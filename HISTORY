@@ -1,0 +1,13 @@
+HISTORY:
+--------
+
+Dec 23,2016: 0.00.0.10 --> Started programming,covered the ground features of the program
+Jan 25,2017: 0.00.0.11 --> Resolved a segfault
+Jan 26,2017: 0.00.0.12 --> Made the Bot::Connect() function a little bit polished.
+Mar 02,2017: 0.00.0.13 --> Made the Bot::handle_msg() function
+Mar 03,2017: 0.00.0.14 --> Made the Bot::handle_msg() work for accepting 
+                           private messages
+Mar 03,2017: 0.00.1.00 --> Made the PONG message working
+Mar 03,2017: 0.00.1.01 --> Made the bot connect and join a channel.Need to  
+                           make a login system now
+

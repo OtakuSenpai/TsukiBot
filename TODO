@@ -1,0 +1,19 @@
+TODO:
+-----
+
+? -> Doing/in my mind
++ -> Done
+- -> To be done
+
+? --> Make the SendPong function work
+- --> Make a nickserv register and login system
+- --> Make MODE,QUIT,TOPIC,NAMES,LIST irc functions
+
+
+GOALS:
+------
+
+0.00.1 --> Get the PONG function working,make the program connect properly to the network
+0.00.2 --> Get the nickserv register and login system working
+0.00.3 --> Get MODE and QUIT and TOPIC function working
+
