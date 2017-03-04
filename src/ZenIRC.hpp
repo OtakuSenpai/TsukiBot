@@ -19,7 +19,7 @@ class Bot
 	  IRCConnector conn;
 	  Join_Data server_data;
 	  std::vector<Channel> chan_list;
-      //std::deque<IRCMessage> msglogs;
+      std::vector<std::string> msglogs;
 	  std::string BotName;
 	  ServerState state;
 	  
@@ -30,14 +30,14 @@ class Bot
       void GetState(ServerState s) { state = s; }
             
    public:
-      Bot(std::string& server,unsigned int port=6667) : conn{server,port}, BotName{} {}
+      Bot(std::string& server,unsigned int port=6667) : conn{server,port}, msglogs{}, BotName{} {}
       Bot(std::string& server,std::string& channel,
           std::string& nick,std::string& user,
           std::string& password,
           unsigned int& port)  : conn{server,port}, server_data{server,channel,nick,user,password,port}, 
-                                 BotName{} { GetName(nick); }
+                                 msglogs{} ,BotName{} { GetName(nick); }
       virtual ~Bot() {}
-			
+      void segragrator(std::string& message,const char* data);	
 	  void GetName(std::string& name);
 	  ServerState RetState() { return state; }
 	  bool IsRunning() { return running; }
@@ -66,7 +66,7 @@ class Bot
       void SendUser(User user,const char* realname,int mode);
       
       //Me message
-      void SendMe(std::string& message);
+      void SendMe(std::string& message,std::string& target);
       
       //Send PONG message
       void SendPong(std::string& contents);		

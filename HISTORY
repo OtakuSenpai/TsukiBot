@@ -10,4 +10,6 @@ Mar 03,2017: 0.00.0.14 --> Made the Bot::handle_msg() work for accepting
 Mar 03,2017: 0.00.1.00 --> Made the PONG message working
 Mar 03,2017: 0.00.1.01 --> Made the bot connect and join a channel.Need to  
                            make a login system now
+Mar 04,2017: 0.00.1.02 --> Made a basic system for the coffee giving mechanism
+                           but it segfaults.Gotta fix both.
 

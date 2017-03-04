@@ -5,6 +5,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <cctype>
 
 void Tsuki :: Bot :: GetName(std::string& name)
 {
@@ -54,95 +55,129 @@ std::string Tsuki :: Bot :: get_text_after_command(std::string& message,const ch
 
 void Tsuki :: Bot :: handle_msg(std::string& message)
 {
-	std::vector<std::string> tokens;
-	std::istringstream strm{message};
-	std::copy(std::istream_iterator<std::string>(strm),
-	          std::istream_iterator<std::string>(),
-	          std::back_inserter(tokens));
-	std::string prefix,command,from,Priv_Comm;
-	std::string channels;
-	std::string a = ":";
-	bool prefix_found = false,chan_found=false;
+	segragrator(message,"\r\n");
 	
-	for(auto&& i: tokens)
+	std::vector<std::string> tokens;
+	std::string prefix,command,from,Priv_Comm;
+	std::string channels,temp,input;
+	
+	std::string a = ":";
+	bool prefix_found = false,sendr_found=false,comm_found = false;
+	bool done = false;
+	
+	for(auto&& z: msglogs)
 	{
-		if((i.find(":") == 0) && (prefix_found) && (chan_found))
-		{   
-		   Priv_Comm = i.substr(1,i.size());
-		   if(Priv_Comm == ",join")
-	       {
-		      bool found = false;
-		      for(auto&& i: tokens)
+		temp = z.c_str();
+		std::istringstream c(temp);
+		if(done)
+		{ break; } 
+		while(std::getline(c,input,' '))
+		   tokens.push_back(input);
+		for(auto i: tokens)
+		{ 
+		   if((i.find(":") == 0) && (prefix_found) && (sendr_found) && (comm_found))
+		   {   
+		      Priv_Comm = i.substr(1,i.size());
+		      if(Priv_Comm == ",join")
 	          {
-		         if((i.find(":,join") != 0) && (!found))
-		         {  
-			        continue;
-		         } 
-		         else { found = true; }
-		         if(found)
-		         {
-		            channels =  i + " " + channels ;
-		         }
-	          }
-	          std::istringstream x(channels); std::vector<std::string> chans;
-	          std::copy(std::istream_iterator<std::string>(x),
+		         bool found = false;
+		         for(auto&& i: tokens)
+	             {
+		            if((i.find(":,join") != 0) && (!found))
+		            {  
+			           continue;
+		            } 
+		            else { found = true; }
+		            if(found)
+		            {
+		               channels =  i + " " + channels ;
+		            }
+	             }
+	             std::istringstream x(channels); std::vector<std::string> chans;
+	             std::copy(std::istream_iterator<std::string>(x),
 	                    std::istream_iterator<std::string>(),
 	                    std::back_inserter(chans));
-	          for(auto&& i: chans)
+	             for(auto&& i: chans)
+	             {
+		            if(i.find("#") == 0)
+		            {
+		               AddChannel(i);
+		               JoinChannel(i);
+		               done = true;
+		               break;
+		          }
+	             } 	
+	          }
+	          if(Priv_Comm == ",coffee") 
 	          {
-		         if(i.find("#") == 0)
+			     bool found = false; 
+			     std::string temp;
+		         for(auto&& j: tokens)
 		         {
-		            AddChannel(i);
-		            JoinChannel(i);
-		         }
-	          } 	
-	       }
-	       if(Priv_Comm == ",coffee") 
-	       {
-			  bool found = false; 
-			  std::string temp;
-		      for(auto&& j: tokens)
-		      {
-				 if(found)
-				 {
-					temp = j + " " +temp;
-				 }
-				 if((j.find(":,coffee") != 0) && (!found))
-				 { continue; }
-				 else 
-				 { found = true; }
-			  }
-			  std::istringstream d(temp); std::vector<std::string> tokens;
-			  std::copy(std::istream_iterator<std::string>(d),
-			            std::istream_iterator<std::string>(),
-			            std::back_inserter(tokens));
-			  for(auto&& k: tokens)
-			  {
-			     if(k == "all")
+				    if(found)
+				    {
+					   temp = j + " " +temp;
+				    }
+				    if((j.find(":,coffee") != 0) && (!found))
+				    { continue; }
+				    else 
+				    { found = true; }
+			     }
+			     std::istringstream d(temp); std::vector<std::string> tokens2;
+			     std::copy(std::istream_iterator<std::string>(d),
+			               std::istream_iterator<std::string>(),
+			               std::back_inserter(tokens));
+			     for(auto&& k: tokens2)
 			     {
-					std::string temp{"brews a hot cup of coffee for all."}; 
-			        SendMe(temp); 
-			        break;
-				 }
-				 else 
-				 {
-			        std::string temp = "me brews a hot cup of coffee for " + k + "."; 
-			        SendMe(temp);
-			        break;
+			        if(k == "all")
+			        {
+			           std::string temp{"brews a hot cup of coffee for all."}; 
+			           std::cout<<std::endl<<from<<std::endl;
+			           SendMe(temp,from); done = true; from.clear();
+			           break;
+			        }
+				    else 
+				    {
+			           std::string temp = "me brews a hot cup of coffee for " + k + "."; 
+			           SendMe(temp,from); done = true; from.clear();
+			           break;
 				 }	  
-			  }	
-		   }  	  
-		}
+			     }
+			   }
+		    }      
 		
-		if(chan_found) { from = i; }
-		if(prefix_found) { command = i; chan_found = true; }
-		if((i.find(":") == 0) && (!prefix_found))
-		{   
-		   prefix = i.substr(1,i.size());
-		   prefix_found = true;
-		} 
+		    if(!sendr_found && (std::isalnum(i.at(0)) || (i.find("#")==0) ) && comm_found) 
+		    { 
+		       from = i.substr(1,i.size());
+		       sendr_found = true; 
+		    }
+		    if(prefix_found && !sendr_found && !comm_found) 
+		    { 
+		       command = i; 
+		       comm_found = true;  
+		    }
+		    if((i.find(":") == 0) && (!prefix_found))
+		    {   
+		       prefix = i.substr(1,i.size());
+		       prefix_found = true;
+		    }
+		}
 	}	
 }
+
+void Tsuki :: Bot :: segragrator(std::string& message,const char* data)
+{
+   std::string temp;
+   std::string::size_type pos = 0, prev = 0;
+   temp.assign(data);
+   
+   while((pos = message.find(temp,prev)) != std::string::npos)
+   {
+	  this->msglogs.push_back(message.substr(prev,pos-prev));
+	  prev = pos +1;
+   }
+}
+	      	
 
 void Tsuki :: Bot :: Connect()
 {
@@ -262,9 +297,9 @@ void Tsuki :: Bot :: SendUser(User user,const char* realname,int mode)
    conn.SendData(s);
 }
 
-void Tsuki :: Bot :: SendMe(std::string& message)
+void Tsuki :: Bot :: SendMe(std::string& message,std::string& target)
 {
-   std::string temp = "\001ACTION " + message + "\001\r\n";
+   std::string temp = "PRIVMSG " + target + " :\u0001ACTION " + message + "\u0001\r\n";
    conn.SendData(temp);
 }
 
