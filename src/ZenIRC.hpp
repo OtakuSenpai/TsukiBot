@@ -65,6 +65,9 @@ class Bot
       void SendUser(User user,std::string& realname,int mode);
       void SendUser(User user,const char* realname,int mode);
       
+      //Me message
+      void SendMe(std::string& message);
+      
       //Send PONG message
       void SendPong(std::string& contents);		
       

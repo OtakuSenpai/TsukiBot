@@ -3,7 +3,7 @@
 
 #include "ZenIRC.hpp"
 
-using namespace Zen;
+using namespace Tsuki;
 using namespace std;
 
 int main()

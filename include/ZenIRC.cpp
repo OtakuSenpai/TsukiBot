@@ -69,12 +69,12 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 		if((i.find(":") == 0) && (prefix_found) && (chan_found))
 		{   
 		   Priv_Comm = i.substr(1,i.size());
-		   if(Priv_Comm == "JOIN")
+		   if(Priv_Comm == ",join")
 	       {
 		      bool found = false;
 		      for(auto&& i: tokens)
 	          {
-		         if((i.find(":JOIN") != 0) && (!found))
+		         if((i.find(":,join") != 0) && (!found))
 		         {  
 			        continue;
 		         } 
@@ -96,8 +96,44 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 		            JoinChannel(i);
 		         }
 	          } 	
-	       }	
+	       }
+	       if(Priv_Comm == ",coffee") 
+	       {
+			  bool found = false; 
+			  std::string temp;
+		      for(auto&& j: tokens)
+		      {
+				 if(found)
+				 {
+					temp = j + " " +temp;
+				 }
+				 if((j.find(":,coffee") != 0) && (!found))
+				 { continue; }
+				 else 
+				 { found = true; }
+			  }
+			  std::istringstream d(temp); std::vector<std::string> tokens;
+			  std::copy(std::istream_iterator<std::string>(d),
+			            std::istream_iterator<std::string>(),
+			            std::back_inserter(tokens));
+			  for(auto&& k: tokens)
+			  {
+			     if(k == "all")
+			     {
+					std::string temp{"brews a hot cup of coffee for all."}; 
+			        SendMe(temp); 
+			        break;
+				 }
+				 else 
+				 {
+			        std::string temp = "me brews a hot cup of coffee for " + k + "."; 
+			        SendMe(temp);
+			        break;
+				 }	  
+			  }	
+		   }  	  
 		}
+		
 		if(chan_found) { from = i; }
 		if(prefix_found) { command = i; chan_found = true; }
 		if((i.find(":") == 0) && (!prefix_found))
@@ -113,7 +149,7 @@ void Tsuki :: Bot :: Connect()
    std::string contents,command{"PING"};
    std::string serv_data,chan = "#cplusplus.com";
    running = false;
-   bool connected = false;
+   bool connected = false,joined = false;
    
    //std::cout<<std::endl<<std::endl<<"In Zen::Bot::Connect...."<<std::endl;
    conn.Connect();
@@ -158,9 +194,10 @@ void Tsuki :: Bot :: Connect()
 		    SendPong(contents);
 		    GetState(Tsuki::ServerState::WORKING); connected = true;
 	     }
-	     if(connected == true)
+	     if(connected == true && joined == false)
 	     {
-		    JoinChannel(chan);
+		    JoinChannel(chan); joined = true;
+		    serv_data.clear();
 		 } 	 
 	     handle_msg(serv_data);
 	     serv_data.clear();
@@ -223,6 +260,12 @@ void Tsuki :: Bot :: SendUser(User user,const char* realname,int mode)
    std::string s = "USER " + user.RetData() + " " + std::to_string(mode) + " *" + " :" + std::string(realname) + "\r\n";
    std::cout<<"Sending user: "<<s<<std::endl;
    conn.SendData(s);
+}
+
+void Tsuki :: Bot :: SendMe(std::string& message)
+{
+   std::string temp = "\001ACTION " + message + "\001\r\n";
+   conn.SendData(temp);
 }
 
 void Tsuki :: Bot :: SendPong(std::string& contents)
