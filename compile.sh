@@ -8,7 +8,7 @@ g++ -mtune=native -std=c++14 -fmessage-length=30 -fdiagnostics-color=always -Wal
 
 g++ -mtune=native -std=c++14 -fmessage-length=30 -fdiagnostics-color=always -Wall -Wextra -pedantic -lstdc++ -lSDL2_net -lSDL2 -c ./include/ircconnector.cpp -I ./src 
 
-g++ -mtune=native -std=c++14 -fmessage-length=30 -fdiagnostics-color=always -Wall -Wextra -pedantic -lstdc++ -lsdl2 -lsdl2_net -c ./include/ZenIRC.cpp -I ./src
+g++ -mtune=native -std=c++14 -fmessage-length=30 -fdiagnostics-color=always -Wall -Wextra -pedantic -lstdc++ -lsdl2 -lsdl2_net -c ./include/TsukiIRC.cpp -I ./src
 
 echo "Done compiling ZenIRC.Now compiling main...."
 
@@ -16,7 +16,7 @@ g++ -mtune=native -std=c++14 -fmessage-length=30 -fdiagnostics-color=always -Wal
 
 echo "Done compiling main.Now linking..."
 
-g++ -o Kikyosama -lstdc++ -lSDL2_net -lSDL2 main.o ZenIRC.o ircconnector.o ircmessage.o constants.o
+g++ -o Kikyosama -lstdc++ -lSDL2_net -lSDL2 main.o TsukiIRC.o ircconnector.o ircmessage.o constants.o
 
 rm *.o
 
