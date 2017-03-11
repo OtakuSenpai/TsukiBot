@@ -66,6 +66,8 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 	
 	for(auto&& z: msglogs)
 	{
+		if(done)
+		{ break; }
 		temp = z.c_str();
 		std::istringstream c(temp);
 		if(done)
@@ -104,65 +106,74 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 		               JoinChannel(i);
 		               done = true;
 		               break;
-		          }
-	             } 	
+		            }
+		            if(done)
+		            { break; }
+	             } 
+	             chans.clear();	
 	          }
-	          else if(Priv_Comm == ",coffee") 
-	          {
-			     bool found = false; 
-			     std::string temp;
-		         for(auto&& j: tokens)
-		         {
-				    if((j.find(":,coffee") != 0) && (!found))
-				    { continue; }
-				    else 
-				    { found = true; }
-				    if(found)
-				    {
-					   temp = j + " " +temp;
-				    }
-			     }
-			     std::istringstream d(temp); std::vector<std::string> tokens2;
-			     std::copy(std::istream_iterator<std::string>(d),
-			               std::istream_iterator<std::string>(),
-			               std::back_inserter(tokens));
-			     for(auto&& k: tokens2)
+	       else if(Priv_Comm == ",coffee") 
+	       {
+			  bool found = false; 
+		      std::string temp;
+		      for(auto&& j: tokens)
+		      {
+				 if((j.find(":,coffee") != 0) && (!found))
+				 { continue; }
+				 else 
+				 { found = true; }
+				 if(found)
+				 {
+					temp = j + " " +temp;
+				 }
+			  }
+			  std::cout<<std::endl<<std::endl<<std::endl<<"Temp is: "<<temp<<std::endl<<std::endl<<std::endl;
+			  std::cout<<std::endl<<std::endl<<std::endl<<"From is: "<<from<<std::endl<<std::endl<<std::endl;
+			  std::cout<<std::endl<<std::endl<<std::endl<<"Command is: "<<command<<std::endl<<std::endl<<std::endl;
+			  std::cout<<std::endl<<std::endl<<std::endl<<"Prefix is: "<<prefix<<std::endl<<std::endl<<std::endl;
+			  std::istringstream d(temp); std::vector<std::string> tokens2;
+			  std::copy(std::istream_iterator<std::string>(d),
+			            std::istream_iterator<std::string>(),
+			            std::back_inserter(tokens2));
+			  for(auto&& k: tokens2)
+			  {
+			     if(k == "all")
 			     {
-			        if(k == "all")
-			        {
-			           std::string temp{"brews a hot cup of coffee for all."}; 
-			           std::cout<<std::endl<<from<<std::endl;
-			           SendMe(temp,from); done = true; from.clear();
-			           break;
-			        }
-				    else 
-				    {
-			           std::string temp = "me brews a hot cup of coffee for " + k + "."; 
-			           SendMe(temp,from); done = true; from.clear();
-			           break;
-				    }	  
-			     temp.clear();
+			        std::string temp{"brews a hot cup of coffee for all."}; 
+			        SendMe(temp,from); done = true; from.clear();
+			        break;
 			     }
-			   }
-		    }      
+				 else 
+				 {
+			        std::string temp = "brews a hot cup of coffee for " + k + "."; 
+			        SendMe(temp,from); done = true; from.clear();
+			        break;
+				 }
+				 if(done)
+		         { break; }	  
+			  }
+			  tokens2.clear();
+			  temp.clear();
+		   }
+		}      
 		
-		    if(!sendr_found && (std::isalnum(i.at(0)) || (i.find("#")==0) ) && comm_found) 
-		    { 
-		       from = i.substr(1,i.size());
-		       sendr_found = true; 
-		    }
-		    if(prefix_found && !sendr_found && !comm_found) 
-		    { 
-		       command = i; 
-		       comm_found = true;  
-		    }
-		    if((i.find(":") == 0) && (!prefix_found))
-		    {   
-		       prefix = i.substr(1,i.size());
-		       prefix_found = true;
-		    }
+		if(!sendr_found && (std::isalnum(i.at(0)) || (i.find("#")==0) ) && comm_found) 
+		{ 
+		    from = i.substr(1,i.size());
+		    sendr_found = true; 
 		}
-	    tokens.clear();
+		if(prefix_found && !sendr_found && !comm_found) 
+		{ 
+		    command = i; 
+		    comm_found = true;  
+		}
+		if((i.find(":") == 0) && (!prefix_found))
+		{   
+		    prefix = i.substr(1,i.size());
+		    prefix_found = true;
+		}
+     }
+	tokens.clear();
 	}	
 }
 
@@ -185,7 +196,7 @@ void Tsuki :: Bot :: Connect()
    std::string contents,command{"PING"};
    std::string serv_data,chan = "#cplusplus.com";
    running = false;
-   bool connected = false,joined = false;
+   bool connected = false,joined = false,cleared = false;
    
    //std::cout<<std::endl<<std::endl<<"In Zen::Bot::Connect...."<<std::endl;
    conn.Connect();
@@ -232,11 +243,15 @@ void Tsuki :: Bot :: Connect()
 	     }
 	     if(connected == true && joined == false)
 	     {
+			serv_data.clear(); 
 		    JoinChannel(chan); joined = true;
-		    serv_data.clear();
 		 } 	 
 	     handle_msg(serv_data);
-	     serv_data.clear();
+	     if(!cleared)
+	     {
+	        serv_data.clear();
+	        cleared = false;
+		 }
       }         	  	  
   std::cout<<"Exiting Zen::Bot::Connect....\n";
 }
@@ -300,7 +315,8 @@ void Tsuki :: Bot :: SendUser(User user,const char* realname,int mode)
 
 void Tsuki :: Bot :: SendMe(std::string& message,std::string& target)
 {
-   std::string temp = "PRIVMSG " + target + " :\u0001ACTION " + message + "\u0001\r\n";
+   std::string temp = "PRIVMSG " + target + " :\001ACTION " + message + "\001\r\n";
+   std::cout<<std::endl<<std::endl<<std::endl<<"Sending /me : "<<temp<<std::endl<<std::endl<<std::endl;
    conn.SendData(temp);
 }
 
