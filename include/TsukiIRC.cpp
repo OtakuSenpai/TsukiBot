@@ -185,7 +185,7 @@ void Tsuki :: Bot :: segragrator(std::string& message,const char* data)
    
    while((pos = message.find(temp,prev)) != std::string::npos)
    {
-	  this->msglogs.push_back(message.substr(prev,pos-prev));
+	  msglogs.push_back(message.substr(prev,pos-prev));
 	  prev = pos +1;
    }
 }
@@ -196,14 +196,14 @@ void Tsuki :: Bot :: Connect()
    std::string contents,command{"PING"};
    std::string serv_data,chan = "#cplusplus.com";
    running = false;
-   bool connected = false,joined = false,cleared = false;
+   bool connected = false,joined = false,receiving = false;
    
    //std::cout<<std::endl<<std::endl<<"In Zen::Bot::Connect...."<<std::endl;
    conn.Connect();
    
    if(!conn.isConnected())
    {
-      std::cerr<<"Unable to connect to server!!!Retrying..."<<std::endl;
+      std::cerr<<"Unable to connect to server!!! Retrying..."<<std::endl;
       conn.Connect();
       GetState(Tsuki::ServerState::SETTING_NICK);
    }
@@ -213,7 +213,7 @@ void Tsuki :: Bot :: Connect()
    std::cout<<"Entering loop...\n";
    while(conn.RecvData(serv_data) && IsRunning()) 
       {   
-         std::cout<<serv_data<<std::endl;
+         std::cout<<"Server Data: "<<std::endl<<serv_data<<std::endl;
          if(RetState() == Tsuki::ServerState::SETTING_NICK)
          {   
             SendNick();
@@ -243,15 +243,15 @@ void Tsuki :: Bot :: Connect()
 	     }
 	     if(connected == true && joined == false)
 	     {
-			serv_data.clear(); 
 		    JoinChannel(chan); joined = true;
 		 } 	 
-	     handle_msg(serv_data);
-	     if(!cleared)
-	     {
-	        serv_data.clear();
-	        cleared = false;
+		 if(connected == true && joined == true && (!receiving) )
+		 {
+			 serv_data.clear();
+			 receiving = true;
 		 }
+	     handle_msg(serv_data);
+	     serv_data.clear();
       }         	  	  
   std::cout<<"Exiting Zen::Bot::Connect....\n";
 }

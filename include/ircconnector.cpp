@@ -1,5 +1,6 @@
 #include "ircconnector.hpp"
 #include <iostream>
+#include <string>
 
 Tsuki :: IRCConnector :: IRCConnector(std::string& server,unsigned int port)
 {
@@ -99,8 +100,7 @@ void Tsuki :: IRCConnector :: SendData(std::string& data)
    else
    {
 	  msg = data;
-   } 
-   //std::cout<<"Sending data: "<<msg.c_str()<<std::endl;
+   }
    len = msg.size();
    ret = SDLNet_TCP_Send(tcpsock,msg.c_str(),len);
 	
@@ -135,8 +135,13 @@ std::string Tsuki :: IRCConnector :: RecvData()
 		std::string s = static_cast<std::string>("ZenIRC Error: Error in Zen :: IRCConnector :: RecvData(). Error is " + std::string(error) + " .");
 		throw std::runtime_error{s};
 	}
-	std::string message(buffer);
-	//std::cout<<"Receiving: "<<message<<std::endl;
+	std::string message(buffer),s;
+	if (message.at(message.size() - 1) != '\n') 
+	{
+       // std::cout << "Receiving more data!" << std::endl;
+       s = RecvData();
+       message = message + s;
+    } 
 	return message;
 }
 
@@ -144,7 +149,7 @@ bool Tsuki :: IRCConnector :: RecvData(std::string& msg)
 {
 	int ret;
 	bool hasit = false;
-	ret = SDLNet_TCP_Recv(tcpsock,buffer,buf_size);
+	ret = SDLNet_TCP_Recv(tcpsock,reinterpret_cast<void*>(buffer),buf_size);
     if(ret<=0)
     {
 	   const char* error = SDLNet_GetError();	
@@ -153,7 +158,13 @@ bool Tsuki :: IRCConnector :: RecvData(std::string& msg)
     }
     else { hasit =true; }
     msg.assign(buffer);
-    //std::cout<<msg<<std::endl;
+    std::string s;
+    if (msg.at(msg.size() - 1) != '\n') 
+	{
+       // std::cout << "Receiving more data!" << std::endl;
+       s = RecvData();
+       msg = msg + s;
+    } 
     return hasit;
 }
 
