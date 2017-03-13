@@ -159,12 +159,12 @@ bool Tsuki :: IRCConnector :: RecvData(std::string& msg)
     else { hasit =true; }
     msg.assign(buffer);
     std::string s;
-    if (msg.at(msg.size() - 1) != '\n') 
+  /*  if (msg.at(msg.size() - 1) != '\n') 
 	{
        // std::cout << "Receiving more data!" << std::endl;
        s = RecvData();
        msg = msg + s;
-    } 
+    } */
     return hasit;
 }
 

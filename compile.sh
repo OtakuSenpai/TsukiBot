@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-echo "Compiling ZenIRC...."
+echo "Compiling TsukiIRC...."
 
 g++ -mtune=native -std=c++14 -fmessage-length=30 -fdiagnostics-color=always -Wall -Wextra -pedantic -lstdc++ -c ./include/constants.cpp -I ./src
 
@@ -10,7 +10,7 @@ g++ -mtune=native -std=c++14 -fmessage-length=30 -fdiagnostics-color=always -Wal
 
 g++ -mtune=native -std=c++14 -fmessage-length=30 -fdiagnostics-color=always -Wall -Wextra -pedantic -lstdc++ -lsdl2 -lsdl2_net -c ./include/TsukiIRC.cpp -I ./src
 
-echo "Done compiling ZenIRC.Now compiling main...."
+echo "Done compiling TsukiIRC.Now compiling main...."
 
 g++ -mtune=native -std=c++14 -fmessage-length=30 -fdiagnostics-color=always -Wall -Wextra -pedantic -lstdc++ -lsdl2 -lsdl2_net -c ./main.cpp -I ./src
 

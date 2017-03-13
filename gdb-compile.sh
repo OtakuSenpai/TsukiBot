@@ -1,4 +1,4 @@
-echo "Compiling ZenIRC...."
+echo "Compiling TsukiIRC...."
 
 g++ -mtune=native -std=c++14 -fmessage-length=30 -fdiagnostics-color=always -Wall -Wextra -pedantic -lstdc++ -c -g3 ./include/constants.cpp -I ./src
 
@@ -8,7 +8,7 @@ g++ -mtune=native -std=c++14 -fmessage-length=30 -fdiagnostics-color=always -Wal
 
 g++ -mtune=native -std=c++14 -fmessage-length=30 -fdiagnostics-color=always -Wall -Wextra -pedantic -lstdc++ -c -lSDL2 -lSDL2_net -g3 ./include/TsukiIRC.cpp -I ./src
 
-echo "Done compiling ZenIRC.Now compiling main...."
+echo "Done compiling TsukiIRC.Now compiling main...."
 
 g++ -mtune=native -std=c++14 -fmessage-length=30 -fdiagnostics-color=always -Wall -Wextra -pedantic -lstdc++ -lSDL2 -lSDL2_net -g3 -c ./main.cpp -I ./src
 

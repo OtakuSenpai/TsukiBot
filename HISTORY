@@ -12,4 +12,6 @@ Mar 03,2017: 0.00.1.01 --> Made the bot connect and join a channel.Need to
                            make a login system now
 Mar 04,2017: 0.00.1.02 --> Made a basic system for the coffee giving mechanism
                            but it segfaults.Gotta fix both.
+Mar 13,2017: 0.00.1.03 --> Made coffee giving mechanism work on one channel  
+                           only. Gotta make it work on multiple channels
 
