@@ -5,15 +5,62 @@ TODO:
 + -> Done
 - -> To be done
 
-? --> Make the SendPong function work
-- --> Make a nickserv register and login system
-- --> Make MODE,QUIT,TOPIC,NAMES,LIST irc functions
-
-
 GOALS:
 ------
 
-0.00.1 --> Get the PONG function working,make the program connect properly to the network
-0.00.2 --> Get the nickserv register and login system working
-0.00.3 --> Get MODE and QUIT and TOPIC function working
+[+] 0.00.01 --> Get the PONG function working,make the program connect  
+                properly to the network
+[?] 0.00.02 --> Get the /me,JOIN,PART message and coffee giving system working
+[-] 0.00.03 --> Get the nickserv register and login system working
+[-] 0.00.04 --> Get MODE,QUERY,QUIT and TOPIC function working
+[-] 0.00.05 --> Get the logging system in place
+[-] 0.00.06 --> Make it join one bot per network(use threads to do it)
+[-] 0.00.07 --> Make a plugin system for the bot 
+[-] 0.00.08 --> Make some cool plugins for it
+[-] 0.00.09 --> Do some optimisations of the code base
+[-] 0.00.10 --> Do some more optimisations
+---------------
+[-] 0.01.01 --> Make the bot connect through a proxy
+[-] 0.01.02 --> Make it connect through SSL
+[-] 0.01.03 --> Make some more plugins
+[-] 0.01.04 --> Optimisations!!!
+---------------
+[-] 0.02.01 --> Make a list function which lists the commands of a bot on the 
+                number of plugins loaded in a private query
+[-] 0.02.02 --> Make a help function for each command which responds in a query
+[-] 0.02.03 --> Make a plugin which lists arbritrary xkcd quotes 
+[-] 0.02.04 --> Make a plugin which lists the latest Linux kernel patches
+[-] 0.02.05 --> Make a plugin which shows the code of the bot
+[-] 0.02.06 --> Make a plugin which accepts a string in pm,and says it using 
+                /me message 
+[-] 0.02.07 --> Optimisations!!!
+---------------
+
+------------------------------------------------------------------------------
+
+PLUGINS:
+--------
+
+1)Getting a keyword and storing the keyword in  a map or hash_map.Plus do various things with those values. 
+
+2)Make a URL link expanding plugin(google,youtube,imgur,etc)
+
+3)Make a plugin which gives rankings based on user nickname
+
+4)Make a google search plugin
+
+5)Make a youtube search plugin
+
+6)Make a plugin which takes the quote of a user and stores it in a hash_map.
+  When asked for a quote listing,it shows a random quote.
+
+7)Make an openweather connected weather listing of cities
+
+8)Make it will look for any easy newbie and attack or mock him continuously until a triggered instance.It will also store the users and their ips in a table and check if any just-logged-in user is a newbie or not. 
+
+9)KaraokeMon class: It will sing some few lines of old songs.
+ 
+10)Brainz class: This class has various functions to help the bot 
+assimilate the server conversations and talk in an intelligent manner.
+(Algorithms and NLP Knowleadge Required.) 
 
