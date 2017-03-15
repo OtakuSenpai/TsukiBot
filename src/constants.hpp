@@ -83,18 +83,10 @@ private:
 
 public:
 	Nick() : _data{} {}
-        Nick(std::string& data) : _data(data) { Parse(); }
-	void operator= (const Nick& obj)
-	{
-		_data = obj.RetData();
-		Parse();
-	}
-	void GetData(std::string& data)
-       {
-	      _data = data;
-	      Parse();
-       }
-       std::string RetData() const { return _data; }
+    Nick(std::string& data) : _data(data) { Parse(); }
+	void operator= (const Nick& obj);
+	void GetData(std::string& data);
+    std::string RetData() const { return _data; }
 	~Nick() {}
 };
 
@@ -102,23 +94,18 @@ class Channel
 {
 private:
       std::string _data;
+      std::vector<Nick> chan_users;
       void Parse();
 
 public:
       Channel() : _data{} {}	
-      Channel(std::string& data): _data(data) { Parse(); }
-      void operator= (const Channel& obj)
-	{
-		_data = obj.RetData();
-		Parse();
-	}
-      void GetData(std::string& data)
-      {
-	      _data = data;
-	      Parse();
-      }
-      std::string RetData() const{ return _data; }
+      Channel(std::string& data): _data(data), chan_users{} { Parse(); }
       ~Channel() {}
+      void operator= (const Channel& obj);
+      std::string RetData() const{ return _data; }
+      std::vector<Nick> RetUser_List() { return chan_users; }
+      void GetData(std::string& data);
+      void GetUsers(std::string& user_list); 
 };
 
 //obsolete
@@ -199,28 +186,13 @@ struct  Irc_Data
 	Irc_Data(std::string& pref,const char* comm): prefix{pref}, command{comm} {}
 	~Irc_Data() {}
 
-	void operator=(const Irc_Data& obj)
-	{
-		command = obj.command;
-		parameters = obj.parameters;
-		prefix = obj.prefix;
-	}
-	 
-          
+	void operator=(const Irc_Data& obj);
 	std::string RetPrefix() { return prefix.RetData(); }
 	std::string RetCommand() { return command; }
 	std::vector<std::string> RetParameters() { return parameters; }	
-        std::string RetSParameters() 
-        {
-		std::string temp;
-		for(auto iter = parameters.rbegin(); iter != parameters.rend(); iter++)
-                 {
-			temp = temp + " " + *iter; 
-                 }
-		 return temp;
-	 }
-         void GetPrefix(std::string& pref) { prefix.GetData(pref); } 
-         void GetCommand(std::string& obj) { command = obj; }  
+    std::string RetSParameters(); 
+    void GetPrefix(std::string& pref) { prefix.GetData(pref); } 
+    void GetCommand(std::string& obj) { command = obj; }  
 };	
 
 /* This struct is used in joining to a given channel.
@@ -254,12 +226,6 @@ struct  Join_Data
     User RetUserObj() { return user; }   
     void GetUser(std::string& obj) { user.GetData(obj); }    	
 };
-
-struct A { Nick nick;
-		  Channel chan;	 
-		  std::string flags;  
-		  A* next; };
-using chan_user_list = struct A;
 
 }		
 

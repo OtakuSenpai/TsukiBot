@@ -156,7 +156,22 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 		{ 
 			if(!sendr_found && i.find("#") == 0)
 			{
+				size_t j = chan_list.size();
 				from = i;
+				Tsuki::Channel a{from};
+				if(j == 0)
+			    { chan_list.push_back(Tsuki::Channel{from}); }
+				std::cout<<std::endl<<"From: "<<std::endl<<std::endl;
+				for(auto i = std::begin(chan_list); i != std::end(chan_list); i++)
+				{
+					size_t k = std::distance(std::begin(chan_list),i);
+					std::cout<<std::endl<<"i: "<<i->RetData()<<std::endl<<std::endl;
+					if(j != 0 && i->RetData() != from)
+					{ chan_list.push_back(a); }
+					else
+					{ break; } 
+					if(k > j) break;
+				}
 				sendr_found = true;
 			}
 			if(prefix_found && !sendr_found && !comm_found)
@@ -193,11 +208,13 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 					     user = j + " " + user;
 					  } 
 				   }
-				   std::istringstream x(user);
-				   std::copy(std::istream_iterator<std::string>(x),
-				             std::istream_iterator<std::string>(),
-				             std::back_inserter(this -> users)); 
-				             
+				   std::cout<<std::endl<<"User: "<<std::endl<<std::endl;
+				   for(auto i =std::begin(chan_list); i != std::end(chan_list);i++)
+				   {
+				       if(i->RetData() == from)
+				       { i->GetUsers(user); }
+				   }
+	               user.clear();
 				}   	     
                 
 				if(Priv_Comm == ",join")
@@ -258,7 +275,7 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 					}
 
 					std::istringstream d(temp);
-					std::vector<std::string> tokens2;
+					std::vector<std::string> tokens2,user;
                     std::string s{":,coffee"},a;
                     bool isthere = false,hasatarget = false;
                     std::string target;
@@ -281,9 +298,10 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 				    std::cout<<std::endl<<"isthere: "<<isthere<<std::endl<<std::endl;
 				    std::cout<<std::endl<<"a: "<<a<<std::endl<<std::endl;
 				    std::cout<<std::endl<<"a.size: "<<a.size()<<std::endl<<std::endl;
+				    user = get_user_list(from);
 				    auto&& i = std::begin(tokens2);
-				    auto&& j = std::begin(users);
-					while(j != std::end(users))
+				    auto&& j = std::begin(user);
+					while(j != std::end(user))
 					{
 					   while(i != std::end(tokens2))
 					   {
@@ -369,9 +387,29 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 	    }
 		tokens.clear();
 	}
+	std::cout<<std::endl<<"Size of chan_list: "<<chan_list.size()<<std::endl<<std::endl;
     message.clear();
 	msglogs.clear();
 }
+
+std::vector<std::string> Tsuki :: Bot :: get_user_list(std::string& from)
+{
+   std::vector<std::string> list;
+   std::vector<Tsuki::Nick> nick_list;
+   for(auto&& i = std::begin(chan_list); i != std::end(chan_list); i++)
+   {
+	   if(i->RetData() == from)
+	   {
+		   nick_list = i->RetUser_List();
+	       for(auto&& j = std::begin(nick_list); j != std::end(nick_list); j++)
+	       {
+			   list.push_back(j->RetData());
+		   }
+	   }
+   }
+   std::cout<<std::endl<<"Size of list: "<<list.size()<<std::endl<<std::endl;
+   return list;
+}    	
 
 void Tsuki :: Bot :: segragrator(std::string& message,const char* data)
 {

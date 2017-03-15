@@ -14,4 +14,6 @@ Mar 04,2017: 0.00.1.02 --> Made a basic system for the coffee giving mechanism
                            but it segfaults.Gotta fix both.
 Mar 13,2017: 0.00.1.03 --> Made coffee giving mechanism work on one channel  
                            only. Gotta make it work on multiple channels
+Mar 15,2017: 0.00.1.04 --> Added support for multiple nicks in a vector of 
+                           channels,but has a bad_alloc in it.Need to fix that.
 

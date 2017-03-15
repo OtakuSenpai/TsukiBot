@@ -8,7 +8,7 @@ using namespace std;
 
 int main()
 {
-	std::string server{"irc.freenode.net"},nick{"Bhsdns"},realname{"Bhsdns"},pass=" ";
+	std::string server{"irc.freenode.net"},nick{"G33kb0i"},realname{"G33kb0i"},pass=" ";
 	std::string user{"Bhsdns"},channel{"##chat"};
 	unsigned int port = 6667;
     
