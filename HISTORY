@@ -1,9 +1,11 @@
 HISTORY:
 --------
 
-Dec 23,2016: 0.00.0.10 --> Started programming,covered the ground features of the program
+Dec 23,2016: 0.00.0.10 --> Started programming,covered the ground features of 
+                           the program
 Jan 25,2017: 0.00.0.11 --> Resolved a segfault
-Jan 26,2017: 0.00.0.12 --> Made the Bot::Connect() function a little bit polished.
+Jan 26,2017: 0.00.0.12 --> Made the Bot::Connect() function a little bit 
+                           polished.
 Mar 02,2017: 0.00.0.13 --> Made the Bot::handle_msg() function
 Mar 03,2017: 0.00.0.14 --> Made the Bot::handle_msg() work for accepting 
                            private messages
@@ -16,4 +18,8 @@ Mar 13,2017: 0.00.1.03 --> Made coffee giving mechanism work on one channel
                            only. Gotta make it work on multiple channels
 Mar 15,2017: 0.00.1.04 --> Added support for multiple nicks in a vector of 
                            channels,but has a bad_alloc in it.Need to fix that.
+Mar 18,2017: 0.00.1.05 --> Fixed the bad alloc,gonna fix the number of 
+                           channels joined which is shown in the program.
+Mar 18,2017: 0.00.1.06 --> Fixed the channel vector issues.Gotta fine tune the 
+                           user adding part.
 
