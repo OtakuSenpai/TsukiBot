@@ -38,7 +38,7 @@ void  Tsuki :: Nick:: Parse()
         _data[0] != '+' && _data[0] != '@' && _data[0] != ':' && _data[0] != '[' && _data[0] != ']' &&
         _data[0] != static_cast<char>(39) && _data[0] != '{' && _data[0] != '}' && _data[0] != '<' && 
         _data[0] != '>' && _data[0] != '^' && _data[0] != '&' && _data[0] != '*' && _data[0] != '$'
-        && _data[0] != static_cast<char>(96) )
+        && _data[0] != static_cast<char>(96) && _data[0] != '|' )
      {
 		 std::cout<<_data<<std::endl;
         throw std::runtime_error{"ZenIRC Error: First character of a nick can't be non-alpha."};
@@ -85,17 +85,24 @@ void Tsuki :: Channel :: GetUsers(std::string& list)
    
 void Tsuki :: Channel  :: Parse()
 {
+	bool first_is_space = false;
    int i = 0;
    if(_data[0] != '#' && _data[0] != '&' )
-   {     
-      throw std::runtime_error{"ZenIRC Error: First character of a channel must be '#' or '&'. "};
+   {  
+	  if(_data[0] == ' ' || _data.size() == 0 ) { first_is_space = true; }
+	  else    
+      { throw std::runtime_error{"ZenIRC Error: First character of a channel must be '#' or '&'. "}; }
    }     
    for(auto iter = _data.begin(); iter != _data.end(); iter++)
    {
       i = std::distance(_data.begin(),iter);
       if(_data[i]  == Tsuki::Space || _data[i] == Tsuki::Null || 
-         _data[i] == Tsuki::Lf || _data[i] == Tsuki::Cr || _data[i] == ',' ) 		
-      throw  std::runtime_error{"ZenIRC Error: Can't have any space,comma,null character, carriage return or newline in Channel."};
+         _data[i] == Tsuki::Lf || _data[i] == Tsuki::Cr || _data[i] == ',' )
+      { 		
+        if(first_is_space) {}
+        else
+        throw  std::runtime_error{"ZenIRC Error: Can't have any space,comma,null character, carriage return or newline in Channel."};
+      }  
    }
 }	
 
