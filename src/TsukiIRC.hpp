@@ -77,7 +77,7 @@ class Bot
       void SendPong(std::string& contents);		
       
       //Add a channel
-	  void AddChannel(std::string& channel);
+	  void AddChannel(std::string& channel,std::string& command);
 };
 			
 			

@@ -61,7 +61,14 @@ bool Tsuki :: Bot :: has_only_space(std::string& data)
    for(size_t i = 0;i<data.size(); i++)
    {
        if(data[i] == Tsuki::Space)
-       { values[i] = false; }   
+       { values[i] = false; }  
+       else if(static_cast<bool>(std::isalpha(data[i])) == true || data[i] == static_cast<char>(95) ||
+               data[i] == static_cast<char>(95) || data[i] == static_cast<char>(39) || data[i] == static_cast<char>(96) ||
+               data[i] == '+' || data[i] == '@' || data[i] == ':' || data[i] == '[' || data[i] == ']' ||
+               data[i] == '{' || data[i] == '}' || data[i] == '<' || data[i] == '_' || data[i] == '-' ||
+               data[i] == '>' || data[i] == '^' || data[i] == '&' || data[i] == '*' || data[i] == '$' || 
+               data[i] == '|' || data[i] == '\\' || data[i] == '/' )
+       { values[i] = true; } 
        else { values[i] = true; }
    }
    for(auto&& i = std::begin(values); i != std::end(values); i++)
@@ -132,7 +139,7 @@ std::string Tsuki :: Bot :: get_text_after_command(std::string& message,const ch
 void Tsuki :: Bot :: handle_msg(std::string& message)
 {
 	std::cout<<std::endl<<"Server Data: "<<message<<std::endl<<std::endl;
-	segragrator(message, "\r\n");
+	segragrator(message, "\r\n"); message = "";
     message.clear();
 	std::vector<std::string> tokens;
 	std::string prefix,command,from,Priv_Comm;
@@ -144,7 +151,7 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 	for(auto&& z: msglogs)
 	{
 		bool prefix_found = false,sendr_found=false,comm_found = false;
-
+   
 		temp = z.c_str();
 		std::istringstream c(temp);
 
@@ -156,34 +163,11 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 		{ 
 			if(!sendr_found && i.find("#") == 0)
 			{
-				size_t j = chan_list.size();
-				bool has_chan = false,chan_is_not_command = false;
-				from = i;
-				if(j == 0 )
-				{
-				   if(command == "372" || command == "NOTICE" || from == "#freenode")
-				   { from = " "; chan_is_not_command = true; }
-				   else 	
-			       { Tsuki::Channel a{from}; chan_list.push_back(a); }
-			    }
-				else
-				{
-				   if(command == "372" || command == "NOTICE" || from == "#freenode")
-				   { from = " "; chan_is_not_command = true; }
-				   for(auto i = std::begin(chan_list); i != std::end(chan_list); i++)
-				   {
-					   size_t k = std::distance(std::begin(chan_list),i);
-					   if(k > j) break;
-					   if(i->RetData() == from)
-					   { has_chan = true; } 
-				   }
-				   if(!has_chan)
-				   { 
-					   if(!chan_is_not_command)   
-					   { Tsuki::Channel a{from}; chan_list.push_back(a); }
-				   }
-			    }
-			    for(auto&& i: chan_list) std::cout<<i.RetData()<<std::endl;			    
+			    from = i;
+			    size_t j = chan_list.size();
+			    if(j == 0 && command != "NOTICE" && command != "372")
+			       chan_list.push_back(Tsuki::Channel{from});
+			    else  AddChannel(from,command);    
 				sendr_found = true;
 			}
 			if(prefix_found && !sendr_found && !comm_found)
@@ -220,17 +204,24 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 					     user = j + " " + user;
 					  } 
 				   }
-				   std::cout<<std::endl<<"User: "<<std::endl<<std::endl;
+				   //std::cout<<std::endl<<"User: "<<user<<std::endl<<std::endl;
 				   for(auto i =std::begin(chan_list); i != std::end(chan_list);i++)
 				   {
+					   //std::cout<<std::endl<<"In user list,from: "<<from<<std::endl<<std::endl;
 				       if(i->RetData() == from)
 				       { i->GetUsers(user); }
 				   }
 	               user.clear();
 				}   	     
-                
+                std::cout<<"From: "<<from<<std::endl
+                         <<"Comm: "<<command<<std::endl
+                         <<"Prefix: "<<prefix<<std::endl
+                         <<"Comm found: "<<comm_found<<std::endl
+                         <<"Sendr found: "<<sendr_found<<std::endl
+                         <<"prefix found: "<<prefix_found<<std::endl;
 				if(Priv_Comm == ",join")
 				{
+					std::cout<<std::endl<<std::endl<<std::endl<<"In Join function...."<<std::endl<<std::endl<<std::endl;
 					bool found = false;
 					for(auto&& i: tokens)
 					{
@@ -244,19 +235,19 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 						}
 
 						if(found)
-						{
-							channels =  i + " " + channels ;
-						}
+						{ channels =  i + " " + channels ; }
 					}
 					std::istringstream x(channels); std::vector<std::string> chans;
 					std::copy(std::istream_iterator<std::string>(x),
 						std::istream_iterator<std::string>(),
 						std::back_inserter(chans));
+				    std::cout<<"To be joined chans are: "<<channels<<std::endl;
+				    for(auto&& i: chans) std::cout<<i<<std::endl;
 	                for(auto&& i: chans)
 	                {
 		               if(i.find("#") == 0)
 		               {
-		                  AddChannel(i);
+		                  AddChannel(i,command);
 		                  JoinChannel(i);
 		                  done = true;
 		                  break;
@@ -576,7 +567,36 @@ void Tsuki :: Bot :: SendPong(std::string& contents)
    conn.SendData(temp);
 }	
 
-void Tsuki :: Bot :: AddChannel(std::string& channel)
+void Tsuki :: Bot :: AddChannel(std::string& channel,std::string& command)
 {
-   chan_list.emplace_back(Tsuki::Channel(channel));
+   size_t j = chan_list.size();
+   //std::cout<<std::endl<<"Chan size in AddChannel: "<<j<<std::endl<<std::endl;
+   bool has_chan = false,chan_is_not_command = false;
+   std::string from = channel;
+   if(j == 0 )
+   {
+      if(command == "372" || command == "NOTICE" || from == "#freenode" || from == "##Linux" || command != "PRIVMSG")
+	  { from = ""; chan_is_not_command = true; }
+	  else  	
+	  { Tsuki::Channel a{from}; chan_list.push_back(a); from = ""; }
+   }
+   else if(j > 0)
+   {
+	  if(command == "372" || command == "NOTICE" || from == "#freenode" ||  command != "PRIVMSG")
+	  { from = ""; chan_is_not_command = true; }
+	  for(auto i = std::begin(chan_list); i != std::end(chan_list); i++)
+	  {
+	     size_t k = std::distance(std::begin(chan_list),i);
+		 if(k > j) break;
+		 if(i->RetData() == from)
+		 { has_chan = true; } 
+	  }
+	  if(!has_chan)
+      { 
+         if(!chan_is_not_command)   
+	     { Tsuki::Channel a{from}; chan_list.push_back(a); }
+      }
+   }
+   //std::cout<<std::endl<<"Channels are: "<<std::endl;
+   //for(auto i: chan_list) std::cout<<i.RetData()<<std::endl;
 }

@@ -22,4 +22,6 @@ Mar 18,2017: 0.00.1.05 --> Fixed the bad alloc,gonna fix the number of
                            channels joined which is shown in the program.
 Mar 18,2017: 0.00.1.06 --> Fixed the channel vector issues.Gotta fine tune the 
                            user adding part.
+Mar 19,2017: 0.00.1.07 --> Made use of AddChannel whenever joining a channel. 
+                           Tryin to make the bot join via pms
 
