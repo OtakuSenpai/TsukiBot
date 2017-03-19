@@ -24,4 +24,6 @@ Mar 18,2017: 0.00.1.06 --> Fixed the channel vector issues.Gotta fine tune the
                            user adding part.
 Mar 19,2017: 0.00.1.07 --> Made use of AddChannel whenever joining a channel. 
                            Tryin to make the bot join via pms
+Mar 19,2017: 0.00.1.08 --> Made the bot accept PMs,but it can't find the users 
+                           in the channels.Gotta fix tht.
 

@@ -60,9 +60,13 @@ void  Tsuki :: Nick:: Parse()
                 _data[i] == Tsuki::RightSquareBrackets || _data[i] == Tsuki::LeftSlash || 
                 _data[i] == Tsuki::SingleQuote || _data[i] == Tsuki::Power || 
                 _data[i] == Tsuki::LeftCurlyBraces  || _data[i] == Tsuki::RightCurlyBraces)
-            continue;
-	else if(_data[i] == Tsuki::Space || _data[i] == Tsuki::Null || _data[i] == Tsuki::Lf || _data[i] == Tsuki::Cr || _data[i] == ',' )
-	    throw  std::runtime_error{"ZenIRC Error: Can't have any space,comma,null character, carriage return or newline in Nick."};
+           continue;
+	    else if(_data[i] == Tsuki::Space || _data[i] == Tsuki::Null ||
+	            _data[i] == Tsuki::Lf || _data[i] == Tsuki::Cr || _data[i] == ',' )
+	    {
+		   std::string temp = "ZenIRC Error: Can't have '" + std::string{_data.at(i)} +"' in Nick.";
+		   throw  std::runtime_error{temp};
+	    }
       }
 }
 
@@ -116,10 +120,16 @@ void Tsuki :: User :: Parse()
 	    i = std::distance(_data.begin(),iter);
 	    if( (bool) std::isalpha(_data[i]) || (bool) std::isdigit(_data[i]) )
 	       continue;
-	    else if(_data[i] == Tsuki::Dash || _data[i] == Tsuki::LeftSquareBrackets ||  _data[i] == Tsuki::RightSquareBrackets || _data[i] == Tsuki::LeftSlash || _data[i] == Tsuki::SingleQuote || _data[i] == Tsuki::Power || _data[i] == Tsuki::LeftCurlyBraces  || _data[i] == Tsuki::RightCurlyBraces)
-               continue;
-	    else
-	       throw std::runtime_error{"ZenIRC Error: Can't have a \" _data[i]\" in the User field."}; 	    
+	    else if(_data[i] == Tsuki::Dash || _data[i] == Tsuki::LeftSquareBrackets ||  
+	            _data[i] == Tsuki::RightSquareBrackets || _data[i] == Tsuki::LeftSlash || 
+	            _data[i] == Tsuki::SingleQuote || _data[i] == Tsuki::Power ||
+	            _data[i] == Tsuki::LeftCurlyBraces  || _data[i] == Tsuki::RightCurlyBraces)
+           continue;
+	    else 
+	    {
+	       std::string temp = "ZenIRC Error: Can't have a '" + std::string{_data.at(i)} + "' in the User field.";
+	       throw std::runtime_error{temp};
+	    } 	    
 	}
 }
 
@@ -138,9 +148,9 @@ void Tsuki :: Prefix :: Parse()
 	  i = std::distance(_data.begin(),iter1);	
       if(_data[i] == '!' )
 	  {	
-		 temp = _data.substr(0,i);
+		 temp = _data.substr(1,i-1);
 		 _nick.GetData(temp);   foundexclam = true;
-		 temp = _data.substr(i+1);
+		 temp = _data.substr(i+2);
          break; 
 	  }
       else continue;  
@@ -162,7 +172,7 @@ void Tsuki :: Prefix :: Parse()
 	  throw std::runtime_error{"ZenIRC Error: Problem parsing prefix,didnt find the hostname and username."}; 	
 }   					
 
-std::string Tsuki :: Irc_Data :: RetSParameters()          	
+std::string Tsuki :: Irc_Data :: RetSParameters()
 {
    std::string temp;
    for(auto iter = std::begin(parameters); iter != std::end(parameters); iter++)

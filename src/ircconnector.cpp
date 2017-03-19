@@ -1,6 +1,7 @@
 #include "ircconnector.hpp"
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 Tsuki :: IRCConnector :: IRCConnector(std::string& server,unsigned int port)
 {
@@ -93,7 +94,7 @@ void Tsuki :: IRCConnector :: SendData(std::string& data)
 {
    int len,ret;
    std::string msg;
-   if(data.size() > 512)
+   if(data.size() >= 512)
    {
 	  msg = data.substr(0,512);
    }
@@ -128,6 +129,8 @@ std::string Tsuki :: IRCConnector :: RecvData()
 {
 	int ret;
 	
+	std::fill(buffer,buffer+2048,0);
+	
 	ret = SDLNet_TCP_Recv(tcpsock,reinterpret_cast<void*>(buffer),buf_size);
 	if(ret <= 0)
 	{
@@ -158,13 +161,6 @@ bool Tsuki :: IRCConnector :: RecvData(std::string& msg)
     }
     else { hasit =true; }
     msg.assign(buffer);
-    std::string s;
-  /*  if (msg.at(msg.size() - 1) != '\n') 
-	{
-       // std::cout << "Receiving more data!" << std::endl;
-       s = RecvData();
-       msg = msg + s;
-    } */
     return hasit;
 }
 

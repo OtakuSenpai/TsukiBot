@@ -14,7 +14,7 @@ void Tsuki :: Bot :: GetName(std::string& name)
 	server_data.GetNick(BotName);
 }
 
-bool Tsuki :: Bot :: has_alnum(std::string& data)
+bool Tsuki :: Bot :: has_alnum(std::string data)
 {
    bool has_it = false,once = true;
    for(auto&& i = std::begin(data); i !=std::end(data); i++)
@@ -29,7 +29,7 @@ bool Tsuki :: Bot :: has_alnum(std::string& data)
    return has_it;
 }
 
-bool Tsuki :: Bot :: has_only_spec(std::string& data)
+bool Tsuki :: Bot :: has_only_spec(std::string data)
 {
    std::vector<bool> values(data.size());
    bool has_it;
@@ -54,7 +54,7 @@ bool Tsuki :: Bot :: has_only_spec(std::string& data)
    return has_it;
 } 
 
-bool Tsuki :: Bot :: has_only_space(std::string& data)
+bool Tsuki :: Bot :: has_only_space(std::string data)
 {
    std::vector<bool> values(data.size());
    bool has_it;
@@ -80,7 +80,7 @@ bool Tsuki :: Bot :: has_only_space(std::string& data)
    return has_it;
 }
 		   
-bool Tsuki :: Bot :: begins_with(std::string& message,const char* command)
+bool Tsuki :: Bot :: begins_with(std::string message,const char* command)
 {
    bool value = false; std::string temp1;
    temp1.assign(command);
@@ -95,7 +95,7 @@ bool Tsuki :: Bot :: begins_with(std::string& message,const char* command)
    return value;
 }
 
-bool Tsuki :: Bot :: has_it(std::string& data,const char* command)
+bool Tsuki :: Bot :: has_it(std::string data,const char* command)
 {
    std::vector<std::string> v;  bool ret = false;
    std::string comm{command};
@@ -111,7 +111,7 @@ bool Tsuki :: Bot :: has_it(std::string& data,const char* command)
    v.clear();	             
    return ret;   
 }
-bool Tsuki :: Bot :: has_it(std::string& data,char command)
+bool Tsuki :: Bot :: has_it(std::string data,char command)
 {
    std::vector<std::string> v;  bool ret = false;
    std::string comm{command};
@@ -128,7 +128,7 @@ bool Tsuki :: Bot :: has_it(std::string& data,char command)
    return ret;   
 }
 
-std::string Tsuki :: Bot :: get_text_after_command(std::string& message,const char* command)
+std::string Tsuki :: Bot :: get_text_after_command(std::string message,const char* command)
 {
 	std::string temp;
 	std::string comm{command};
@@ -136,13 +136,28 @@ std::string Tsuki :: Bot :: get_text_after_command(std::string& message,const ch
 	return temp;
 }
 
+bool Tsuki :: Bot :: has_in_chan(std::string name,std::string& channel)
+{
+   bool has_it = false;
+   for(auto&& i: chan_list)
+   {
+       for(auto&& j: i.RetUser_List())
+       {
+	       if(name == j.RetData())
+	       { channel = i.RetData(); has_it = true; break; }
+	   }
+	   if(has_it) { break; }
+   }
+   return has_it; 
+}		         	
+
 void Tsuki :: Bot :: handle_msg(std::string& message)
 {
 	std::cout<<std::endl<<"Server Data: "<<message<<std::endl<<std::endl;
 	segragrator(message, "\r\n"); message = "";
     message.clear();
 	std::vector<std::string> tokens;
-	std::string prefix,command,from,Priv_Comm;
+	std::string prefix,command,from,Priv_Comm,channel;
 	std::string channels,temp,input;
 	bool done = false;
 
@@ -161,14 +176,22 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 	
 		for(auto&& i: tokens)
 		{ 
-			if(!sendr_found && i.find("#") == 0)
+			if(!sendr_found)
 			{
-			    from = i;
-			    size_t j = chan_list.size();
-			    if(j == 0 && command != "NOTICE" && command != "372")
-			       chan_list.push_back(Tsuki::Channel{from});
-			    else  AddChannel(from,command);    
-				sendr_found = true;
+				if(i.find("#") == 0)
+			    {   
+			       from = i;
+			       size_t j = chan_list.size();
+			       if(j == 0 && command != "NOTICE" && command != "372")
+			       { chan_list.push_back(Tsuki::Channel{from}); }
+			       else { AddChannel(from,command); } 
+			       sendr_found = true;
+			    }  
+				else if(command == "PRIVMSG" && i == RetName())
+				{
+				   from = prefix.substr(0,prefix.find("!"));
+				   sendr_found = true;
+			   }	
 			}
 			if(prefix_found && !sendr_found && !comm_found)
 			{
@@ -320,58 +343,116 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 				    std::cout<<std::endl<<"hasatarget: "<<hasatarget<<std::endl<<std::endl;
 				    std::cout<<std::endl<<"target: "<<target<<std::endl<<std::endl;
 				    
-				    if(a.size() != 0)
+				    if(from.find("#") == 0)
 				    {
-				       if(has_only_spec(a))
+				       if(a.size() != 0)
 				       {
-					      std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
-					      SendMe(temp,from); done = true; from.clear();
-					   }
-					   else if(isthere && has_it(a,Tsuki::Space))
-					   {
-					      std::string temp = "prepares a pile of shit for " + prefix.substr(0,prefix.find("!")) + ".";
-					      SendMe(temp,from); done = true; from.clear();
-					   }
-					   else if(isthere && has_it(a,"shit"))
-					   {
-					      std::string temp = "prepares a pile of shit for " + prefix.substr(0,prefix.find("!")) + ".";
-					      SendMe(temp,from); done = true; from.clear();
-					   }
-					   else if(isthere && ( has_it(a,RetName().c_str()) || has_it(a,"herself") || has_it(a,"himself")))
-					   {
-					       std::string temp{"prepares a hot cup of coffee for herself and drinks it."};
-					       SendMe(temp,from); done = true; from.clear();
-					   }   
-				       else if(has_it(a,Tsuki::Lf) || has_it(a,Tsuki::Cr) || has_it(a,Tsuki::Null))		
-			           {
-					       std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
-					       SendMe(temp,from); done = true; from.clear();
-				       }
-				       else if(!hasatarget && has_only_space(a))
-				       {
-					       std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
-					       SendMe(temp,from); done = true; from.clear();
-				       }	   
-				       else if(isthere && hasatarget)	
-			           {  
-					      for(auto&& k: tokens2)
+				          if(has_only_spec(a))
+				          {
+					         std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
+					         SendMe(temp,from); done = true; from.clear();
+					      }
+					      else if(isthere && has_it(a,Tsuki::Space))
+					      {
+					         std::string temp = "prepares a pile of shit for " + prefix.substr(0,prefix.find("!")) + ".";
+					         SendMe(temp,from); done = true; from.clear();
+					      }
+					      else if(isthere && has_it(a,"shit"))
+					      {
+					         std::string temp = "prepares a pile of shit for " + prefix.substr(0,prefix.find("!")) + ".";
+					         SendMe(temp,from); done = true; from.clear();
+					      }
+					      else if(isthere && ( has_it(a,RetName().c_str()) || has_it(a,"herself") || has_it(a,"himself")))
+					      {
+					         std::string temp{"prepares a hot cup of coffee for herself and drinks it."};
+					         SendMe(temp,from); done = true; from.clear();
+					      }   
+				          else if(has_it(a,Tsuki::Lf) || has_it(a,Tsuki::Cr) || has_it(a,Tsuki::Null))		
 			              {
-							  std::cout<<std::endl<<"k: "<<k<<std::endl<<std::endl;
-			                  if(k == "all")
-			                  {
-			                      std::string temp{"brews a hot cup of coffee for all."}; 
-			                      SendMe(temp,from); done = true; from.clear();
-			                      break;
-			                  }
-				              else if(hasatarget)  
-				              {
-			                      std::string temp = "brews a hot cup of coffee for " + target + "."; 
-			                      SendMe(temp,from); done = true; from.clear();
-			                      break;
-				              } 	  
+					         std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
+					         SendMe(temp,from); done = true; from.clear();
+				          }
+				          else if(!hasatarget && has_only_space(a))
+				          {
+					         std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
+					         SendMe(temp,from); done = true; from.clear();
+				          }	   
+				          else if(isthere && hasatarget)	
+			              {  
+					         for(auto&& k: tokens2)
+			                 {
+							    std::cout<<std::endl<<"k: "<<k<<std::endl<<std::endl;
+			                    if(k == "all")
+			                    {
+			                       std::string temp{"brews a hot cup of coffee for all."}; 
+			                       SendMe(temp,from); done = true; from.clear();
+			                       break;
+			                    }
+				                else if(hasatarget)  
+				                {
+			                        std::string temp = "brews a hot cup of coffee for " + target + "."; 
+			                        SendMe(temp,from); done = true; from.clear();
+			                        break;
+				                } 	  
+			                 }
+			              }
+			          }   
+				    }
+				    else if(command == "PRIVMSG" && has_in_chan(from,channel))
+				    { 
+				       if(a.size() != 0)
+				       {
+				          if(has_only_spec(a))
+				          {
+					         std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
+					         SendMe(temp,channel); done = true; from.clear(); channel.clear();
+					      }
+					      else if(isthere && has_it(a,Tsuki::Space))
+					      {
+					         std::string temp = "prepares a pile of shit for " + prefix.substr(0,prefix.find("!")) + ".";
+					         SendMe(temp,channel); done = true; from.clear(); channel.clear();
+					      }
+					      else if(isthere && has_it(a,"shit"))
+					      {
+					         std::string temp = "prepares a pile of shit for " + prefix.substr(0,prefix.find("!")) + ".";
+					         SendMe(temp,channel); done = true; from.clear(); channel.clear();
+					      }
+					      else if(isthere && ( has_it(a,RetName().c_str()) || has_it(a,"herself") || has_it(a,"himself")))
+					      {
+					         std::string temp{"prepares a hot cup of coffee for herself and drinks it."};
+					         SendMe(temp,channel); done = true; from.clear(); channel.clear();
+					      }   
+				          else if(has_it(a,Tsuki::Lf) || has_it(a,Tsuki::Cr) || has_it(a,Tsuki::Null))		
+			              {
+					         std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
+					         SendMe(temp,channel); done = true; from.clear(); channel.clear();
+				          }
+				          else if(!hasatarget && has_only_space(a))
+				          {
+					         std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
+					         SendMe(temp,channel); done = true; from.clear(); channel.clear();
+				          }	   
+				          else if(isthere && hasatarget)	
+			              {  
+					         for(auto&& k: tokens2)
+			                 {
+							    std::cout<<std::endl<<"k: "<<k<<std::endl<<std::endl;
+			                    if(k == "all")
+			                    {
+			                       std::string temp{"brews a hot cup of coffee for all."}; 
+			                       SendMe(temp,channel); done = true; from.clear(); channel.clear();
+			                       break;
+			                    }
+				                else if(hasatarget)  
+				                {
+			                        std::string temp = "brews a hot cup of coffee for " + target + "."; 
+			                        SendMe(temp,channel); done = true; from.clear(); channel.clear();
+			                        break;
+				                } 	  
+			                 }
 			              }
 			           }
-				    }
+				    }   
 				    else
 				    {
 					    std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";

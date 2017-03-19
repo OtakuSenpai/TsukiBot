@@ -23,14 +23,15 @@ class Bot
 	  std::string BotName;
 	  ServerState state;
 	  
-	  bool begins_with(std::string& message,const char* command);
-	  bool has_alnum(std::string& data);
-	  bool has_only_spec(std::string& data);
-	  bool has_only_space(std::string& data);
-	  bool has_it(std::string& data,const char* command);
-	  bool has_it(std::string& data,char command);
+	  bool begins_with(std::string message,const char* command);
+	  bool has_alnum(std::string data);
+	  bool has_only_spec(std::string data);
+	  bool has_only_space(std::string data);
+	  bool has_it(std::string data,const char* command);
+	  bool has_it(std::string data,char command);
 	  std::vector<std::string> get_user_list(std::string& from);
-      std::string get_text_after_command(std::string& message,const char* command);
+      std::string get_text_after_command(std::string message,const char* command);
+      bool has_in_chan(std::string name,std::string& channel);
       virtual void handle_msg(std::string& msg);
       void GetState(ServerState s) { state = s; }
             
