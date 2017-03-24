@@ -26,4 +26,6 @@ Mar 19,2017: 0.00.1.07 --> Made use of AddChannel whenever joining a channel.
                            Tryin to make the bot join via pms
 Mar 19,2017: 0.00.1.08 --> Made the bot accept PMs,but it can't find the users 
                            in the channels.Gotta fix tht.
+Mar 24,2017: 0.00.1.09 --> Made the bot accept PMs and also made it work in 
+                           the channel(removed some functions in the process.)
 
