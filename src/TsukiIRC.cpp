@@ -7,12 +7,13 @@
 #include <vector>
 #include <string>
 #include <cctype>
+#include <cstring>
 
 void Tsuki :: Bot :: GetName(std::string& name)
 {
 	BotName = name;
 	server_data.GetNick(BotName);
-}
+}	
 
 bool Tsuki :: Bot :: has_alnum(std::string data)
 {
@@ -143,13 +144,19 @@ bool Tsuki :: Bot :: has_in_chan(std::string name,std::string& channel)
 {
    bool has_it = false;
    for(auto&& i: chan_list)
-   {
-       for(auto&& j: i.RetUser_List())
-       {
-	       if(name == j.RetData())
-	       { channel = i.RetData(); has_it = true; break; }
-	   }
-	   if(has_it) { break; }
+   {   
+	   if(channel == i.RetData())
+       {   
+          for(auto&& j: i.RetUser_List())
+          {
+	         if(name == j.RetData())
+	         { has_it = true; break; }
+	         else if(name == j.RetData().substr(1))
+	         { has_it = true; break; }
+	      }
+	      if(has_it) { break; }
+       }
+       else continue;
    }
    std::cout<<std::endl<<"Has_in_chan: "<<has_it<<std::endl<<std::endl;
    return has_it; 
@@ -268,7 +275,6 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 					std::copy(std::istream_iterator<std::string>(x),
 						std::istream_iterator<std::string>(),
 						std::back_inserter(chans));
-				    std::cout<<"To be joined chans are: "<<channels<<std::endl;
 				    for(auto&& i: chans) std::cout<<i<<std::endl;
 	                for(auto&& i: chans)
 	                {
@@ -304,15 +310,16 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 						}
 					}
 
-					std::istringstream d(temp);
-					std::vector<std::string> tokens2,user;
+					//std::istringstream d(temp);
+					std::vector<std::string> user;//,tokens2;
+					std::vector<Tsuki::Nick> n_user;
                     std::string s{":,coffee"},a;
                     bool isthere = false,hasatarget = false;
                     std::string target;
                       
-					std::copy(std::istream_iterator<std::string>(d),
-						std::istream_iterator<std::string>(),
-						std::back_inserter(tokens2));
+				//	std::copy(std::istream_iterator<std::string>(d),
+				//		std::istream_iterator<std::string>(),
+				//		std::back_inserter(tokens2));
 					a = temp.substr(s.size() + 2);
 					if(a.size() < 2)
 					{ isthere = false; }
@@ -328,26 +335,33 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 				    std::cout<<std::endl<<"isthere: "<<isthere<<std::endl<<std::endl;
 				    std::cout<<std::endl<<"a: "<<a<<std::endl<<std::endl;
 				    std::cout<<std::endl<<"a.size: "<<a.size()<<std::endl<<std::endl;
-				    user = get_user_list(from);
-				    auto&& i = std::begin(tokens2);
+				    n_user = get_user_list(from);
+				    for(auto&& i = std::begin(n_user); i != std::end(n_user); i++)
+				       user.push_back(i->RetData());
+				//  auto&& i = std::begin(tokens2);
 				    auto&& j = std::begin(user);
 					while(j != std::end(user))
 					{
-					   while(i != std::end(tokens2))
-					   {
-					      if(*i == *j)
-					      { hasatarget = true; target.assign(*j); break; }
-					      if(*i == "all")
+					   std::cout<<*j<<std::endl;	
+				//	   while(i != std::end(tokens2))
+				//	   {
+					      if(a == "all")
 					      { hasatarget = true; target.assign("all"); break; }
-					      i++;
-					   }
-					   i = std::begin(tokens2);
+					      if(j->at(0) == '+' || j->at(0) == '@')
+					      {
+						     if(a == j->substr(1))
+					         { hasatarget = true; target.assign(a); break; }
+						  }
+					      else if(a == *j) { hasatarget = true; target.assign(a); break; }
+			    //	      i++;
+				//	   }
+				//	   i = std::begin(tokens2);
 					   j++;
 				    }
 				    std::cout<<std::endl<<"hasatarget: "<<hasatarget<<std::endl<<std::endl;
 				    std::cout<<std::endl<<"target: "<<target<<std::endl<<std::endl;
 				    
-				    if(from.find("#") == 0)
+				    if(from.find("#") == 0 || from.find("##") == 0)
 				    {
 				       if(a.size() != 0)
 				       {
@@ -383,22 +397,22 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 				          }	   
 				          else if(isthere && hasatarget)	
 			              {  
-					         for(auto&& k: tokens2)
-			                 {
-							    std::cout<<std::endl<<"k: "<<k<<std::endl<<std::endl;
-			                    if(k == "all")
+				//	         for(auto&& k: tokens2)
+			    //           {
+				//			    std::cout<<std::endl<<"k: "<<k<<std::endl<<std::endl;
+			                    if(target == "all")
 			                    {
 			                       std::string temp{"brews a hot cup of coffee for all."}; 
 			                       SendMe(temp,from); done = true; from.clear();
-			                       break;
+			    //                 break;
 			                    }
 				                else if(hasatarget)  
 				                {
 			                        std::string temp = "brews a hot cup of coffee for " + target + "."; 
 			                        SendMe(temp,from); done = true; from.clear();
-			                        break;
+			    //                 break;
 				                } 	  
-			                 }
+			    //           }
 			              }
 			          }   
 				    }
@@ -436,7 +450,8 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 					    std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
 					    SendMe(temp,from); done = true; from.clear();
 				    }  
-				    user.clear(); tokens2.clear();
+				    user.clear();
+			//	    tokens2.clear();
 			        a.clear();
 			        target.clear(); 
 			        temp.clear();
@@ -455,9 +470,8 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 	msglogs.clear();
 }
 
-std::vector<std::string> Tsuki :: Bot :: get_user_list(std::string& from)
+std::vector<Tsuki::Nick> Tsuki :: Bot :: get_user_list(std::string& from)
 {
-   std::vector<std::string> list;
    std::vector<Tsuki::Nick> nick_list;
    bool isthere = false;
    for(auto&& i = std::begin(chan_list); i != std::end(chan_list); i++)
@@ -465,14 +479,12 @@ std::vector<std::string> Tsuki :: Bot :: get_user_list(std::string& from)
 	   if(i->RetData() == from)
 	   {
 		   nick_list = i->RetUser_List();
-		   if(nick_list.size() == list.size() ||isthere) break;
-	       for(auto&& j = std::begin(nick_list); j != std::end(nick_list); j++)
-	       {
-			   list.push_back(j->RetData()); isthere = true;
-		   }
+		   isthere = true;
+		   std::cout<<std::endl<<"Found channel: "<<i->RetData()<<std::endl<<std::endl;
+		   if(isthere) break;
 	   }
    }
-   return list;
+   return nick_list;
 }    	
 
 void Tsuki :: Bot :: segragrator(std::string& message,const char* data)
@@ -530,7 +542,7 @@ void Tsuki :: Bot :: Connect()
 		    contents = serv_data.substr(command.size());
 		    SendPong(contents);
 		    GetState(Tsuki::ServerState::WORKING); connected = true;
-	     }
+	     }  	 
 	     if(has_it(serv_data,"004"))
 	     {
 			 std::cout<<std::endl<<"Connected!!!"<<std::endl<<std::endl;

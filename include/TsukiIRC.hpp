@@ -29,7 +29,7 @@ class Bot
 	  bool has_only_space(std::string data);
 	  bool has_it(std::string data,const char* command);
 	  bool has_it(std::string data,char command);
-	  std::vector<std::string> get_user_list(std::string& from);
+	  std::vector<Tsuki::Nick> get_user_list(std::string& from);
       std::string get_text_after_command(std::string message,const char* command);
       bool has_in_chan(std::string name,std::string& channel);
       virtual void handle_msg(std::string& msg);
@@ -48,8 +48,8 @@ class Bot
 	  std::string RetName() { return BotName; }
 	  ServerState RetState() { return state; }
 	  bool IsRunning() { return running; }
-	   
-	  //Connect to the server
+	  
+      //Connect to the server
       virtual void Connect();
 			
 	  //Disconnect
@@ -80,8 +80,7 @@ class Bot
       //Add a channel
 	  void AddChannel(std::string& channel,std::string& command);
 };
-			
-			
+
 }		
                        
 
