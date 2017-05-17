@@ -22,11 +22,15 @@ GOALS:
 [-] 0.00.09 --> Do some optimisations of the code base
 [-] 0.00.10 --> Do some more optimisations
 ---------------
-[-] 0.01.01 --> Make the bot connect through a proxy
-[-] 0.01.02 --> Make it connect through SSL
-[-] 0.01.03 --> Make some more plugins(numbers 4,5,6,7)
-[-] 0.01.04 --> Make it join one bot per network(use threads to do it)
-[-] 0.01.05 --> Optimisations!!!
+[-] 0.01.01 --> Add Aliasing feature to the bot(alias commands)
+[-] 0.01.02 --> Add Groups feature to the bot. Each group has a set of function
+                which only the group´s members can perform. Also make some commands
+                to operate on the groups
+[-] 0.01.03 --> Make the bot connect through a proxy
+[-] 0.01.04 --> Make it connect through SSL
+[-] 0.01.05 --> Make some more plugins(numbers 4,5,6,7)
+[-] 0.01.06 --> Make it join one bot per network(use threads to do it)
+[-] 0.01.07 --> Optimisations!!!
 ---------------
 [-] 0.02.01 --> Make a list function which lists the commands of a bot on the 
                 number of plugins loaded in a private query
