@@ -3,32 +3,29 @@
 
 Tsuki :: IRCMessage :: IRCMessage(const IRCMessage& obj)
 {
-	_sender = obj.RetSender();
-	msg_data = obj.RetMsgData();
-}	
+  _sender = obj.getSender();
+  msg_data = obj.getMsgData();
+}
 
 void Tsuki :: IRCMessage :: Parse(std::string& data)
 {
-	auto front = data.begin();
-	auto end = data.end();
-	
-	if(*front == ':')
-	{
-		auto prefix = std::find(++front,end,' ');
-		_sender.assign(front,prefix);
-		msg_data.prefix.GetData(_sender);
-		front = safe_iterate(front,prefix);
-	}
-	else
-	{
-		std::string a ="";
-		msg_data.prefix.GetData(a);
-	}
-		
-	auto command = std::find(front,end,' ');
-	msg_data.command.assign(front,command);
-	front = safe_iterate(front,command);
-	
+  auto front = data.begin();
+  auto end = data.end();
+
+  if(*front == ':') {
+    auto prefix = std::find(++front,end,' ');
+    _sender.assign(front,prefix);
+    msg_data.prefix.setData(_sender);
+    front = safe_iterate(front,prefix);
+  }
+  else {
+    std::string a ="";
+    msg_data.prefix.setData(a);
+  }
+  auto command = std::find(front,end,' ');
+  msg_data.command.assign(front,command);
+  front = safe_iterate(front,command);
+
 	/*
 	if( (temp2.compare("PASS") || temp2.compare("pass")) || (temp2.compare("NICK") || temp2.compare("nick"))  ||
 	    (temp2.compare("USER") || temp2.compare("user")) || (temp2.compare("OPER") || temp2.compare("oper")) ||
@@ -43,29 +40,28 @@ void Tsuki :: IRCMessage :: Parse(std::string& data)
 		IsACommand = true;
 		msg_data.command = temp2;
 	    }
-		
+
 	else
 	{
 		IsACommand = false;
 	}
 	*/
-	std::string temp;
-	while(front != end)
-	{
-		auto params = std::find(front,end,' '); 
-		if(params == std::end(data)) params = std::find(front,end,',');
-		temp.assign(front,params);
-		msg_data.parameters.push_back(temp); temp.clear();
-		front = safe_iterate(front,params);
-	}		
-}				
-
-
-				
-Irc_Data Tsuki :: IRCMessage :: RParse(std::string& data)
-{
-	Parse(data);
-	return msg_data;
+  std::string temp;
+  while(front != end) {
+    auto params = std::find(front,end,' ');
+    if(params == std::end(data)) params = std::find(front,end,',');
+    temp.assign(front,params);
+    msg_data.parameters.push_back(temp); temp.clear();
+    front = safe_iterate(front,params);
+  }
 }
 
-	
+
+
+Irc_Data Tsuki :: IRCMessage :: dataParse(std::string& data)
+{
+  Parse(data);
+  return msg_data;
+}
+
+
