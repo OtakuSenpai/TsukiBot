@@ -125,13 +125,10 @@ bool Tsuki :: Bot :: has_in_chan(std::string name,std::string& channel)
 {
   bool has_it = false;
   for(auto&& i: chan_list) {
-    std::cout<<"\nIn channel: "<<i.getData()<<std::endl
-             <<"Target channel: "<<channel<<std::endl;
     if(channel == i.getData()) {
-      std::cout<<"\nIn channel(has_in_chan): "<<i.getData()<<std::endl;
       for(auto&& j: i.getUserList()) {
-        if(name == j.getData()) { has_it = true; std::cout<<"\nFound!!!\n"; break; }
-        else if(name == j.getData().substr(1)) { has_it = true; std::cout<<"\nIn 2nd condition, Found!!!\n"; break; }
+        if(name == j.getData()) { has_it = true; break; }
+        else if(name == j.getData().substr(1)) { has_it = true; break; }
       }
       if(has_it) { break; }
     }
@@ -148,7 +145,7 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 
   message = ""; message.clear();
   std::vector<std::string> tokens;
-  std::string prefix,command,from,Priv_Comm,channel;
+  std::string prefix,command,from,Priv_Comm;
   std::string channels,temp,input;
   bool done = false;
 
@@ -167,7 +164,6 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
       if(!sendr_found) {
         if(i.find("#") == 0) {
           from = i; // the channel where its from
-	  channel = i; // used later onwards
 	  size_t j = chan_list.size(); // size of channel list
 	  if(j == 0 && command != "NOTICE" && command != "372") //joining part
 	  { chan_list.push_back(Tsuki::Channel{from}); }
@@ -255,16 +251,11 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
             if(found) { temp = temp + " " + j; }
           }
 
-          //std::istringstream d(temp);
           std::vector<std::string> user;//,tokens2;
           std::vector<Tsuki::Nick> n_user;
           std::string s{":,coffee"},a; // a is the rest of the string sent
           bool isthere = false,hasatarget = false;
           std::string target; // the target for the coffee
-
-          //std::copy(std::istream_iterator<std::string>(d),
-          //std::istream_iterator<std::string>(),
-          //std::back_inserter(tokens2));
 
           a = temp.substr(s.size() + 2); // segragate the command from the string
           if(a.size() < 2) { isthere = false; } // mischief :P
@@ -356,7 +347,7 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 	      // if for self
               if(isthere && ( has_it(a,getName().c_str()) || has_it(a,"herself") )) {
 	        std::string temp{"prepares a hot cup of coffee for herself and drinks it."};
-	        SendMe(temp,from); done = true; from.clear(); channel.clear();
+	        SendMe(temp,from); done = true; from.clear();
 	      }
 	      else if(isthere) { // if for someone
 	        std::cout<<std::endl<<"from: "<<from<<std::endl<<std::endl;
@@ -367,12 +358,12 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 	      // if misbehaving
               else if(has_it(a,Tsuki::Lf) || has_it(a,Tsuki::Cr) || has_it(a,Tsuki::Null)) {
 	        std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
-	        SendMe(temp,from); done = true; from.clear(); channel.clear();
+	        SendMe(temp,from); done = true; from.clear();
 	      }
 	      // if misbehaving
 	      else if(from != a && (!has_it(a,getName().c_str()) || !has_it(a,"herself"))) {
 	        std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
-	        SendMe(temp,from); done = true; from.clear(); channel.clear();
+	        SendMe(temp,from); done = true; from.clear();
 	      }
             }
           }
@@ -386,6 +377,51 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
           a.clear();
           target.clear();
           temp.clear();
+        }
+	else if(Priv_Comm == ",part") { // handling the part part
+	  bool found = false;
+	  bool mulChannels = false,hasMsg = false;
+	  std::string temp = "",mainStr = "",msg{",part"};
+	  std::string channel = "",message = "";
+	  std::vector<std::string> msgTokens;
+
+	  for(auto&& j: tokens) {
+            if((j.find(":,part") != 0) && (!found)) {
+	      continue;
+            }
+            else { found = true; }
+
+            if(found) { temp = temp + " " + j; }
+          }
+
+	  mainStr = temp.substr(msg.size() + 2);
+	  std::istringstream d(mainStr);
+	  std::copy(std::istream_iterator<std::string>(d),
+                    std::istream_iterator<std::string>(),
+                    std::back_inserter(msgTokens));
+	  for(auto&& l : msgTokens) {
+	    std::cout<<"\nToken: "<<l<<std::endl;
+            if(l.at(0) == '#' && mulChannels == false) { // if its a channel
+	      channel = channel + l ;
+	      mulChannels = true;
+	    }
+	    else if(l.at(0) == '#' && mulChannels == true) { // if its multiple channels
+	      channel = channel + "," + l ;
+            }
+	    else { // the message
+	      bool first = false;
+	      if(!first) {
+                message = message + l + " ";
+		first = true;
+	      }
+	      else if(first) {
+		message = message + " " + l ;
+	      }
+	      hasMsg = true;
+	    }
+	  }
+	  if(hasMsg == false) SendPart(channel);
+	  else if(hasMsg == true) SendPart(channel,message);
         }
       }
       if(done) { break; }
@@ -551,6 +587,19 @@ void Tsuki :: Bot :: SendMe(std::string& message,std::string& target)
 void Tsuki :: Bot :: SendPong(std::string& contents)
 {
   std::string temp = "PONG " + contents + "\r\n";
+  conn.SendData(temp);
+}
+
+void Tsuki :: Bot :: SendPart(std::string& channel)
+{
+  std::string temp = "PART " + channel + "\r\n";
+  conn.SendData(temp);
+}
+
+void Tsuki :: Bot :: SendPart(std::string& channel,std::string& message)
+{
+  std::string temp = "PART " + channel + " :" + message + "\r\n";
+  std::cout<<"\nSending part message: "<<temp<<std::endl;
   conn.SendData(temp);
 }
 

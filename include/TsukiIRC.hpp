@@ -75,6 +75,10 @@ namespace Tsuki
     //Send PONG message
     void SendPong(std::string& contents);
 
+    //Part message
+    void SendPart(std::string& channel);
+    void SendPart(std::string& channel,std::string& message);
+
     //Add a channel
     void AddChannel(std::string& channel,std::string& command);
   };

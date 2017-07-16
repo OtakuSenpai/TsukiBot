@@ -1,31 +1,35 @@
 HISTORY:
 --------
 
-Dec 23,2016: 0.00.0.10 --> Started programming,covered the ground features of 
+Dec 23,2016: 0.00.0.10 --> Started programming,covered the ground features of
                            the program
 Jan 25,2017: 0.00.0.11 --> Resolved a segfault
-Jan 26,2017: 0.00.0.12 --> Made the Bot::Connect() function a little bit 
+Jan 26,2017: 0.00.0.12 --> Made the Bot::Connect() function a little bit
                            polished.
 Mar 02,2017: 0.00.0.13 --> Made the Bot::handle_msg() function
-Mar 03,2017: 0.00.0.14 --> Made the Bot::handle_msg() work for accepting 
+Mar 03,2017: 0.00.0.14 --> Made the Bot::handle_msg() work for accepting
                            private messages
 Mar 03,2017: 0.00.1.00 --> Made the PONG message working
-Mar 03,2017: 0.00.1.01 --> Made the bot connect and join a channel.Need to  
+Mar 03,2017: 0.00.1.01 --> Made the bot connect and join a channel.Need to
                            make a login system now
 Mar 04,2017: 0.00.1.02 --> Made a basic system for the coffee giving mechanism
                            but it segfaults.Gotta fix both.
-Mar 13,2017: 0.00.1.03 --> Made coffee giving mechanism work on one channel  
+Mar 13,2017: 0.00.1.03 --> Made coffee giving mechanism work on one channel
                            only. Gotta make it work on multiple channels
-Mar 15,2017: 0.00.1.04 --> Added support for multiple nicks in a vector of 
+Mar 15,2017: 0.00.1.04 --> Added support for multiple nicks in a vector of
                            channels,but has a bad_alloc in it.Need to fix that.
-Mar 18,2017: 0.00.1.05 --> Fixed the bad alloc,gonna fix the number of 
+Mar 18,2017: 0.00.1.05 --> Fixed the bad alloc,gonna fix the number of
                            channels joined which is shown in the program.
-Mar 18,2017: 0.00.1.06 --> Fixed the channel vector issues.Gotta fine tune the 
+Mar 18,2017: 0.00.1.06 --> Fixed the channel vector issues.Gotta fine tune the
                            user adding part.
-Mar 19,2017: 0.00.1.07 --> Made use of AddChannel whenever joining a channel. 
+Mar 19,2017: 0.00.1.07 --> Made use of AddChannel whenever joining a channel.
                            Tryin to make the bot join via pms
-Mar 19,2017: 0.00.1.08 --> Made the bot accept PMs,but it can't find the users 
+Mar 19,2017: 0.00.1.08 --> Made the bot accept PMs,but it can't find the users
                            in the channels.Gotta fix tht.
-Mar 24,2017: 0.00.1.09 --> Made the bot accept PMs and also made it work in 
+Mar 24,2017: 0.00.1.09 --> Made the bot accept PMs and also made it work in
                            the channel(removed some functions in the process.)
 May 08,2017: 0.00.1.10 --> Made the has_in_chan(string&,string&) function work
+Jul 16,2017: 0.00.1.11 --> Made a cmake file,plus prettified files to my taste.
+                           Made the bot reply to privmsg for coffee.
+Jul 16,2017: 0.00.1.12 --> Made the part command.Need to integrate it into
+                           handle_msg().
