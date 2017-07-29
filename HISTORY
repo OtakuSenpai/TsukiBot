@@ -33,3 +33,9 @@ Jul 16,2017: 0.00.1.11 --> Made a cmake file,plus prettified files to my taste.
                            Made the bot reply to privmsg for coffee.
 Jul 16,2017: 0.00.1.12 --> Made the part command.Need to integrate it into
                            handle_msg().
+Jul 16,2017: 0.00.1.13 --> Made the part message work. Will be using TryxPS
+                           in future versions for plugins.
+Jul 29,2017: 0.00.1.14 --> Made suitable changes to the cmakelists.txt for 
+                           including TryxPS. Changed the TODO list. 
+
+

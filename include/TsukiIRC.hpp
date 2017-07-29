@@ -1,4 +1,4 @@
-#ifndef  TSUKIIRC_HPP
+#ifndef TSUKIIRC_HPP
 #define TSUKIIRC_HPP
 
 #include <vector>
@@ -6,8 +6,10 @@
 #include <iterator>
 
 #include "ircconnector.hpp"
+#include "kernel.hpp"
 
 using namespace Tsuki;
+using namespace Tryx;
 
 namespace Tsuki
 {
@@ -20,6 +22,8 @@ namespace Tsuki
     std::vector<std::string> msglogs;
     std::string BotName;
     ServerState state;
+    Kernel kernel;
+    std::string plgPath;
 
     bool begins_with(std::string message,const char* command);
     bool has_alnum(std::string data);
@@ -44,7 +48,7 @@ namespace Tsuki
     void segragrator(std::string& message,const char* data);
     void setName(std::string& name);
     std::string getName() const{ return BotName; }
-    ServerState getState() { return state; }
+    ServerState getState() const{ return state; }
     bool isRunning() const{ return running; }
 
     //Connect to the server
@@ -81,6 +85,13 @@ namespace Tsuki
 
     //Add a channel
     void AddChannel(std::string& channel,std::string& command);
+
+    //Plugins part
+    //Load a plugin or plugins
+    void LoadPlugin(const std::string& path);
+    void LoadPlugins(const std::string& path);
+    int getSize() const{ return kernel.getSize(); }
+    void UnloadPlugins(){ kernel.unloadPlugins(); }
   };
 } // namespcace Tsuki
 

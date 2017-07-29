@@ -9,6 +9,8 @@
 #include <cctype>
 #include <cstring>
 
+using namespace Tryx;
+
 void Tsuki :: Bot :: setName(std::string& name)
 {
   BotName = name;
@@ -631,4 +633,12 @@ void Tsuki :: Bot :: AddChannel(std::string& channel,std::string& command)
   }
    //std::cout<<std::endl<<"Channels are: "<<std::endl;
    //for(auto i: chan_list) std::cout<<i.RetData()<<std::endl;
+}
+
+void Tsuki :: Bot :: LoadPlugin(const std::string& path) {
+  kernel.loadPlugin(path);
+}
+
+void Tsuki :: Bot :: LoadPlugins(const std::string& path) {
+  kernel.loadPlugins(path,true);
 }

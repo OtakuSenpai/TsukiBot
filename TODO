@@ -8,19 +8,19 @@ TODO:
 GOALS:
 ------
 
-[+] 0.00.01 --> Get the PONG function working,make the program connect
+[+] 0.00.00 --> Get the PONG function working,make the program connect
                 properly to the network
-[+] 0.00.02 --> Get the /me,JOIN,PART message and coffee giving system working
-[+] 0.00.03 --> Make a plugin system for the bot
-[-] 0.00.04 --> Get a Poke,tea,weed,help functions working in plugins
-[-] 0.00.05 --> Get a topic system and the logging system working
-[-] 0.00.06 --> Get MODE,QUERY,QUIT and TOPIC function working,and make the bot
+[+] 0.00.01 --> Get the /me,JOIN,PART message and coffee giving system working
+[+] 0.00.02 --> Make a plugin system for the bot
+[-] 0.00.03 --> Get a Poke,tea,weed,help functions working in plugins
+[-] 0.00.04 --> Get a topic system and the logging system working
+[-] 0.00.05 --> Get MODE,QUERY,QUIT and TOPIC function working,and make the bot
                 accept PRIVMSGs
-[-] 0.00.07 --> Get the nickserv register and login system working
-[-] 0.00.08 --> Make the bot output colored text,plus do use it in the plugins.
+[-] 0.00.06 --> Get the nickserv register and login system working
+[-] 0.00.07 --> Make the bot output colored text,plus do use it in the plugins.
                 also make it autojoin when kicked from a channel.
-[-] 0.00.09 --> Make some cool plugins for it(number 1,2,3)
-[-] 0.00.10 --> Do some optimisations of the code base
+[-] 0.00.08 --> Make some cool plugins for it(number 1,2,3)
+[-] 0.00.09 --> Do some optimisations of the code base
 ---------------
 [-] 0.01.01 --> Add Aliasing feature to the bot(alias commands)
 [-] 0.01.02 --> Add Groups feature to the bot. Each group has a set of function
