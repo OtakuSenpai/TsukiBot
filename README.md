@@ -30,17 +30,16 @@ For Windows,you have to get the required LibSDL2 packages from this two links:-
 2) https://www.libsdl.org/projects/SDL_net/
 
 Then, after extracting them to a "said" directory,add that directory to your path from Settings.
-Here's some useful link on it, 
+Here's some useful links on it, 
 
-1) https://superuser.com/questions/949560/how-do-i-set-system-environment-variables-in-windows-10 (For Win10)
-2)https://superuser.com/questions/502358/easier-way-to-change-environment-variables-in-windows-8 (For Win8)
-3)https://stackoverflow.com/questions/23400030/windows-7-add-path (For Win7)
+1)https://superuser.com/questions/949560/how-do-i-set-system-environment-variables-in-windows-10
+2)https://superuser.com/questions/502358/easier-way-to-change-environment-variables-in-windows-8
+3)https://stackoverflow.com/questions/23400030/windows-7-add-path
  
 Also for Cmake,check this links,
 
 1)https://cmake.org/install/
 2)https://stackoverflow.com/questions/9878225/using-cmake-on-windows-for-c
-
 A lil googling helps too ;)
 
 Then you have to add another library,which is a plugin system I made during my summer vacations of 2017. It's name is Tryx Plugin System, and it's licensed under MIT License.
@@ -64,7 +63,7 @@ cmake CMakeLists.txt
 make
 ```
 
-Your executable should be inside the bin directory of TsukiBot folder.Now enjoy ;) !!
+Your executable should be inside the bin directory of TsukiBot folder. Now enjoy ;) !!
 
 Future Possibilities
 --------------------
