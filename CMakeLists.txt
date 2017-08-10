@@ -20,10 +20,9 @@ set(SOURCES "src/constants.cpp"
             "src/ircmessage.cpp"
             "src/TsukiIRC.cpp")
 
-
+set (TryxPS_DIR "${CMAKE_SOURCE_DIR}/TryxPS/cmake")
 find_package(TryxPS REQUIRED)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/TryxPS/cmake")
-set (TryxPS_DIR ${TryxPS_DIR} "${CMAKE_SOURCE_DIR}/TryxPS/cmake")
 
 find_file(SDL2_INCLUDE_DIR NAME SDL.h HINTS SDL2)
 find_library(SDL2_LIBRARY NAME SDL2 HINTS SDL2)
