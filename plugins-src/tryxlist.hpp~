@@ -1,0 +1,232 @@
+#ifndef TRYX_LINKEDLIST_HPP
+#define TRYX_LINKEDLIST_HPP
+
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Like the fact that you're using ints for your indices and not handling negative values in any shape or form, like the fact that at() can be called with a value equal to this->size(), that many of the member functions here pass by value instead of const reference, that you catch exceptions thrown and only print an error message, that it doesn't implement begin() or end() or any variant thereof (unless you have versions of std::begin/end in which case I take that point back) making it impossible to use with standard algorithms... 
+Oh, and the create function. Why isn't that a constructor?
+(Also, I'd normally make a note about const correctness, but you don't seem to have any intention of using const TryxLists, so... it would be a moot argument).
+search, for instance, could be const. Same with at and retDataAtPos since they return copies.
+*/
+
+template<typename T,typename U>
+class List {
+  public:
+    List() {
+      root = nullptr;
+    }
+      
+    List(T param1,U param2) {
+      if(root == nullptr) {
+        Node* nn = new Node(param1,param2);
+        root = nn; 
+      }
+      else {
+        printf("Error in class List,list already exists.\n");
+        exit(EXIT_FAILURE);
+      }
+    }
+
+    ~List() { deleteList(); }
+      
+    size_t size() const {
+      Node* temp = root;
+      size_t count = 0;
+      while(temp != nullptr) {
+        count++; temp = temp->next;
+      }
+      return count;
+    }
+      
+    U at(int pos) {
+      U retValue;
+      if(this->size() < pos) {
+        printf("Error in class List, searching out of bounds.\n");
+        exit(EXIT_FAILURE);
+      }  
+      else if(root != nullptr) {
+        Node* current = root;
+        int temp = 0;
+          
+        while(current != nullptr) {
+          if(temp == pos) {
+            retValue = current->_data;
+            break;
+          } 
+          ++temp;
+          current = current->next;
+        }
+      }
+      else {
+        printf("Error in class List, can't return an empty list.\n");
+        exit(EXIT_FAILURE);
+      }
+      return retValue;
+    }
+    
+    int search(T searchItem) {
+      int pos = 0;
+      if(root != nullptr) {
+        Node* current = root;
+        while(current != nullptr) {
+          if(current->_name == searchItem) break;
+          ++pos;
+          current = current->next;
+        }
+      }
+      else {
+        printf("tryxlist.hpp : line 50, searching on an empty list.\n");
+        exit(EXIT_FAILURE);
+      }      
+      return pos;  
+    }
+      
+    U retDataAtPos(T identifier) {
+      int pos = search(identifier);
+      Node* current = root;
+      for(int j = 0; j<pos; j++) 
+        current = current->next;
+      if(identifier == current->_name)
+        return current->_data;
+      else {
+        printf("Error in class List,couldn't find the entry in the list.");
+        exit(EXIT_FAILURE);
+      }
+    }
+      
+    void reverse() {
+      Node* prev   = nullptr;
+      Node* current = root;
+      Node* next;
+      while(current != nullptr) {
+        next = current->next;  
+        current->next = prev;   
+        prev = current;
+        current = next;
+      }
+      root = prev;
+    } 
+       
+    void uniqueIt() {
+      Node *ptr1, *ptr2, *dup;
+      ptr1 = root;
+ 
+      while (ptr1 != nullptr && ptr1->next != nullptr) {
+        ptr2 = ptr1;
+ 
+      while (ptr2->next != nullptr) {
+        if (ptr1->_data == ptr2->next->_data) {
+          dup = ptr2->next;
+            ptr2->next = ptr2->next->next;
+            delete dup;
+          }
+        else ptr2 = ptr2->next;
+      }
+      ptr1 = ptr1->next;
+      }
+    } 
+       
+    void pushBack(T param1,U param2) {
+      if(root != nullptr) {
+        Node* nn = new Node(param1,param2);
+        Node* temp = root;
+        while(temp->next != nullptr) temp = temp->next;
+          temp->next = nn; nn->next = nullptr;
+      }
+      else create(param1,param2);
+    }
+      
+    void popBack() {
+      if(root != nullptr) {
+        Node* current = root;
+        Node* prev;
+        while(1) {
+          if(current->next == nullptr) break;
+          prev = current;
+          current = current->next;
+        }
+        prev->next = nullptr;
+        delete current;
+      }
+      else throw std::runtime_error("tryxlist.hpp : line 120,list has not been created.\n");
+    }
+      
+    void pop(T param1) {
+      Node *old, *current;
+      current = root;
+      if(root != nullptr) {
+        while(current != nullptr) {
+          if(current->_name == param1) {
+            if(current == root)
+              root = current->next;
+            else old->next = current->next;
+            delete current; current = nullptr;
+            return;
+          }
+          else {
+            old = current;
+            current = current->next;
+          }
+        }
+      }
+      else throw std::runtime_error("tryxlist.hpp : line 137,parameter to be deleted not found.");
+    }
+      
+    void deleteList() {
+      Node* current = root;
+      Node* next;
+      while (current != nullptr) {
+        next = current->next;
+        delete current;
+        current = next;
+      }
+      root = nullptr;
+    } 
+        
+  private:
+      
+    void display() {
+      Node* temp = root;
+      while(temp != nullptr) {  
+        std::cout<<"Parameter one is: "<<temp->_name<<std::endl
+                 <<"Parameter two is: "<<temp->_data<<std::endl;
+        temp = temp->next;         
+      }
+    }
+      
+    struct Node {
+      T _name;
+      U _data;
+      Node* next;
+        
+      Node() {}    
+      Node(T t,U u) : _name(t), _data(u) {}
+      Node(const Node* other) {
+        try {
+          _name = other._name;
+         _data = other._data;
+         next = other.next;
+        }
+        catch(std::exception& e){ std::cerr<<"tryxlist.hpp : line 187,caught exception: "<<e.what(); }           
+      }
+      Node* operator=(const Node* other) {
+        try {
+          free();
+          Node* temp = new Node(other);
+          return temp;
+        }
+        catch(std::exception& e){ std::cerr<<"tryxlist.hpp : line 195,caught exception: "<<e.what(); }
+      }
+      void free() {
+        free(next); 
+      }
+      ~Node() {}
+    };  
+    
+      Node* root;
+  };
+
+}
+
+#endif

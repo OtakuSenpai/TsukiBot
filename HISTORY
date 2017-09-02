@@ -37,5 +37,9 @@ Jul 16,2017: 0.00.1.13 --> Made the part message work. Will be using TryxPS
                            in future versions for plugins.
 Jul 29,2017: 0.00.1.14 --> Made suitable changes to the cmakelists.txt for 
                            including TryxPS. Changed the TODO list. 
+Sep 02,2017: 0.00.1.15 --> Polished the codebase, changed the todo.There's a 
+                           segfault in the code,fixing it in a sec.
+Sep 02,2017: 0.00.1.16 --> Removed cmake/modules since the project uses the cmake 
+                           config files generated from TryxPS library.
 
 

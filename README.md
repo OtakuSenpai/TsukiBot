@@ -3,7 +3,8 @@ TsukiBot - A hand made C++ IRC bot!
 
 This bot is my second attempt at making a C++ IRC bot. Currently this bot joins a channel on Freenode and accepts commands to join additional channels,plus give tea.
 
-I plan to make a plugin system for this bot to do things like show weather,make jokes or serve tea,mock someone,sing songs at the appropriate moments,etc.
+I plan to make a plugin system for this bot to do things like show weather,make jokes or serve tea,do some AI shit,remind people of things,google,show youtube links,give the appropriate description of links,sing songs at the appropriate moments,etc.
+As they say,one at a time ;-)
 
 How to Compile
 --------------
@@ -17,12 +18,14 @@ git pull -v https://github.com/OtakuSenpai/TsukiBot.git
 As of writing this, this bot uses LibSDL2-net headers to connect to the server.
 
 If your on linux,you hav to download the LibSDL2 and LibSDL2-net development packages. Plus you 
-also have to get the shared library packages for both LibSDL2 and LibSDL2-net. You will also need the cmake packages for your system to build the bot.
+also have to get the shared library packages for both LibSDL2 and LibSDL2-net. You will also need the cmake packages for your system to 
+build the bot. Also for debugging,you need to get "libsdl2-net-dbg" package. The make package is for those who don't already have the make utility in
+their system.
 
 For Ubuntu or Debian,run this command:
 
 ```
-sudo aptitude install libsdl2-2.0-0 libsdl2-net-2.0-0 libsdl2-dev libsdl2-net-dev cmake
+sudo aptitude install libsdl2-2.0-0 libsdl2-net-2.0-0 libsdl2-dev libsdl2-net-dev cmake libsdl2-net-dbg make
 
 ```
 For Windows,you have to get the required LibSDL2 packages from this two links:-
@@ -69,20 +72,12 @@ make
 
 Your executable should be inside the bin directory of TsukiBot folder. Now enjoy ;) !!
 
-Future Possibilities
---------------------
+Notes
+-----
 
-Currently the bot is in its primary stages,I could like to make the project into a Bot framework where I can just inherit from the Bot class and make a customised bot for myself.
-
-```
-class MyBot: public Bot{
-public:
-   MyBot(){}
-   ~MyBot(){}
-   //now the functions to do various stuff
-   ...
-```
-However,such ideas have to wait for a bit since I won't be working on the code for a two months(till June,2017).But the possibilities with this project remain.
+1) The main code of the bot is ready, I just have to implement the plugins now. Things like SSL and proxies will be done in v0.01.
+2) Don't use the compile.sh script to compile,use cmake. That script is way outdated. Though the gdb-compile.sh script uses cmake to do the dirty job.
+3) More will be added on notice.
 
 License
 -------
