@@ -3,7 +3,7 @@
 #include <string>
 #include <algorithm>
 
-Tsuki :: IRCConnector :: IRCConnector(std::string& server,unsigned int port)
+Tsuki :: IRCConnector :: IRCConnector(const std::string& server,const unsigned int& port)
 {
   try {
     tcpsock = 0;
@@ -50,7 +50,7 @@ void  Tsuki :: IRCConnector :: Connect()
   }
 }
 
-void Tsuki :: IRCConnector :: SendData(IRCMessage& data)
+void Tsuki :: IRCConnector :: SendData(const IRCMessage& data)
 {
   try {
     int len,ret;
@@ -93,7 +93,7 @@ void Tsuki :: IRCConnector :: SendData(const char* data)
 }
 
 
-void Tsuki :: IRCConnector :: SendData(std::string& data)
+void Tsuki :: IRCConnector :: SendData(const std::string& data)
 {
   try {
     int len,ret;
@@ -139,10 +139,11 @@ std::string Tsuki :: IRCConnector :: RecvData()
       throw std::runtime_error(s);
     }
     message.assign(buffer);
+    // Check if the input received is demarcated by a newline
     if (message.at(message.size() - 1) != '\n') {
-       // std::cout << "Receiving more data!" << std::endl;
+      // std::cout << "Receiving more data!" << std::endl;
       s = RecvData();
-      message = message + s;
+      message = message + s; s.clear();
     }
   }
   catch(std::exception& e) {
@@ -151,6 +152,7 @@ std::string Tsuki :: IRCConnector :: RecvData()
   return message;
 }
 
+// Can't const it due to a weird error
 bool Tsuki :: IRCConnector :: RecvData(std::string& msg)
 {
   bool hasit = false;
@@ -162,7 +164,8 @@ bool Tsuki :: IRCConnector :: RecvData(std::string& msg)
       throw std::runtime_error(s);
     }
     else { hasit =true; }
-    msg.assign(buffer);
+    msg.assign(buffer); delete buffer;
+    buffer = nullptr;
   }
   catch(std::exception& e) {
     std::cout<<"Caught exception : \n"<<e.what();

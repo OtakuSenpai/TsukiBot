@@ -25,66 +25,66 @@ namespace Tsuki
     Kernel kernel;
     std::string plgPath;
 
-    bool begins_with(std::string message,const char* command);
-    bool has_alnum(std::string data);
-    bool has_only_spec(std::string data);
-    bool has_only_space(std::string data);
-    bool has_it(std::string data,const char* command);
-    bool has_it(std::string data,char command);
-    std::vector<Tsuki::Nick> get_user_list(std::string& from);
-    std::string get_text_after_command(std::string message,const char* command);
-    bool has_in_chan(std::string name,std::string& channel);
-    virtual void handle_msg(std::string& msg);
-    void GetState(ServerState s) { state = s; }
+    bool begins_with(const std::string& message,const char* command);
+    bool has_alnum(const std::string& data);
+    bool has_only_spec(const std::string& data);
+    bool has_only_space(const std::string& data);
+    bool has_it(const std::string& data,const char* command);
+    bool has_it(const std::string& data,const char& command);
+    std::vector<Tsuki::Nick> get_user_list(const std::string& from);
+    std::string get_text_after_command(const std::string& message,const char* command);
+    bool has_in_chan(const std::string& name,const std::string& channel);
+    void handle_msg(std::string& msg);
+    void GetState(const ServerState& s) { state = s; }
 
   public:
-    Bot(std::string& server,unsigned int port=6667) : conn{server,port}, msglogs{}, BotName{} {}
-    Bot(std::string& server,std::string& channel,
-	std::string& nick,std::string& user,
-	std::string& password,
-	unsigned int& port) : conn{server,port}, server_data{server,channel,nick,user,password,port},
-			      msglogs{},BotName{nick} { setName(nick); }
-    virtual ~Bot() {}
-    void segragrator(std::string& message,const char* data);
-    void setName(std::string& name);
+    Bot(const std::string& server,unsigned int port=6667) : conn{server,port}, msglogs{}, BotName{} {}
+    Bot(const std::string& server,const std::string& channel,
+	     const std::string& nick,const std::string& user,
+	     const std::string& password,
+	     const unsigned int& port) : conn{server,port}, server_data{server,channel,nick,user,password,port},
+			                     msglogs{},BotName{nick} { setName(nick); }
+    ~Bot() { UnloadPlugins(); }
+    void segragrator(const std::string& message,const char* data);
+    void setName(const std::string& name);
     std::string getName() const{ return BotName; }
     ServerState getState() const{ return state; }
     bool isRunning() const{ return running; }
 
     //Connect to the server
-    virtual void Connect();
+    void Connect();
 
     //Disconnect
     void Disconnect();
 
     //Join a channel
-    void JoinChannel(Channel& chan);
-    void JoinChannel(std::string& channel);
+    void JoinChannel(const Channel& chan);
+    void JoinChannel(const std::string& channel);
 
     //Send a normal message
-    void SendMsg(std::string& msg);
-    void SendMsg(const char* command,std::string& message);
+    void SendMsg(const std::string& msg);
+    void SendMsg(const char* command,const std::string& message);
 
     //Send NICK message
     void SendNick();
-    void SendNick(std::string& nick);
+    void SendNick(const std::string& nick);
 
     //Send USER message
-    void SendUser(User user,std::string& realname,int mode);
-    void SendUser(User user,const char* realname,int mode);
+    void SendUser(const User& user,const std::string& realname,const int& mode);
+    void SendUser(const User& user,const char* realname,const int& mode);
 
     //Me message
-    void SendMe(std::string& message,std::string& target);
+    void SendMe(const std::string& message,const std::string& target);
 
     //Send PONG message
-    void SendPong(std::string& contents);
+    void SendPong(const std::string& contents);
 
     //Part message
-    void SendPart(std::string& channel);
-    void SendPart(std::string& channel,std::string& message);
+    void SendPart(const std::string& channel);
+    void SendPart(const std::string& channel,const std::string& message);
 
     //Add a channel
-    void AddChannel(std::string& channel,std::string& command);
+    void AddChannel(const std::string& channel,const std::string& command);
 
     //Plugins part
     //Load a plugin or plugins

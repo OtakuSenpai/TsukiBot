@@ -56,10 +56,10 @@ namespace Tsuki {
 
   public:
     User() : _data{} {}
-    User(std::string& data) : _data(data) { Parse(); }
+    User(const std::string& data) : _data(data) { Parse(); }
     ~User() {}
     void operator= (const User& obj);
-    void setData(std::string& data);
+    void setData(const std::string& data);
     std::string getData() const{ return _data; }
   };
 
@@ -73,10 +73,10 @@ namespace Tsuki {
 
   public:
     Nick() : _data{} {}
-    Nick(std::string& data) : _data(data) { Parse(); }
+    Nick(const std::string& data) : _data(data) { Parse(); }
     ~Nick() {}
     void operator= (const Nick& obj);
-    void setData(std::string& data);
+    void setData(const std::string& data);
     std::string getData() const { return _data; }
   };
 
@@ -88,11 +88,11 @@ namespace Tsuki {
 
   public:
     Channel() : _data{} {}
-    Channel(std::string& data): _data(data), chan_users{} { Parse(); }
+    Channel(const std::string& data): _data(data), chan_users{} { Parse(); }
     ~Channel() {}
     void operator= (const Channel& obj);
-    void setData(std::string& data);
-    void setUsers(std::string& user_list);
+    void setData(const std::string& data);
+    void setUsers(const std::string& user_list);
     std::string getData() const{ return _data; }
     std::vector<Nick> getUserList() const{ return chan_users; }
   };
@@ -105,11 +105,11 @@ namespace Tsuki {
     void Parse();
   public:
     Prefix() : _data{}, _hostname{}, _ident{}, _nick{}, _user{} {}
-    Prefix(std::string& data): _data(data) { Parse(); }
+    Prefix(const std::string& data): _data(data) { Parse(); }
     ~Prefix() {}
     void operator= (const Prefix& obj);
-    void setData(std::string& data);
-    void setNick(std::string& nick);
+    void setData(const std::string& data);
+    void setNick(const std::string& nick);
     std::string getData() const { return _data; }
     std::string getNickData() const{ return _nick.getData(); }
     std::string getHostname() const{ return _hostname; }
@@ -127,12 +127,12 @@ namespace Tsuki {
     std::vector<std::string> parameters;  //   the parameters to the command
 
     Irc_Data() : prefix{}, command{}, parameters{} {}
-    Irc_Data(std::string& pref,std::string& comm): prefix{pref}, command{comm} {}
-    Irc_Data(std::string& pref,const char* comm): prefix{pref}, command{comm} {}
+    Irc_Data(const std::string& pref,const std::string& comm): prefix{pref}, command{comm} {}
+    Irc_Data(const std::string& pref,const char* comm): prefix{pref}, command{comm} {}
     ~Irc_Data() {}
     void operator=(const Irc_Data& obj);
-    void setPrefix(std::string& pref) { prefix.setData(pref); }
-    void setCommand(std::string& obj) { command = obj; }
+    void setPrefix(const std::string& pref) { prefix.setData(pref); }
+    void setCommand(const std::string& obj) { command = obj; }
     std::string getPrefix() const{ return prefix.getData(); }
     std::string getCommand() const{ return command; }
     std::vector<std::string> getParameters() const{ return parameters; }
@@ -151,16 +151,16 @@ namespace Tsuki {
     unsigned int port;
 
     Join_Data() : server{}, chan{}, nick{}, user{}, pass{}, port{6667} {}
-    Join_Data(std::string& serv,std::string& channel,std::string& nickname,
-              std::string& username,std::string& password,
-	      unsigned int& p) : chan{channel}, nick{nickname}, user{username} {
+    Join_Data(const std::string& serv,const std::string& channel,const std::string& nickname,
+              const std::string& username,const std::string& password,
+	           const unsigned int& p) : chan{channel}, nick{nickname}, user{username} {
       server = serv;
       pass = password;  port =p;
     }
     ~Join_Data() {}
-    void setUser(std::string& obj) { user.setData(obj); }
-    void setNick(std::string& obj) { nick.setData(obj); }
-    void setChan(std::string& obj) { chan.setData(obj); }
+    void setUser(const std::string& obj) { user.setData(obj); }
+    void setNick(const std::string& obj) { nick.setData(obj); }
+    void setChan(const std::string& obj) { chan.setData(obj); }
     std::string getNick() const{ return nick.getData(); }
     std::string getChan() const{ return chan.getData(); }
     std::string getUser() const{ return user.getData(); }

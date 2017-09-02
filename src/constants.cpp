@@ -8,7 +8,7 @@ void Tsuki :: Nick :: operator= (const Nick& obj) {
   _data = obj.getData();
   Parse();
 }
-void Tsuki :: Nick :: setData(std::string& data) {
+void Tsuki :: Nick :: setData(const std::string& data) {
   _data = data;
   Parse();
 }
@@ -58,19 +58,20 @@ void Tsuki :: Channel :: operator= (const Channel& obj) {
   Parse();
 }
 
-void Tsuki :: Channel :: setData(std::string& data) {
+void Tsuki :: Channel :: setData(const std::string& data) {
   _data = data;
   Parse();
 }
 
-void Tsuki :: Channel :: setUsers(std::string& list) {
+void Tsuki :: Channel :: setUsers(const std::string& list) {
   try {
     size_t pos = 0;
-    std::string token,delimiter{" "};
-    while((pos = list.find(delimiter)) != std::string::npos) {
-      token = list.substr(0,pos);
+    std::string token,delimiter{" "},tempValue;
+    tempValue = list;    
+    while((pos = tempValue.find(delimiter)) != std::string::npos) {
+      token = tempValue.substr(0,pos);
       chan_users.push_back(Nick{token});
-      list.erase(0,pos + delimiter.size());
+      tempValue.erase(0,pos + delimiter.size());
     }
   }
   catch(std::exception& e) {
@@ -102,7 +103,7 @@ void Tsuki :: User :: operator= (const User& obj) {
   Parse();
 }
 
-void Tsuki :: User :: setData(std::string& data) {
+void Tsuki :: User :: setData(const std::string& data) {
   _data = data;
   Parse();
 }
@@ -138,12 +139,12 @@ void Tsuki :: Prefix :: operator= (const Prefix& obj) {
   _ident = obj.getIdent();
 }
 
-void Tsuki :: Prefix :: setData(std::string& data) {
+void Tsuki :: Prefix :: setData(const std::string& data) {
   _data = data;
   Parse();
 }
 
-void Tsuki :: Prefix :: setNick(std::string& nick) {
+void Tsuki :: Prefix :: setNick(const std::string& nick) {
   _nick.setData(nick);
 }
 

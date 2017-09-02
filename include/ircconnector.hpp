@@ -14,12 +14,12 @@ namespace Tsuki
   private:
     IPaddress ipaddress;
     TCPsocket tcpsock;
-    char* buffer;
+    char* buffer = nullptr;
     const int buf_size =2048;
     bool connected = false;
 
   public:
-    IRCConnector(std::string& server,unsigned int port);
+    IRCConnector(const std::string& server,const unsigned int& port);
     ~IRCConnector() {
       delete buffer; buffer = nullptr;
       if(!(tcpsock == 0)) {
@@ -41,8 +41,8 @@ namespace Tsuki
 
     //Send Data to the server
     void SendData(const char* data);
-    void SendData(std::string& data);
-    void SendData(IRCMessage& data);
+    void SendData(const std::string& data);
+    void SendData(const IRCMessage& data);
 
     //Receive data from the server
     std::string RecvData();

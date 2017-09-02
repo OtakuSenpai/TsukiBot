@@ -12,7 +12,7 @@ GOALS:
                 properly to the network
 [+] 0.00.01 --> Get the /me,JOIN,PART message and coffee giving system working
 [+] 0.00.02 --> Make a plugin system for the bot
-[-] 0.00.03 --> Get a Poke,tea,weed,help functions working in plugins
+[-] 0.00.03 --> Get a Poke,tea,weed,help,moo functions working in plugins
 [-] 0.00.04 --> Get a topic system and the logging system working
 [-] 0.00.05 --> Get MODE,QUERY,QUIT and TOPIC function working,and make the bot
                 accept PRIVMSGs
