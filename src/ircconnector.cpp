@@ -156,6 +156,8 @@ std::string Tsuki :: IRCConnector :: RecvData()
 bool Tsuki :: IRCConnector :: RecvData(std::string& msg)
 {
   bool hasit = false;
+  std::string s;
+  std::fill(buffer,buffer+2048,0);
   try {
     int ret;
     ret = SDLNet_TCP_Recv(tcpsock,reinterpret_cast<void*>(buffer),buf_size);
@@ -164,8 +166,11 @@ bool Tsuki :: IRCConnector :: RecvData(std::string& msg)
       throw std::runtime_error(s);
     }
     else { hasit =true; }
-    msg.assign(buffer); delete buffer;
-    buffer = nullptr;
+    msg.assign(buffer);
+    while(msg.at(msg.size() - 1) != '\n') {
+      s = RecvData();
+      msg = msg + s; s.clear();
+    }
   }
   catch(std::exception& e) {
     std::cout<<"Caught exception : \n"<<e.what();
