@@ -41,5 +41,8 @@ Sep 02,2017: 0.00.1.15 --> Polished the codebase, changed the todo.There's a
                            segfault in the code,fixing it in a sec.
 Sep 02,2017: 0.00.1.16 --> Removed cmake/modules since the project uses the cmake 
                            config files generated from TryxPS library.
+Sep 06,2017: 0.00.1.17 --> Solved the segfault.bool RecvData(string&) now receives a 
+                           newline ended message.
+Sep 07,2017: 0.00.1.18 --> Solved the MooPlugin issues.
 
 

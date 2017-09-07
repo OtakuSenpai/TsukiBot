@@ -43,7 +43,12 @@ namespace Tsuki
 	     const std::string& nick,const std::string& user,
 	     const std::string& password,
 	     const unsigned int& port) : conn{server,port}, server_data{server,channel,nick,user,password,port},
-			                     msglogs{},BotName{nick} { setName(nick); }
+			                     msglogs{},BotName{nick} 
+      { 
+        setName(nick);
+        std::string mooplg{"./plugins/libmooplg.so"};           
+        LoadPlugin(mooplg); 
+      }
     ~Bot() { UnloadPlugins(); }
     void segragrator(const std::string& message,const char* data);
     void setName(const std::string& name);
@@ -75,7 +80,10 @@ namespace Tsuki
 
     //Me message
     void SendMe(const std::string& message,const std::string& target);
-
+    
+    //PrivMsg message
+    void SendPrivMsg(const std::string& target,const std::string& message);    
+    
     //Send PONG message
     void SendPong(const std::string& contents);
 
@@ -90,7 +98,11 @@ namespace Tsuki
     //Load a plugin or plugins
     void LoadPlugin(const std::string& path);
     void LoadPlugins(const std::string& path);
-    int getSize() const{ return kernel.getSize(); }
+    
+    //Get list of plugin's size       
+    int getSize() const{ return kernel.getSize(); }     
+    
+    //Unload plugins 
     void UnloadPlugins(){ kernel.unloadPlugins(); }
   };
 } // namespcace Tsuki

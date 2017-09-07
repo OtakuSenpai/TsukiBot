@@ -142,302 +142,319 @@ bool Tsuki :: Bot :: has_in_chan(const std::string& name,const std::string& chan
 
 void Tsuki :: Bot :: handle_msg(std::string& message)
 {
-  std::cout<<std::endl<<"Server Data: "<<message<<std::endl<<std::endl;
-  segragrator(message, "\r\n"); // separate whole messages
+  try {  
+    std::cout<<std::endl<<"Server Data: "<<message<<std::endl<<std::endl;
+    segragrator(message, "\r\n"); // separate whole messages
 
-  message = ""; message.clear();
-  std::vector<std::string> tokens;
-  std::string prefix,command,from,Priv_Comm;
-  std::string channels,temp,input;
-  bool done = false;
+    message = ""; message.clear();
+    std::vector<std::string> tokens;
+    std::string prefix,command,from,Priv_Comm;
+    std::string channels,temp,input;
+    bool done = false;
 
-  std::cout << "Size of msglogs: " << msglogs.size() << std::endl;
+    std::cout << "Size of msglogs: " << msglogs.size() << std::endl;
 
-  for(auto&& z: msglogs) {
-    bool prefix_found = false,sendr_found=false,comm_found = false;
-    temp = z.c_str();
-    std::istringstream c(temp);
+    for(auto&& z: msglogs) {
+      bool prefix_found = false,sendr_found=false,comm_found = false;
+      temp = z.c_str();
+      std::istringstream c(temp);
 
-    while(std::getline(c, input, ' ')) {
-      tokens.push_back(input);  // separate whole words
-    }
+      while(std::getline(c, input, ' ')) {
+        tokens.push_back(input);  // separate whole words
+      }
 
-    for(auto&& i: tokens) {
-      if(!sendr_found) {
-        if(i.find("#") == 0) {
-          from = i; // the channel where its from
-	       size_t j = chan_list.size(); // size of channel list
-	       if(j == 0 && command != "NOTICE" && command != "372") //joining part
+      for(auto&& i: tokens) {
+        if(!sendr_found) {
+          if(i.find("#") == 0 || i.find("##") == 0) {
+            from = i; // the channel where its from
+	         size_t j = chan_list.size(); // size of channel list
+	         if(j == 0 && command != "NOTICE" && command != "372") //joining part
 	         { chan_list.push_back(Tsuki::Channel{from}); }
-	       else { AddChannel(from,command); } // joining another channel
-	       sendr_found = true; // found channel sent from
+	         else { AddChannel(from,command); } // joining another channel
+	         sendr_found = true; // found channel sent from
+          }
+          else if(command == "PRIVMSG" && i == getName()) { // if sender is a person
+            from = prefix.substr(0,prefix.find("!"));
+	         sendr_found = true;
+          }
         }
-        else if(command == "PRIVMSG" && i == getName()) { // if sender is a person
-          from = prefix.substr(0,prefix.find("!"));
-	       sendr_found = true;
+        if(prefix_found && !sendr_found && !comm_found) { // find the command
+          command = i;
+          comm_found = true;
         }
-      }
-      if(prefix_found && !sendr_found && !comm_found) { // find the command
-        command = i;
-        comm_found = true;
-      }
-      if((i.find(":") == 0) && (!prefix_found)) {  // find the prefix of the sender
-        prefix = i.substr(1,i.size());
-        prefix_found = true;
-      }
-      if((i.find(":") == 0) && (prefix_found) && (sendr_found) && (comm_found)) { // if everythings done
-        Priv_Comm = i.substr(1, i.size()); // fancy variable
+        if((i.find(":") == 0) && (!prefix_found)) {  // find the prefix of the sender
+          prefix = i.substr(1,i.size());
+          prefix_found = true;
+        }
+        if((i.find(":") == 0) && (prefix_found) && (sendr_found) && (comm_found)) { // if everythings done
+          Priv_Comm = i.substr(1, i.size()); // fancy command,used to tell if some command is sent by user or if its a server message
 
-        if(command == "353" && from.at(0) == '#') { // if user list is sent
-          bool found = false,colon1 = false;
-          std::string user;
-          for(auto&& j: tokens) {
-            if((j.find(":") == 0) && (!colon1)) {
-	           colon1 = true; continue;
-	         }
-	         else if((j.find(":") == 0) && (colon1) && (!found)) {
-	           found = true;
-	         }
-	         if(found) { user = j + " " + user; }
+          if(command == "353" && from.at(0) == '#') { // if user list is sent
+            bool found = false,colon1 = false;
+            std::string user;
+            for(auto&& j: tokens) {
+              if((j.find(":") == 0) && (!colon1)) {
+	             colon1 = true; continue;
+	           }
+	           else if((j.find(":") == 0) && (colon1) && (!found)) {
+	             found = true;
+	           }
+	           if(found) { user = j + " " + user; }
+            }
+            std::cout<<std::endl<<"User: "<<user<<std::endl<<std::endl;
+            for(auto i =std::begin(chan_list); i != std::end(chan_list);i++) {
+              std::cout<<std::endl<<"In user list,from: "<<from<<std::endl<<std::endl;
+	           if(i->getData() == from) { i->setUsers(user); }
+            }
+            user.clear();
           }
-          std::cout<<std::endl<<"User: "<<user<<std::endl<<std::endl;
-          for(auto i =std::begin(chan_list); i != std::end(chan_list);i++) {
-            std::cout<<std::endl<<"In user list,from: "<<from<<std::endl<<std::endl;
-	         if(i->getData() == from) { i->setUsers(user); }
-          }
-          user.clear();
-        }
-        std::cout<<"From: "<<from<<std::endl
-	              <<"Comm: "<<command<<std::endl
-	              <<"Prefix: "<<prefix<<std::endl
-	              <<"Comm found: "<<comm_found<<std::endl
-	              <<"Sendr found: "<<sendr_found<<std::endl
-	              <<"prefix found: "<<prefix_found<<std::endl;
+          std::cout<<"From: "<<from<<std::endl
+	                <<"Comm: "<<command<<std::endl
+	                <<"Prefix: "<<prefix<<std::endl
+	                <<"Priv_Comm: "<<Priv_Comm<<std::endl 
+	                <<"Comm found: "<<comm_found<<std::endl
+	                <<"Sendr found: "<<sendr_found<<std::endl
+	                <<"prefix found: "<<prefix_found<<std::endl;
         
-        if(Priv_Comm == ",join") { // my fancy joining command
-          std::cout<<std::endl<<std::endl<<std::endl
-	           <<"In Join function...."<<std::endl
-	           <<std::endl<<std::endl;
-          bool found = false;
-          for(auto&& i: tokens) {
-            if((i.find(":,join") != 0) && (!found)) { continue; }
-            else { found = true; }
+          if(Priv_Comm == ",join") { // my fancy joining command
+            std::cout<<std::endl<<std::endl<<std::endl
+	                  <<"In Join function...."<<std::endl
+	                  <<std::endl<<std::endl;
+            bool found = false;
+            for(auto&& i: tokens) {
+              if((i.find(":,join") != 0) && (!found)) { continue; }
+              else { found = true; }
 
-	         if(found) { channels =  i + " " + channels ; }
-          }
-          std::istringstream x(channels); std::vector<std::string> chans;
-          std::copy(std::istream_iterator<std::string>(x),
-		    std::istream_iterator<std::string>(),
-		    std::back_inserter(chans));
-          for(auto&& i: chans) std::cout<<i<<std::endl;
+	           if(found) { channels =  i + " " + channels ; }
+            }
+            std::istringstream x(channels); std::vector<std::string> chans;
+            std::copy(std::istream_iterator<std::string>(x),
+		      std::istream_iterator<std::string>(),
+		      std::back_inserter(chans));
+            for(auto&& i: chans) std::cout<<i<<std::endl;
           
-          for(auto&& i: chans) {
-            if(i.find("#") == 0) { // if its a channel
-	           AddChannel(i,command);
-	           JoinChannel(i);
-              done = true; break;
+            for(auto&& i: chans) {
+              if(i.find("#") == 0) { // if its a channel
+	             AddChannel(i,command);
+	             JoinChannel(i);
+                done = true; break;
+              }
             }
+            chans.clear();
           }
-          chans.clear();
-        }
-        else if(Priv_Comm == ",coffee") { // my fancy coffee command
-          bool found = false;
-          std::string temp;
+          else if(Priv_Comm == ",coffee") { // my fancy coffee command
+            bool found = false;
+            std::string temp;
 
-          for(auto&& j: tokens) {
-            if((j.find(":,coffee") != 0) && (!found)) { continue; }
-            else { found = true; }
+            for(auto&& j: tokens) {
+              if((j.find(":,coffee") != 0) && (!found)) { continue; }
+              else { found = true; }
 
-            if(found) { temp = temp + " " + j; }
-          }
-
-          std::vector<std::string> user;//,tokens2;
-          std::vector<Tsuki::Nick> n_user;
-          std::string s{":,coffee"},a; // a is the rest of the string sent
-          bool isthere = false,hasatarget = false;
-          std::string target; // the target for the coffee
-
-          a = temp.substr(s.size() + 2); // segragate the command from the string
-          if(a.size() < 2) { isthere = false; } // mischief :P
-          else {
-            for(auto&& i = std::begin(a); i != std::end(a); i++) {
-	           if(std::isalnum(*i)) { isthere = true; }
+              if(found) { temp = temp + " " + j; }
             }
-          }
-          std::cout<<std::endl<<"temp: "<<temp<<std::endl<<std::endl;
-          std::cout<<std::endl<<"isthere: "<<isthere<<std::endl<<std::endl;
-          std::cout<<std::endl<<"a: "<<a<<std::endl<<std::endl;
-          std::cout<<std::endl<<"a.size: "<<a.size()<<std::endl<<std::endl;
-          n_user = get_user_list(from); // find the user list for tht channel
+
+            std::vector<std::string> user;//,tokens2;
+            std::vector<Tsuki::Nick> n_user;
+            std::string s{":,coffee"},a; // a is the rest of the string sent
+            bool isthere = false,hasatarget = false;
+            std::string target; // the target for the coffee
+
+            a = temp.substr(s.size() + 2); // segragate the command from the string
+            if(a.size() < 2) { isthere = false; } // mischief :P
+            else {
+              for(auto&& i = std::begin(a); i != std::end(a); i++) {
+	             if(std::isalnum(*i)) { isthere = true; }
+              }
+            }
+            std::cout<<std::endl<<"temp: "<<temp<<std::endl<<std::endl;
+            std::cout<<std::endl<<"isthere: "<<isthere<<std::endl<<std::endl;
+            std::cout<<std::endl<<"a: "<<a<<std::endl<<std::endl;
+            std::cout<<std::endl<<"a.size: "<<a.size()<<std::endl<<std::endl;
+            n_user = get_user_list(from); // find the user list for tht channel
           
-          for(auto&& i = std::begin(n_user); i != std::end(n_user); i++)
-            user.push_back(i->getData()); // store it in a vector of strings
-          //auto&& i = std::begin(tokens2);
-          auto&& j = std::begin(user);
-          while(j != std::end(user)) {
-            std::cout<<*j<<std::endl;
-	         //while(i != std::end(tokens2)) {
-	         if(a == "all")
-	         { hasatarget = true; target.assign("all"); break; }
-	         if(j->at(0) == '+' || j->at(0) == '@') { // remove the op or voice signs
-	           if(a == j->substr(1))
-              { hasatarget = true; target.assign(a); break; }
-	         }
-	         else if(a == *j) { hasatarget = true; target.assign(a); break; }
-	         //i++;
-	         //}
-            //i = std::begin(tokens2);
-            j++;
-          }
-          std::cout<<std::endl<<"hasatarget: "<<hasatarget<<std::endl<<std::endl;
-          std::cout<<std::endl<<"target: "<<target<<std::endl<<std::endl;
-          if(from.find("#") == 0 || from.find("##") == 0) { // if from a channel
-            if(a.size() != 0) { // if the string sent is not empty
-	         //if none matches
-	           if(!has_in_chan(a,from) && !(a == "all" || a == getName() || a == "herself")) {
-                std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
-	             SendMe(temp,from); done = true; from.clear();
+            for(auto&& i = std::begin(n_user); i != std::end(n_user); i++)
+              user.push_back(i->getData()); // store it in a vector of strings
+            //auto&& i = std::begin(tokens2);
+            auto&& j = std::begin(user);
+            while(j != std::end(user)) {
+              std::cout<<*j<<std::endl;
+	           //while(i != std::end(tokens2)) {
+	           if(a == "all")
+	           { hasatarget = true; target.assign("all"); break; }
+	           if(j->at(0) == '+' || j->at(0) == '@') { // remove the op or voice signs
+	             if(a == j->substr(1))
+                { hasatarget = true; target.assign(a); break; }
 	           }
-	           // if misbehaving
-	           else if(isthere && has_it(a,Tsuki::Space)) {
-	             std::string temp = "prepares a pile of shit for " + prefix.substr(0,prefix.find("!")) + ".";
-	             SendMe(temp,from); done = true; from.clear();
-	           }
-	           else if(isthere && (has_it(a,"shit") || has_it(a,"bitch") || has_it(a,"nigga") ||
-	             has_it(a,"whore") || has_it(a,"poop") || has_it(a,"sex") || has_it(a,"ass") ||
-	             has_it(a,"weed"))) { // misbehaving :P
-	             std::string temp = "prepares a pile of shit for " + prefix.substr(0,prefix.find("!")) + ".";
-	             SendMe(temp,from); done = true; from.clear();
-	           } 
-	           // if assigning to self
-	           else if(isthere && ( has_it(a,getName().c_str()) || has_it(a,"herself"))) {
-	             std::string temp{"prepares a hot cup of coffee for herself and drinks it."};
-	             SendMe(temp,from); done = true; from.clear();
-	           }
-	           // misbehaving ;)
-	           else if(has_it(a,Tsuki::Lf) || has_it(a,Tsuki::Cr) || has_it(a,Tsuki::Null)) {
-	             std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
-	             SendMe(temp,from); done = true; from.clear();
-	           }
-	           // misbehaving
-	           else if(!hasatarget || has_only_space(a)) {
-	             std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
-	             SendMe(temp,from); done = true; from.clear();
-	           }
-	           // else
-	           else if(isthere && hasatarget) {
-	             //for(auto&& k: tokens2) {
-	             //std::cout<<std::endl<<"k: "<<k<<std::endl<<std::endl;
-	             if(target == "all") {
-	               std::string temp{"brews a hot cup of coffee for all."};
-	               SendMe(temp,from); done = true; from.clear();
-	               //break;
-	             }
-	             else if(hasatarget) {
-	               std::string temp = "brews a hot cup of coffee for " + target + ".";
-	               SendMe(temp,from); done = true; from.clear();
-	               //break;
-	             }
-                //}
-	           }
+	           else if(a == *j) { hasatarget = true; target.assign(a); break; }
+	           //i++;
+	           //}
+              //i = std::begin(tokens2);
+              j++;
             }
-          }
-	       // if in a privmsg
-          else if(command == "PRIVMSG" || (a == "herself" || a == getName())) {
-            if(a.size() != 0) { // if string isnt empty
-	         // if for self
-              if(isthere && ( has_it(a,getName().c_str()) || has_it(a,"herself") )) {
-	             std::string temp{"prepares a hot cup of coffee for herself and drinks it."};
-	             SendMe(temp,from); done = true; from.clear();
-	           }
-	           else if(isthere) { // if for someone
-	             std::cout<<std::endl<<"from: "<<from<<std::endl<<std::endl;
-	             std::string temp = "brews a hot cup of coffee for " + a + ".";
-	             SendMe(temp,a); done = true; from.clear();
-	             break;
+            std::cout<<std::endl<<"hasatarget: "<<hasatarget<<std::endl<<std::endl;
+            std::cout<<std::endl<<"target: "<<target<<std::endl<<std::endl;
+            if(from.find("#") == 0 || from.find("##") == 0) { // if from a channel
+              if(a.size() != 0) { // if the string sent is not empty
+	           //if none matches
+	             if(!has_in_chan(a,from) && !(a == "all" || a == getName() || a == "herself")) {
+                  std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
+	               SendMe(temp,from); done = true; from.clear();
+	             }
+	             // if misbehaving
+	             else if(isthere && has_it(a,Tsuki::Space)) {
+	               std::string temp = "prepares a pile of shit for " + prefix.substr(0,prefix.find("!")) + ".";
+	               SendMe(temp,from); done = true; from.clear();
+	             }
+	             else if(isthere && (has_it(a,"shit") || has_it(a,"bitch") || has_it(a,"nigga") ||
+	               has_it(a,"whore") || has_it(a,"poop") || has_it(a,"sex") || has_it(a,"ass") ||
+	               has_it(a,"weed"))) { // misbehaving :P
+	               std::string temp = "prepares a pile of shit for " + prefix.substr(0,prefix.find("!")) + ".";
+	               SendMe(temp,from); done = true; from.clear();
+	             } 
+	             // if assigning to self
+	             else if(isthere && ( has_it(a,getName().c_str()) || has_it(a,"herself"))) {
+	               std::string temp{"prepares a hot cup of coffee for herself and drinks it."};
+	               SendMe(temp,from); done = true; from.clear();
+	             }
+	             // misbehaving ;)
+	             else if(has_it(a,Tsuki::Lf) || has_it(a,Tsuki::Cr) || has_it(a,Tsuki::Null)) {
+	               std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
+	               SendMe(temp,from); done = true; from.clear();
+	             }
+	             // misbehaving
+	             else if(!hasatarget || has_only_space(a)) {
+	               std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
+	               SendMe(temp,from); done = true; from.clear();
+	             }
+	             // else
+	             else if(isthere && hasatarget) {
+	               //for(auto&& k: tokens2) {
+	               //std::cout<<std::endl<<"k: "<<k<<std::endl<<std::endl;
+	               if(target == "all") {
+	                 std::string temp{"brews a hot cup of coffee for all."};
+	                 SendMe(temp,from); done = true; from.clear();
+	                 //break;
+	               }
+	               else if(hasatarget) {
+	                 std::string temp = "brews a hot cup of coffee for " + target + ".";
+	                 SendMe(temp,from); done = true; from.clear();
+	                 //break;
+	               }
+                  //}
+	             }
+              }
+            }
+	         // if in a privmsg
+            else if(command == "PRIVMSG" || (a == "herself" || a == getName())) {
+              if(a.size() != 0) { // if string isnt empty
+	           // if for self
+                if(isthere && ( has_it(a,getName().c_str()) || has_it(a,"herself") )) {
+	               std::string temp{"prepares a hot cup of coffee for herself and drinks it."};
+	               SendMe(temp,from); done = true; from.clear();
+	             }
+	             else if(isthere) { // if for someone
+	               std::cout<<std::endl<<"from: "<<from<<std::endl<<std::endl;
+	               std::string temp = "brews a hot cup of coffee for " + a + ".";
+	               SendMe(temp,a); done = true; from.clear();
+	               break;
+                }
+	             // if misbehaving
+                else if(has_it(a,Tsuki::Lf) || has_it(a,Tsuki::Cr) || has_it(a,Tsuki::Null)) {
+	               std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
+	               SendMe(temp,from); done = true; from.clear();
+	             }
+	             // if misbehaving
+	             else if(from != a && (!has_it(a,getName().c_str()) || !has_it(a,"herself"))) {
+	               std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
+	               SendMe(temp,from); done = true; from.clear();
+	             }
+              }
+           }
+           else { // weird
+             std::cout<<std::endl<<"In third condition: "<<std::endl<<std::endl;
+             std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
+             SendMe(temp,from); done = true; from.clear();
+           }
+           user.clear();
+           //tokens2.clear();
+           a.clear();
+           target.clear();
+           temp.clear();
+         }
+         else if(Priv_Comm == ",moo") {
+       	  std::cout<<"Size of kernel list: "<<getSize()<<std::endl;
+           int pos = kernel.getFuncPos("MooPlg");
+           std::cout<<"Pos: "<<pos<<"\n";
+           std::string temp = kernel.getPluginName(pos);
+           std::cout<<"Temp: "<<temp<<"\n";  
+           PluginInterface *p = kernel.getFuncHandle(temp);
+           if(!p) { 
+             std::string error = "Error at TsukiIRC.cpp: Couldn't get function pointer from libmooplg.so!\n";
+             throw std::runtime_error(error);
+           }
+           const char* retValue = p->onCommand(prefix.substr(0,prefix.find("!")).c_str());         
+           std::string msg{retValue};
+           SendPrivMsg(from,msg);         
+         }
+	      else if(Priv_Comm == ",part") { // handling the part part
+	        bool found = false;
+	        bool mulChannels = false,hasMsg = false;
+	        std::string temp = "",mainStr = "",msg{",part"};
+	        std::string channel = "",message = "";
+	        std::vector<std::string> msgTokens;
+
+	        for(auto&& j: tokens) {
+             if((j.find(":,part") != 0) && (!found)) { continue; }
+             else { found = true; }
+
+             if(found) { temp = temp + " " + j; }
+           }
+
+	        mainStr = temp.substr(msg.size() + 2);
+	        std::istringstream d(mainStr);
+	        std::copy(std::istream_iterator<std::string>(d),
+                     std::istream_iterator<std::string>(),
+                     std::back_inserter(msgTokens));
+	        for(auto&& l : msgTokens) {
+	          std::cout<<"\nToken: "<<l<<std::endl;
+             if(l.at(0) == '#' && mulChannels == false) { // if its a channel
+	            channel = channel + l ;
+	            mulChannels = true;
+	          }
+	          else if(l.at(0) == '#' && mulChannels == true) { // if its multiple channels
+	            channel = channel + "," + l ;
              }
-	          // if misbehaving
-             else if(has_it(a,Tsuki::Lf) || has_it(a,Tsuki::Cr) || has_it(a,Tsuki::Null)) {
-	            std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
-	            SendMe(temp,from); done = true; from.clear();
+	          else { // the message
+	            bool first = false;
+	            if(!first) {
+                 message = message + l + " ";
+		           first = true;
+	            }
+	            else if(first) {
+		           message = message + " " + l ;
+	            }
+	            hasMsg = true;
 	          }
-	          // if misbehaving
-	          else if(from != a && (!has_it(a,getName().c_str()) || !has_it(a,"herself"))) {
-	            std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
-	            SendMe(temp,from); done = true; from.clear();
-	          }
-           }
-         }
-         else { // weird
-           std::cout<<std::endl<<"In third condition: "<<std::endl<<std::endl;
-           std::string temp = "slaps " + prefix.substr(0,prefix.find("!")) + " for messing with her.";
-           SendMe(temp,from); done = true; from.clear();
-         }
-         user.clear();
-         //tokens2.clear();
-         a.clear();
-         target.clear();
-         temp.clear();
-       }
-       else if(Priv_Comm == ",moo") {
-         std::string path{"./plugins/libmooplg.so"};           
-         LoadPlugin(path); 
-         PluginInterface *p = kernel.getFuncHandle(from);
-         const char* temp = p->onCommand(from.c_str());         
-         std::string msg{temp};
-         SendMsg(msg);         
-       }
-	    else if(Priv_Comm == ",part") { // handling the part part
-	      bool found = false;
-	      bool mulChannels = false,hasMsg = false;
-	      std::string temp = "",mainStr = "",msg{",part"};
-	      std::string channel = "",message = "";
-	      std::vector<std::string> msgTokens;
-
-	      for(auto&& j: tokens) {
-           if((j.find(":,part") != 0) && (!found)) { continue; }
-           else { found = true; }
-
-           if(found) { temp = temp + " " + j; }
-         }
-
-	      mainStr = temp.substr(msg.size() + 2);
-	      std::istringstream d(mainStr);
-	      std::copy(std::istream_iterator<std::string>(d),
-                    std::istream_iterator<std::string>(),
-                    std::back_inserter(msgTokens));
-	      for(auto&& l : msgTokens) {
-	        std::cout<<"\nToken: "<<l<<std::endl;
-           if(l.at(0) == '#' && mulChannels == false) { // if its a channel
-	          channel = channel + l ;
-	          mulChannels = true;
 	        }
-	        else if(l.at(0) == '#' && mulChannels == true) { // if its multiple channels
-	          channel = channel + "," + l ;
-           }
-	        else { // the message
-	          bool first = false;
-	          if(!first) {
-               message = message + l + " ";
-		         first = true;
-	          }
-	          else if(first) {
-		         message = message + " " + l ;
-	          }
-	          hasMsg = true;
-	        }
-	      }
-	      if(hasMsg == false) SendPart(channel);
-	      else if(hasMsg == true) SendPart(channel,message);
+	        if(hasMsg == false) SendPart(channel);
+	        else if(hasMsg == true) SendPart(channel,message);
+         }
+         else { // Debugging
+           std::string msg = "Priv_Comm: " + Priv_Comm;
+           std::cout<<msg<<"\n";       
+         }
        }
+       if(done) { break; }
      }
-     if(done) { break; }
+     tokens.clear();
    }
-   tokens.clear();
-  }
-  std::cout<<std::endl<<"Size of chan_list: "<<chan_list.size()<<std::endl<<std::endl;
-  message.clear();
-  msglogs.clear();
+   std::cout<<std::endl<<"Size of chan_list: "<<chan_list.size()<<std::endl<<std::endl;
+   message.clear();
+   msglogs.clear();
+ }
+ catch(std::exception& e){
+   std::cout<<"Caught exception: \n"<<e.what(); 
+ }
 }
 
 std::vector<Tsuki::Nick> Tsuki :: Bot :: get_user_list(const std::string& from)
@@ -589,6 +606,12 @@ void Tsuki :: Bot :: SendMe(const std::string& message,const std::string& target
   std::string temp = "PRIVMSG " + target + " :\001ACTION " + message + "\001\r\n";
   std::cout<<std::endl<<std::endl<<std::endl<<"Sending /me : "<<temp<<std::endl<<std::endl<<std::endl;
   conn.SendData(temp);
+}
+
+void Tsuki :: Bot :: SendPrivMsg(const std::string& target,const std::string& msg) {
+  std::string temp = "PRIVMSG " + target + " :" + msg + "\r\n";
+  std::cout<<"Retvalue: "<<temp<<"\n"; 
+  SendMsg(temp);
 }
 
 void Tsuki :: Bot :: SendPong(const std::string& contents)
