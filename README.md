@@ -51,7 +51,7 @@ A lil googling helps too ;)
 
 Then you have to add another library,which is a plugin system I made during my summer vacations of 2017. It's name is Tryx Plugin System, and it's licensed under MIT License.
 
-Create a new folder,one inside the other folder,and inside that new folder,type this(again,if you are on Windows use TortoiseGit):-
+Create a new folder,name it "TryxPS",one inside the other folder,and inside that new folder("TryxPS"),type this(again,if you are on Windows use TortoiseGit):-
 
 ```
 git pull -v https://github.com/OtakuSenpai/TryxPS.git

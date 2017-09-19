@@ -37,5 +37,5 @@ add_library(mooplg SHARED ${MOOPLG})
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -O2")
 
-add_executable(Nyu "main.cpp" ${SOURCES} ${HEADERS})
-target_link_libraries(Nyu ${SDL2_LIBRARY} ${SDL2NET_LIBRARY} TryxPS::tryxps ${CMAKE_DL_LIBS})
+add_executable(TsukiBot "main.cpp" ${SOURCES} ${HEADERS})
+target_link_libraries(TsukiBot ${SDL2_LIBRARY} ${SDL2NET_LIBRARY} TryxPS::tryxps ${CMAKE_DL_LIBS})

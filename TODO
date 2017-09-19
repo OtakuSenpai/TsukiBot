@@ -12,30 +12,34 @@ GOALS:
                 properly to the network
 [+] 0.00.01 --> Get the /me,JOIN,PART message and coffee giving system working
 [+] 0.00.02 --> Make a plugin system for the bot
-[-] 0.00.03 --> Get a Poke,tea,weed,help,moo functions working in plugins
-[-] 0.00.04 --> Get a topic system and the logging system working
-[-] 0.00.05 --> Get MODE,QUERY,QUIT and TOPIC function working,and make the bot
-                accept PRIVMSGs
-[-] 0.00.06 --> Get the nickserv register and login system working
-[-] 0.00.07 --> Make the bot output colored text,plus do use it in the plugins.
-                also make it autojoin when kicked from a channel.
-[-] 0.00.08 --> Make some cool plugins for it(number 1,2,3)
-[-] 0.00.09 --> Do some optimisations of the code base
+[?] 0.00.03 --> Get a Poke,tea,weed,ping,help,moo functions working in plugins
+[-] 0.00.04 --> Move coffee function to a plugin. Also make a reminder plugin
+[-] 0.00.05 --> Get MODE,QUERY,QUIT and TOPIC function working,and make the 
+                bot and accept PRIVMSGs
+[-] 0.00.06 --> Get a topic system and the logging system and plugin system 
+                working
+[-] 0.00.07 --> Get the nickserv register and login system working
+[-] 0.00.08 --> Make the bot output colored text,plus do use it in the 
+                plugins.Also make it autojoin when kicked from a channel.
+[-] 0.00.09 --> Make some cool plugins for it(number 1,2,3)
+[-] 0.00.10 --> Do some optimisations of the code base
 ---------------
 [-] 0.01.01 --> Add Aliasing feature to the bot(alias commands)
-[-] 0.01.02 --> Add Groups feature to the bot. Each group has a set of function
-                which only the group´s members can perform. Also make some commands
-                to operate on the groups
-[-] 0.01.03 --> Make the bot connect through a proxy
-[-] 0.01.04 --> Make it connect through SSL
+[-] 0.01.02 --> Add Groups feature to the bot. Each group has a set of 
+                function which only the group´s members can perform. Also    
+                make some commands to operate on the groups
+[-] 0.01.03 --> Make it connect through SSL
+[-] 0.01.04 --> Make the bot connect through a proxy
 [-] 0.01.05 --> Make some more plugins(numbers 4,5,6,7)
 [-] 0.01.06 --> Make it join one bot per network(use threads to do it)
 [-] 0.01.07 --> Optimisations!!!
 ---------------
 [-] 0.02.01 --> Make a list function which lists the commands of a bot on the
                 number of plugins loaded in a private query
-[-] 0.02.02 --> Make a help function for each command which responds in a query
-[-] 0.02.03 to
+[-] 0.02.02 --> Make the bot execute linux command line functions in a secure
+                (no-root) env. Include it in a plugin.
+[-] 0.02.03 --> Make the bot talk in a intelligent way(Feature set 10)
+[-] 0.02.04 to
     0.02.06 -->  ???
 [-] 0.02.07 --> Optimisations!!!
 ---------------
