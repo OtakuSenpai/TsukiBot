@@ -4,7 +4,7 @@ TsukiBot - A hand made C++ IRC bot!
 This bot is my second attempt at making a C++ IRC bot. Currently this bot joins a channel on Freenode and accepts commands to join additional channels,plus give tea.
 
 I plan to make a plugin system for this bot to do things like show weather,make jokes or serve tea,do some AI shit,remind people of things,google,show youtube links,give the appropriate description of links,sing songs at the appropriate moments,etc.
-As they say,one at a time ;-)
+As they say,one at a time 😉
 
 How to Compile
 --------------
@@ -47,7 +47,7 @@ Also for Cmake,check this links,
 
 2)https://stackoverflow.com/questions/9878225/using-cmake-on-windows-for-c
 
-A lil googling helps too ;)
+A lil googling helps too 😄
 
 Then you have to add another library,which is a plugin system I made during my summer vacations of 2017. It's name is Tryx Plugin System, and it's licensed under MIT License.
 

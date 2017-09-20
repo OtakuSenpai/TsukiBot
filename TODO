@@ -13,7 +13,8 @@ GOALS:
 [+] 0.00.01 --> Get the /me,JOIN,PART message and coffee giving system working
 [+] 0.00.02 --> Make a plugin system for the bot
 [?] 0.00.03 --> Get a Poke,tea,weed,ping,help,moo functions working in plugins
-[-] 0.00.04 --> Move coffee function to a plugin. Also make a reminder plugin
+[-] 0.00.04 --> Move coffee function to a plugin. Also make a reminder,a 
+                tictactoe game and a gomoku game plugin
 [-] 0.00.05 --> Get MODE,QUERY,QUIT and TOPIC function working,and make the 
                 bot and accept PRIVMSGs
 [-] 0.00.06 --> Get a topic system and the logging system and plugin system 
@@ -22,7 +23,8 @@ GOALS:
 [-] 0.00.08 --> Make the bot output colored text,plus do use it in the 
                 plugins.Also make it autojoin when kicked from a channel.
 [-] 0.00.09 --> Make some cool plugins for it(number 1,2,3)
-[-] 0.00.10 --> Do some optimisations of the code base
+[-] 0.00.10 --> Fix some bugs
+[-] 0.00.11 --> Do some optimisations of the code base
 ---------------
 [-] 0.01.01 --> Add Aliasing feature to the bot(alias commands)
 [-] 0.01.02 --> Add Groups feature to the bot. Each group has a set of 
@@ -49,7 +51,7 @@ GOALS:
 PLUGINS:
 --------
 
-1)Getting a keyword and storing the keyword in  a map or hash_map.Plus do various things with those values.
+1)Get useful statistics from logs(word stats,top words of day,top words of a user,top users,time spent,number of smileys,number of cusses,etc).
 
 2)Make a URL link expanding plugin(google,youtube,imgur,etc)
 

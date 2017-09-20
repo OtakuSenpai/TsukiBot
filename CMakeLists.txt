@@ -9,17 +9,17 @@ set(CMAKE_CXX_EXTENSIONS 14)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
-include_directories("${PROJECT_SOURCE_DIR}/include")
+include_directories("${PROJECT_SOURCE_DIR}/TsukiBot/include")
 include_directories("${PROJECT_SOURCE_DIR}/TryxPS/include")
-set(HEADERS "include/constants.hpp"
-            "include/ircconnector.hpp"
-            "include/ircmessage.hpp"
-            "include/TsukiIRC.hpp")
+set(HEADERS "TsukiBot/include/constants.hpp"
+            "TsukiBot/include/ircconnector.hpp"
+            "TsukiBot/include/ircmessage.hpp"
+            "TsukiBot/include/TsukiIRC.hpp")
 
-set(SOURCES "src/constants.cpp"
-            "src/ircconnector.cpp"
-            "src/ircmessage.cpp"
-            "src/TsukiIRC.cpp")
+set(SOURCES "TsukiBot/src/constants.cpp"
+            "TsukiBot/src/ircconnector.cpp"
+            "TsukiBot/src/ircmessage.cpp"
+            "TsukiBot/src/TsukiIRC.cpp")
 
 set(MOOPLG "plugins-src/MooPlugin/mooplg.hpp"
            "plugins-src/MooPlugin/mooplg.cpp")
@@ -37,5 +37,5 @@ add_library(mooplg SHARED ${MOOPLG})
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -O2")
 
-add_executable(TsukiBot "main.cpp" ${SOURCES} ${HEADERS})
-target_link_libraries(TsukiBot ${SDL2_LIBRARY} ${SDL2NET_LIBRARY} TryxPS::tryxps ${CMAKE_DL_LIBS})
+add_executable(tsukibot "main.cpp" ${SOURCES} ${HEADERS})
+target_link_libraries(tsukibot ${SDL2_LIBRARY} ${SDL2NET_LIBRARY} TryxPS::tryxps ${CMAKE_DL_LIBS})
