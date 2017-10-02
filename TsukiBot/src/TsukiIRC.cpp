@@ -382,11 +382,8 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
            temp.clear();
          }
          else if(Priv_Comm == ",moo") {
-       	  std::cout<<"Size of kernel list: "<<getSize()<<std::endl;
            int pos = kernel.getFuncPos("MooPlg");
-           std::cout<<"Pos: "<<pos<<"\n";
            std::string temp = kernel.getPluginName(pos);
-           std::cout<<"Temp: "<<temp<<"\n";  
            PluginInterface *p = kernel.getFuncHandle(temp);
            if(!p) { 
              std::string error = "Error at TsukiIRC.cpp: Couldn't get function pointer from libmooplg.so!\n";
@@ -396,6 +393,25 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
            std::string msg{retValue};
            SendPrivMsg(from,msg);         
          }
+         else if(Priv_Comm == ",ping") {
+		   int pos = kernel.getFuncPos("PingPlg");
+		   std::string temp = kernel.getPluginName(pos);
+		   std::cout<<"Pos: "<<pos<<"\n";
+		   std::cout<<"Temp: "<<temp<<"\n";
+		   std::cout<<"Size of kernel list: "<<getSize()<<std::endl;
+		   PluginInterface *p = kernel.getFuncHandle(temp);
+		   if(!p) {
+			 std::string error = "Error at TsukiIRC.cpp: Couldn't get function pointer from libpingplg.so!\n";
+			 throw std::runtime_error(error);
+		   }
+		   std::cout<<"Plugin loaded!\n";
+		   const char* tempVar = prefix.substr(0,prefix.find("!")).c_str();
+		   const char* retValue = p->onCommand(tempVar);
+		   std::cout<<"Retvalue: "<<retValue<<"\n"
+		            <<"Tempvar: "<<tempVar<<"\n";
+		   std::string msg(retValue);
+		   SendMsg(std::string("PRIVMSG " + from),msg);
+		 }   
 	      else if(Priv_Comm == ",part") { // handling the part part
 	        bool found = false;
 	        bool mulChannels = false,hasMsg = false;
@@ -572,6 +588,13 @@ void Tsuki :: Bot :: SendMsg(const char* command,const std::string& msg)
   std::string s = std::string(command) + " :" + msg;
   conn.SendData(s);
 }
+
+void Tsuki :: Bot :: SendMsg(const std::string& command,const std::string& msg)
+{
+  std::string s = command + " :" + msg;
+  conn.SendData(s);
+}
+
 
 void Tsuki :: Bot :: SendNick()
 {
