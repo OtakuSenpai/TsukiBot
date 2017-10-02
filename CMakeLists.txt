@@ -23,6 +23,8 @@ set(SOURCES "TsukiBot/src/constants.cpp"
 
 set(MOOPLG "plugins-src/MooPlugin/mooplg.hpp"
            "plugins-src/MooPlugin/mooplg.cpp")
+set(PINGPLG "plugins-src/PingPlugin/pingplg.hpp"
+           "plugins-src/PingPlugin/pingplg.cpp")
 
 set (TryxPS_DIR "${CMAKE_SOURCE_DIR}/TryxPS/cmake")
 find_package(TryxPS REQUIRED)
@@ -33,7 +35,8 @@ find_library(SDL2_LIBRARY NAME SDL2 HINTS SDL2)
 find_file(SDL2NET_INCLUDE_DIR NAME SDL_net.h HINTS SDL2_net)
 find_library(SDL2NET_LIBRARY NAME SDL2_net HINTS SDL2_net)
 
-add_library(mooplg SHARED ${MOOPLG}) 
+add_library(mooplg SHARED ${MOOPLG})
+add_library(pingplg SHARED ${PINGPLG}) 
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -O2")
 

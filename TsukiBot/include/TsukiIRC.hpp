@@ -46,7 +46,9 @@ namespace Tsuki
 			                     msglogs{},BotName{nick} 
       { 
         setName(nick);
-        std::string mooplg{"./plugins/libmooplg.so"};           
+        std::string mooplg{"./plugins/libmooplg.so"}; 
+        std::string pingplg{"./plugins/libpingplg.so"};
+        LoadPlugin(pingplg);          
         LoadPlugin(mooplg); 
       }
     ~Bot() { UnloadPlugins(); }
@@ -69,7 +71,8 @@ namespace Tsuki
     //Send a normal message
     void SendMsg(const std::string& msg);
     void SendMsg(const char* command,const std::string& message);
-
+    void SendMsg(const std::string& command,const std::string& msg);
+    
     //Send NICK message
     void SendNick();
     void SendNick(const std::string& nick);
