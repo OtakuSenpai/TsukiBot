@@ -30,7 +30,7 @@ As of writing this, this bot uses the following libraries and tools:-
 build the bot. Also for debugging,you need to get LibSdl2 Net debugging package. The make package is for those who don't already have the make utility in their posix system. Also Cmake should be above version 3.7.
 
 
-For Ubuntu or Debian,run this command:
+For Ubuntu or Debian,run this command(package names may change with updates):
 
 ```
 sudo aptitude install libsdl2-2.0-0 libsdl2-net-2.0-0 libsdl2-dev libsdl2-net-dev cmake libsdl2-net-dbg make
@@ -53,10 +53,11 @@ sbopkg
 ```
 
 SboPkg is a package manger like synaptic.You open it up,then search for the following and install:-
-1)Sdl2(devel,shared libs,debug if your debugging too)
-2)Sdl2 net(devel,shared libs,debug if your debugging too)
-3)Cmake
-4)Make
+
+1) Sdl2(devel,shared libs,debug if your debugging too)
+2) Sdl2 net(devel,shared libs,debug if your debugging too)
+3) Cmake
+4) Make
 
 For Windows,you have to get the required LibSDL2 packages from this two links:-
 1) https://www.libsdl.org/download-2.0.php
