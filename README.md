@@ -116,10 +116,5 @@ Notes
 License
 -------
 
-```
+ Distributed under the Mozilla Public License, Version 3.0.(See accompanying file [`LICENSE`](./LICENSE) or copy at https://www.mozilla.org/en-US/MPL/2.0/)
 
- Distributed under the Mozilla Public License, Version 3.0.
-    (See accompanying file [`LICENSE`](./LICENSE) or copy at
-         https://www.mozilla.org/en-US/MPL/2.0/)
-
-```
