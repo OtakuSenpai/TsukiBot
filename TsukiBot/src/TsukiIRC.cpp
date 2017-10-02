@@ -396,11 +396,11 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
          else if(Priv_Comm == ",ping") {
 		   int pos = kernel.getFuncPos("PingPlg");
 		   std::vector<std::string> nicks;
-		   std::string tempVar,tempNames,input,temp = kernel.getPluginName(pos);
+		   std::string tempVar,tempNames,input,temp1 = kernel.getPluginName(pos);
 		   std::cout<<"Pos: "<<pos<<"\n";
-		   std::cout<<"Temp: "<<temp<<"\n";
+		   std::cout<<"Temp: "<<temp1<<"\n";
 		   std::cout<<"Size of kernel list: "<<getSize()<<std::endl;
-		   PluginInterface *p = kernel.getFuncHandle(temp);
+		   PluginInterface *p = kernel.getFuncHandle(temp1);
 		   if(!p) {
 			 std::string error = "Error at TsukiIRC.cpp: Couldn't get function pointer from libpingplg.so!\n";
 			 throw std::runtime_error(error);
@@ -412,6 +412,9 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
              else { found = true; }
 	         if(found) { tempNames = tempNames + " " + i; }
            }
+           if(tempNames[0] == ' ') 
+		     tempNames= tempNames.substr(1);	   
+           std::cout<<"tempNames: "<<tempNames<<"\n";
            if(tempNames.size() != 0 && tempNames.size() >= 7) {
              tempVar = tempNames.substr(std::string(":,ping").size() +1);
              std::istringstream s(tempVar);
