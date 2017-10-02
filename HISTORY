@@ -35,16 +35,16 @@ Jul 16,2017: 0.00.1.12 --> Made the part command.Need to integrate it into
                            handle_msg().
 Jul 16,2017: 0.00.1.13 --> Made the part message work. Will be using TryxPS
                            in future versions for plugins.
-Jul 29,2017: 0.00.1.14 --> Made suitable changes to the cmakelists.txt for 
+Jul 29,2017: 0.00.2.00 --> Made suitable changes to the cmakelists.txt for 
                            including TryxPS. Changed the TODO list. 
-Sep 02,2017: 0.00.1.15 --> Polished the codebase, changed the todo.There's a 
+Sep 02,2017: 0.00.3.00 --> Polished the codebase, changed the todo.There's a 
                            segfault in the code,fixing it in a sec.
-Sep 02,2017: 0.00.1.16 --> Removed cmake/modules since the project uses the cmake 
+Sep 02,2017: 0.00.3.01 --> Removed cmake/modules since the project uses the cmake 
                            config files generated from TryxPS library.
-Sep 06,2017: 0.00.1.17 --> Solved the segfault.bool RecvData(string&) now receives a 
+Sep 06,2017: 0.00.3.02 --> Solved the segfault.bool RecvData(string&) now receives a 
                            newline ended message.
-Sep 07,2017: 0.00.1.18 --> Solved the MooPlugin issues.
-Oct 02,2017: 0.00.1.19 --> Wrote important helper functions...changed 
+Sep 07,2017: 0.00.3.03 --> Solved the MooPlugin issues.
+Oct 02,2017: 0.00.3.04 --> Wrote important helper functions...changed 
                            TODO...removed some unnecessary files.
-Oct 02,2017: 0.00.1.20 --> Wrote the ping plugin.
+Oct 02,2017: 0.00.3.05 --> Wrote the ping plugin.
 

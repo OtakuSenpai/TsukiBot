@@ -395,7 +395,8 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
          }
          else if(Priv_Comm == ",ping") {
 		   int pos = kernel.getFuncPos("PingPlg");
-		   std::string temp = kernel.getPluginName(pos);
+		   std::vector<std::string> nicks;
+		   std::string tempVar,tempNames,input,temp = kernel.getPluginName(pos);
 		   std::cout<<"Pos: "<<pos<<"\n";
 		   std::cout<<"Temp: "<<temp<<"\n";
 		   std::cout<<"Size of kernel list: "<<getSize()<<std::endl;
@@ -405,12 +406,38 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 			 throw std::runtime_error(error);
 		   }
 		   std::cout<<"Plugin loaded!\n";
-		   const char* tempVar = prefix.substr(0,prefix.find("!")).c_str();
-		   const char* retValue = p->onCommand(tempVar);
-		   std::cout<<"Retvalue: "<<retValue<<"\n"
-		            <<"Tempvar: "<<tempVar<<"\n";
-		   std::string msg(retValue);
-		   SendMsg(std::string("PRIVMSG " + from),msg);
+		   bool found = false;
+           for(auto&& i: tokens) {
+             if((i.find(":,ping") != 0) && (!found)) { continue; }
+             else { found = true; }
+	         if(found) { tempNames = tempNames + " " + i; }
+           }
+           if(tempNames.size() != 0 && tempNames.size() >= 7) {
+             tempVar = tempNames.substr(std::string(":,ping").size() +1);
+             std::istringstream s(tempVar);
+             while(std::getline(s,input,' ')) {
+        	   std::cout<<input<<"|";
+			   nicks.push_back(input);
+		     }
+		   }
+		   
+		   if(nicks.size() == 0 && tempNames.size() >= 7) {     
+		     std::string msg = "PRIVMSG " + from + " :PONG PONG PONG!\r\n";
+		     std::cout<<"msg: "<<msg<<"\n";
+		     SendMsg(msg);
+		   }
+		    
+		   else if(nicks.size() > 0) {
+			 std::string msg;
+			 for(auto&& i: nicks) {  
+			   const char* retValue = p->onCommand(i.c_str());
+		       std::cout<<"\nRetvalue: "<<retValue<<"\n"
+		                <<"Tempvar: "<<tempVar<<"\n";
+		       msg.assign(retValue);
+		       SendMsg(std::string("PRIVMSG " + from),msg);
+		       msg.clear();
+		     }
+		   } 
 		 }   
 	      else if(Priv_Comm == ",part") { // handling the part part
 	        bool found = false;

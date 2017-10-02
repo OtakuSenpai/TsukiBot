@@ -14,7 +14,8 @@ GOALS:
 [+] 0.0.02 --> Make a plugin system for the bot
 [?] 0.0.03 --> Get a Poke,tea,weed,ping,help,moo functions working in plugins
 [-] 0.0.04 --> Get MODE,QUERY,QUIT and TOPIC function working,and make the 
-                bot and accept PRIVMSGs
+               bot and accept PRIVMSGs.Write all plugins(except coffee) in
+               plugin classes totally    
 [-] 0.0.05 --> Get a topic system and plugin loading system working.Also 
                 make a channel logging plugin.Plugins should hav the ability 
                 to load/unload on the fly.Plus plugins(which require this) 
