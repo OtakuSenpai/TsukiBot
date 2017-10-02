@@ -2,7 +2,12 @@
 #define HELPERFUNCS_H
 
 #include <string.h>
+#include <ctype.h>
 
-void segragator(const char* data,char** words);
+#include "list.hpp"
+
+List tokenizer(const char* data);
+size_t find(const char data,const char* words);
+size_t find(const char* data,const char* words);
 
 #endif

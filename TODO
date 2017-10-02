@@ -8,42 +8,49 @@ TODO:
 GOALS:
 ------
 
-[+] 0.00.00 --> Get the PONG function working,make the program connect
+[+] 0.0.00 --> Get the PONG function working,make the program connect
                 properly to the network
-[+] 0.00.01 --> Get the /me,JOIN,PART message and coffee giving system working
-[+] 0.00.02 --> Make a plugin system for the bot
-[?] 0.00.03 --> Get a Poke,tea,weed,ping,help,moo functions working in plugins
-[-] 0.00.04 --> Move coffee function to a plugin. Also make a reminder,a 
-                tictactoe game and a gomoku game plugin
-[-] 0.00.05 --> Get MODE,QUERY,QUIT and TOPIC function working,and make the 
+[+] 0.0.01 --> Get the /me,JOIN,PART message and coffee giving system working
+[+] 0.0.02 --> Make a plugin system for the bot
+[?] 0.0.03 --> Get a Poke,tea,weed,ping,help,moo functions working in plugins
+[-] 0.0.04 --> Get MODE,QUERY,QUIT and TOPIC function working,and make the 
                 bot and accept PRIVMSGs
-[-] 0.00.06 --> Get a topic system and the logging system and plugin system 
-                working
-[-] 0.00.07 --> Get the nickserv register and login system working
-[-] 0.00.08 --> Make the bot output colored text,plus do use it in the 
-                plugins.Also make it autojoin when kicked from a channel.
-[-] 0.00.09 --> Make some cool plugins for it(number 1,2,3)
-[-] 0.00.10 --> Fix some bugs
-[-] 0.00.11 --> Do some optimisations of the code base
+[-] 0.0.05 --> Get a topic system and plugin loading system working.Also 
+                make a channel logging plugin.Plugins should hav the ability 
+                to load/unload on the fly.Plus plugins(which require this) 
+                should have a config file.
+[-] 0.0.06 --> Get the nickserv register and login system working
+[-] 0.0.07 --> Move coffee function to a plugin. Also make a reminder,a 
+               seen,a tictactoe game and a gomoku game plugin 
+[-] 0.0.08 --> Fix some bugs.Also make it autojoin when kicked from a  
+                channel.
+[-] 0.0.09 --> Make some cool plugins for it(number 1,2,3)
+[-] 0.0.10 --> Fix some bugs and add feature enhancements and all.
+[-] 0.0.11 --> Do some profiling and optimisations of the code base
+
 ---------------
-[-] 0.01.01 --> Add Aliasing feature to the bot(alias commands)
-[-] 0.01.02 --> Add Groups feature to the bot. Each group has a set of 
+
+[-] 0.1.01 --> Add Aliasing feature to the bot(alias commands)
+[-] 0.1.02 --> Add Groups feature to the bot. Each group has a set of 
                 function which only the group´s members can perform. Also    
                 make some commands to operate on the groups
-[-] 0.01.03 --> Make it connect through SSL
-[-] 0.01.04 --> Make the bot connect through a proxy
-[-] 0.01.05 --> Make some more plugins(numbers 4,5,6,7)
-[-] 0.01.06 --> Make it join one bot per network(use threads to do it)
-[-] 0.01.07 --> Optimisations!!!
+[-] 0.1.03 --> Make it connect through SSL
+[-] 0.1.04 --> Make the bot connect through a proxy
+[-] 0.1.05 --> Make some more plugins(numbers 4,5,6)
+[-] 0.1.06 --> Make it join one bot per network(use threads to do it)
+[-] 0.1.07 --> Fix some bugs and add feature enhancements
+[-] 0.1.08 --> Optimisations!!!
 ---------------
-[-] 0.02.01 --> Make a list function which lists the commands of a bot on the
-                number of plugins loaded in a private query
-[-] 0.02.02 --> Make the bot execute linux command line functions in a secure
+[-] 0.2.01 --> Make a calc,sudoku,hangman,admin(administrative use plugin).
+               Also do number 7 in the list.
+[-] 0.2.02 --> Make the bot execute linux command line functions in a secure
                 (no-root) env. Include it in a plugin.
-[-] 0.02.03 --> Make the bot talk in a intelligent way(Feature set 10)
-[-] 0.02.04 to
-    0.02.06 -->  ???
-[-] 0.02.07 --> Optimisations!!!
+[-] 0.2.03 --> Make the bot talk in a intelligent way(Feature set 10)
+[-] 0.2.04 --> Do number 9 and 11.
+[-] 0.2.05 --> Do number 14.
+[-] 0.2.06 --> Do number 12 and 13.
+[-] 0.2.07 --> Fix some bugs and do some enhancements.
+[-] 0.2.08 --> Optimisations and Profiling!!!
 ---------------
 
 ------------------------------------------------------------------------------
@@ -51,7 +58,8 @@ GOALS:
 PLUGINS:
 --------
 
-1)Get useful statistics from logs(word stats,top words of day,top words of a user,top users,time spent,number of smileys,number of cusses,etc).
+1)Get useful statistics from logs(word stats,top words of day,top words of a user,top users,time spent,number of smileys,number of cusses, top10
+cusses,etc).
 
 2)Make a URL link expanding plugin(google,youtube,imgur,etc)
 
@@ -79,3 +87,5 @@ assimilate the server conversations and talk in an intelligent manner.
 12)Make a plugin which lists the latest Linux kernel patches
 
 13)Make a plugin which shows the code of the bot
+
+14)Games like chess,othello,checkers,backgammon,etc.
