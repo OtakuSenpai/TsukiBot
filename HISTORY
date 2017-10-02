@@ -44,5 +44,7 @@ Sep 02,2017: 0.00.1.16 --> Removed cmake/modules since the project uses the cmak
 Sep 06,2017: 0.00.1.17 --> Solved the segfault.bool RecvData(string&) now receives a 
                            newline ended message.
 Sep 07,2017: 0.00.1.18 --> Solved the MooPlugin issues.
-
+Oct 02,2017: 0.00.1.19 --> Wrote important helper functions...changed 
+                           TODO...removed some unnecessary files.
+Oct 02,2017: 0.00.1.20 --> Wrote the ping plugin.
 
