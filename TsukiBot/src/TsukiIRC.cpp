@@ -189,7 +189,8 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
           prefix_found = true;
         }
         if((i.find(":") == 0) && (prefix_found) && (sendr_found) && (comm_found)) { // if everythings done
-          Priv_Comm = i.substr(1, i.size()); // fancy command,used to tell if some command is sent by user or if its a server message
+          Priv_Comm = i.substr(1, i.size()); // fancy command,used to tell if some command is sent by user or 
+                                             // if its a server message
 
           if(command == "353" && from.at(0) == '#') { // if user list is sent
             bool found = false,colon1 = false;
@@ -411,42 +412,45 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 	         if(found) { tempNames = tempNames + " " + i; }
            }
            if(tempNames[0] == ' ') 
-		     tempNames= tempNames.substr(1);	   
+		     tempNames= tempNames.substr(1);  	   
            std::cout<<"tempNames: "<<tempNames<<"\n";
-           if((tempNames.substr(tempNames.find(":,ping")).size()+1) > 0) {
-             tempVar = tempNames.substr(std::string(":,ping").size());
-             tempVar = tempVar.substr(1); 
-             std::cout<<"tempNames: "<<tempNames<<"\n"
-                    <<"tempNames size: "<<tempNames.size()<<"\n"
-                    <<"TempVars: "<<tempVar<<"\n"
-                    <<"empVars size: "<<tempVar.size()<<"\n";       
-             std::istringstream s(tempVar);
-             while(std::getline(s,input,' ')) {
-        	   std::cout<<input<<"|";
-			   nicks.push_back(input);
-		     }
-		     std::cout<<"nicks size: "<<nicks.size()<<"\n";
-		     //if(nicks.at(0) == " " && nicks.size() != 0) 
-			 //  nicks.erase(nicks.begin());
-		   }
-		   
-		   if(nicks.size() == 0 && tempNames.size() >= 6) {     
+           
+           if(tempNames.size() == 6) {     
 		     std::string msg = "PRIVMSG " + from + " :PONG PONG PONG!\r\n";
 		     std::cout<<"msg: "<<msg<<"\n";
 		     SendMsg(msg);
 		   }
-		    
-		   else if(nicks.size() > 0) {
-			 std::string msg;
-			 for(auto&& i: nicks) {  
-			   const char* retValue = p->onCommand(i.c_str());
-		       std::cout<<"\nRetvalue: "<<retValue<<"\n"
-		                <<"Tempvar: "<<tempVar<<"\n";
-		       msg.assign(retValue);
-		       SendMsg(std::string("PRIVMSG " + from),msg);
-		       msg.clear();
+           else {
+             if((tempNames.substr(tempNames.find(":,ping")).size()) > 0) {
+               tempVar = tempNames.substr(std::string(":,ping").size());
+               if(tempVar.size() > 0)
+                 tempVar = tempVar.substr(1); 
+               std::cout<<"tempNames: "<<tempNames<<"\n"
+                        <<"tempNames size: "<<tempNames.size()<<"\n"
+                        <<"TempVars: "<<tempVar<<"\n"
+                        <<"empVars size: "<<tempVar.size()<<"\n";       
+               std::istringstream s(tempVar);
+               while(std::getline(s,input,' ')) {
+        	     std::cout<<input<<"|";
+			     nicks.push_back(input);
+		       }
+		       std::cout<<"nicks size: "<<nicks.size()<<"\n";
+		       //if(nicks.at(0) == " " && nicks.size() != 0) 
+			   //  nicks.erase(nicks.begin());
 		     }
-		   } 
+		    
+		     if(nicks.size() > 0) {
+			   std::string msg;
+			   for(auto&& i: nicks) {  
+			     const char* retValue = p->onCommand(i.c_str());
+		         std::cout<<"\nRetvalue: "<<retValue<<"\n"
+		                  <<"Tempvar: "<<tempVar<<"\n";
+		         msg.assign(retValue);
+		         SendMsg(std::string("PRIVMSG " + from),msg);
+		         msg.clear();
+		       }
+		     } 
+		   }
 		 }   
 	      else if(Priv_Comm == ",part") { // handling the part part
 	        bool found = false;
@@ -603,7 +607,10 @@ void Tsuki :: Bot :: Connect()
 		setState(Tsuki::ServerState::NOT_CONNECTED);
 		setRunning(false);
 		setConnected(false);
-		
+		while(!isConnected() && !isRunning()) {
+          std::this_thread::sleep_for(wait_time);
+          SetConn();
+        }
 	  }	
       handle_msg(serv_data);
       serv_data.clear();
@@ -611,9 +618,9 @@ void Tsuki :: Bot :: Connect()
     std::cout<<"Exiting Tsuki::Bot::Connect....\n";
   }
   catch(std::exception& e) { 
-	  std::cerr<<"Caught exception: \n"<<e.what();
-	  conn.DisConnect();
-	  std::exit(EXIT_FAILURE);
+	std::cerr<<"Caught exception: \n"<<e.what();
+	conn.DisConnect();
+	std::exit(EXIT_FAILURE);
   }   
 }
 
@@ -716,7 +723,6 @@ void Tsuki :: Bot :: SendPart(const std::string& channel,const std::string& mess
 void Tsuki :: Bot :: AddChannel(const std::string& channel,const std::string& command)
 {
   size_t j = chan_list.size();
-  //std::cout<<std::endl<<"Chan size in AddChannel: "<<j<<std::endl<<std::endl;
   bool has_chan = false,chan_is_not_command = false;
   std::string from = channel;
   if(j == 0 ) {
@@ -739,8 +745,6 @@ void Tsuki :: Bot :: AddChannel(const std::string& channel,const std::string& co
       { Tsuki::Channel a{from}; chan_list.push_back(a); }
     }
   }
-   //std::cout<<std::endl<<"Channels are: "<<std::endl;
-   //for(auto i: chan_list) std::cout<<i.RetData()<<std::endl;
 }
 
 void Tsuki :: Bot :: LoadPlugin(const std::string& path) {

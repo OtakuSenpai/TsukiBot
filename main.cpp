@@ -8,7 +8,7 @@ using namespace Tsuki;
 int main()
 {
   std::string server{"irc.freenode.net"},nick{"G33kb0i"},realname{"G33kb0i"},pass;
-  std::string user{"OtakuSenpai"},channel{"##llamas"},nick2{"G33k1"};
+  std::string user{"OtakuSenpai"},channel{"##chatterz"},nick2{"Falguni"};
   unsigned int port = 6667;
 
   Channel chan(channel);
