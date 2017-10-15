@@ -8,13 +8,15 @@
 #include <string>
 #include <cctype>
 #include <cstring>
+#include <chrono>
+#include <thread>
 
 using namespace Tryx;
 
 void Tsuki :: Bot :: setName(const std::string& name)
 {
-  BotName = name;
-  server_data.setNick(BotName);
+  bot_name = name;
+  server_data.setNick(bot_name);
 }
 
 bool Tsuki :: Bot :: has_alnum(const std::string& data)
@@ -397,15 +399,11 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 		   int pos = kernel.getFuncPos("PingPlg");
 		   std::vector<std::string> nicks;
 		   std::string tempVar,tempNames,input,temp1 = kernel.getPluginName(pos);
-		   std::cout<<"Pos: "<<pos<<"\n";
-		   std::cout<<"Temp: "<<temp1<<"\n";
-		   std::cout<<"Size of kernel list: "<<getSize()<<std::endl;
 		   PluginInterface *p = kernel.getFuncHandle(temp1);
 		   if(!p) {
 			 std::string error = "Error at TsukiIRC.cpp: Couldn't get function pointer from libpingplg.so!\n";
 			 throw std::runtime_error(error);
 		   }
-		   std::cout<<"Plugin loaded!\n";
 		   bool found = false;
            for(auto&& i: tokens) {
              if((i.find(":,ping") != 0) && (!found)) { continue; }
@@ -415,16 +413,24 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
            if(tempNames[0] == ' ') 
 		     tempNames= tempNames.substr(1);	   
            std::cout<<"tempNames: "<<tempNames<<"\n";
-           if(tempNames.size() != 0 && tempNames.size() >= 7) {
-             tempVar = tempNames.substr(std::string(":,ping").size() +1);
+           if((tempNames.substr(tempNames.find(":,ping")).size()+1) > 0) {
+             tempVar = tempNames.substr(std::string(":,ping").size());
+             tempVar = tempVar.substr(1); 
+             std::cout<<"tempNames: "<<tempNames<<"\n"
+                    <<"tempNames size: "<<tempNames.size()<<"\n"
+                    <<"TempVars: "<<tempVar<<"\n"
+                    <<"empVars size: "<<tempVar.size()<<"\n";       
              std::istringstream s(tempVar);
              while(std::getline(s,input,' ')) {
         	   std::cout<<input<<"|";
 			   nicks.push_back(input);
 		     }
+		     std::cout<<"nicks size: "<<nicks.size()<<"\n";
+		     //if(nicks.at(0) == " " && nicks.size() != 0) 
+			 //  nicks.erase(nicks.begin());
 		   }
 		   
-		   if(nicks.size() == 0 && tempNames.size() >= 7) {     
+		   if(nicks.size() == 0 && tempNames.size() >= 6) {     
 		     std::string msg = "PRIVMSG " + from + " :PONG PONG PONG!\r\n";
 		     std::cout<<"msg: "<<msg<<"\n";
 		     SendMsg(msg);
@@ -530,70 +536,91 @@ void Tsuki :: Bot :: segragrator(const std::string& message,const char* data)
   }
 }
 
-
-void Tsuki :: Bot :: Connect()
-{
-  std::string contents,command{"PING"};
-  std::string serv_data,chan = "#cplusplus.com";
-  running = false;
-  bool connected = false,joined = false;
-
-  //std::cout<<std::endl<<std::endl<<"In Zen::Bot::Connect...."<<std::endl;
+void Tsuki :: Bot :: SetConn() {
   conn.Connect();
 
-  if(!conn.isConnected()) {
+  while(!conn.isConnected()) {
     std::cerr<<"Unable to connect to server!!! Retrying..."<<std::endl;
+    std::this_thread::sleep_for(wait_time);
     conn.Connect();
-    GetState(Tsuki::ServerState::SETTING_NICK);
+    setConnected(true);
   }
-  GetState(Tsuki::ServerState::SETTING_NICK);
-  running = true;
+  setState(Tsuki::ServerState::SETTING_NICK);
 
   if(getState() == Tsuki::ServerState::SETTING_NICK) {
     SendNick();
     std::cout<<"Nick sent..."<<std::endl;
-    GetState(Tsuki::ServerState::SETTING_USER);
+    setState(Tsuki::ServerState::SETTING_USER);
   }
   if(getState() == Tsuki::ServerState::SETTING_USER) {
     std::cout<<"Sending user..."<<std::endl;
-    SendUser(server_data.getUserObj(),"Inuyasha",0);
+    SendUser(server_data.getUser(),server_data.getRealName(),0);
     std::cout<<"User sent..."<<std::endl;
-    GetState(Tsuki::ServerState::SETTING_PONG);
+    setState(Tsuki::ServerState::SETTING_PONG);
+    setRunning(true);
   }
+}
 
-  std::cout<<"Entering loop...\n";
-  while(conn.RecvData(serv_data) && isRunning()) {
-    if(begins_with(serv_data,"PING")) {
-      if(contents == "") contents = serv_data.substr(command.size());
-      SendPong(contents);
-      GetState(Tsuki::ServerState::WORKING); connected = true;
+void Tsuki :: Bot :: Connect()
+{
+  try {	
+    std::string contents,command{"PING"};
+    std::string serv_data;
+    running = false;
+
+    while(!isConnected() && !isRunning()) {
+      std::this_thread::sleep_for(wait_time);
+      SetConn();
     }
-    if(has_it(serv_data,"004")) {
-      std::cout<<std::endl<<"Connected!!!"<<std::endl<<std::endl;
-      connected = true;
+  
+    std::cout<<"Entering loop...\n";
+    while(conn.RecvData(serv_data) && isRunning()) { 
+      if(begins_with(serv_data,"PING")) {
+        if(contents == "") contents = serv_data.substr(command.size());
+        SendPong(contents);
+        setState(Tsuki::ServerState::WORKING); setConnected(true);
+      }
+      if(has_it(serv_data,"004")) {
+        std::cout<<std::endl<<"Connected!!!"<<std::endl<<std::endl;
+        setConnected(true);
+      }
+      if(has_it(serv_data,"433")) {
+        SendNick(second_name);
+      }
+      if(connected == true && joined == false) {
+        JoinChannel(server_data.getChannel()); joined = true;
+      }
+      if(getState() == Tsuki::ServerState::SETTING_PONG || begins_with(serv_data,"PING")) {
+        if(contents == "") contents = serv_data.substr(command.size());
+        SendPong(contents);
+        setState(Tsuki::ServerState::WORKING);
+      }
+      
+      //:nick!user@host QUIT :Ping timeout: 200 seconds
+      if(has_it(serv_data,":Ping timeout:") &&   
+        ((has_it(serv_data,bot_name.c_str())) || (has_it(serv_data,second_name.c_str()))) &&
+        has_it(serv_data,"QUIT")) {
+		setState(Tsuki::ServerState::NOT_CONNECTED);
+		setRunning(false);
+		setConnected(false);
+		
+	  }	
+      handle_msg(serv_data);
+      serv_data.clear();
     }
-    if(has_it(serv_data,"433")) {
-      std::string nick = "DsJki";
-      SendNick(nick);
-    }
-    if(connected == true && joined == false) {
-      JoinChannel(chan); joined = true;
-    }
-    if(getState() == Tsuki::ServerState::SETTING_PONG || begins_with(serv_data,"PING")) {
-      if(contents == "") contents = serv_data.substr(command.size());
-      SendPong(contents);
-      GetState(Tsuki::ServerState::WORKING);
-    }
-    handle_msg(serv_data);
-    serv_data.clear();
+    std::cout<<"Exiting Tsuki::Bot::Connect....\n";
   }
-  std::cout<<"Exiting Tsuki::Bot::Connect....\n";
+  catch(std::exception& e) { 
+	  std::cerr<<"Caught exception: \n"<<e.what();
+	  conn.DisConnect();
+	  std::exit(EXIT_FAILURE);
+  }   
 }
 
 void Tsuki :: Bot :: Disconnect()
 {
   conn.DisConnect();
-  GetState(Tsuki::ServerState::NOT_CONNECTED);
+  setState(Tsuki::ServerState::NOT_CONNECTED);
 }
 
 void Tsuki :: Bot :: JoinChannel(const Channel& chan)
@@ -629,7 +656,7 @@ void Tsuki :: Bot :: SendMsg(const std::string& command,const std::string& msg)
 void Tsuki :: Bot :: SendNick()
 {
   std::string s;
-  s = "NICK " + BotName + "\r\n";
+  s = "NICK " + bot_name + "\r\n";
   std::cout<<"Nick: "<<s<<std::endl;
   conn.SendData(s);
 }
@@ -643,7 +670,7 @@ void Tsuki :: Bot :: SendNick(const std::string& nick)
 
 void Tsuki :: Bot :: SendUser(const User& user,const std::string& realname,const int& mode)
 {
-  std::string s = "USER " + user.getData() + " " + std::to_string(mode) + " :" + realname + "\r\n";
+  std::string s = "USER " + user.getData() + " " + std::to_string(mode) + " * :" + realname + "\r\n";
   conn.SendData(s);
 }
 

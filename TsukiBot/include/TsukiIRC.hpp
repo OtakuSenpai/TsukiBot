@@ -4,10 +4,13 @@
 #include <vector>
 #include <string>
 #include <iterator>
+#include <chrono>
 
 #include "ircconnector.hpp"
 #include "kernel.hpp"
 
+
+using namespace std::chrono;
 using namespace Tsuki;
 using namespace Tryx;
 
@@ -16,15 +19,18 @@ namespace Tsuki
   class Bot {
   protected:
     bool running;
+    bool connected = false,joined = false;
+    std::chrono::seconds wait_time{5};
     IRCConnector conn;
     Join_Data server_data;
     std::vector<Channel> chan_list;
     std::vector<std::string> msglogs;
-    std::string BotName;
+    std::string bot_name,second_name;
     ServerState state;
     Kernel kernel;
     std::string plgPath;
 
+    //Utility functions
     bool begins_with(const std::string& message,const char* command);
     bool has_alnum(const std::string& data);
     bool has_only_spec(const std::string& data);
@@ -35,15 +41,33 @@ namespace Tsuki
     std::string get_text_after_command(const std::string& message,const char* command);
     bool has_in_chan(const std::string& name,const std::string& channel);
     void handle_msg(std::string& msg);
-    void GetState(const ServerState& s) { state = s; }
+    void segragrator(const std::string& message,const char* data);
+    
+    void setState(const ServerState& s) { state = s; }
+    void setRunning(const bool& run) { running = run; }    
+    void setName(const std::string& name);
+    bool isConnected() { return connected; }
+    void setConnected(const bool& connect) { connected = connect; }
+    
+    //Set the connection
+    void SetConn();
+
+    //Plugins part
+    //Load a plugin or plugins
+    void LoadPlugin(const std::string& path);
+    void LoadPlugins(const std::string& path);
+    
+    //Unload plugins 
+    void UnloadPlugins(){ kernel.unloadPlugins(); }
 
   public:
-    Bot(const std::string& server,unsigned int port=6667) : conn{server,port}, msglogs{}, BotName{} {}
     Bot(const std::string& server,const std::string& channel,
-	     const std::string& nick,const std::string& user,
-	     const std::string& password,
-	     const unsigned int& port) : conn{server,port}, server_data{server,channel,nick,user,password,port},
-			                     msglogs{},BotName{nick} 
+	    const std::string& nick,const std::string& nick2, 
+	    const std::string& user,const std::string& realname,
+	    const std::string& password,
+	    const unsigned int& port) : conn{server,port},
+	    server_data{server,channel,nick,user,realname,password,port},
+	    msglogs{}, bot_name{nick}, second_name{nick2}    
       { 
         setName(nick);
         std::string mooplg{"./plugins/libmooplg.so"}; 
@@ -52,12 +76,11 @@ namespace Tsuki
         LoadPlugin(mooplg); 
       }
     ~Bot() { UnloadPlugins(); }
-    void segragrator(const std::string& message,const char* data);
-    void setName(const std::string& name);
-    std::string getName() const{ return BotName; }
+    
+    std::string getName() const{ return bot_name; }
     ServerState getState() const{ return state; }
-    bool isRunning() const{ return running; }
-
+    bool isRunning() const{ return running; }    
+    
     //Connect to the server
     void Connect();
 
@@ -78,7 +101,8 @@ namespace Tsuki
     void SendNick(const std::string& nick);
 
     //Send USER message
-    void SendUser(const User& user,const std::string& realname,const int& mode);
+    void SendUser(const User& user,const std::string& realname,
+                  const int& mode);
     void SendUser(const User& user,const char* realname,const int& mode);
 
     //Me message
@@ -96,17 +120,9 @@ namespace Tsuki
 
     //Add a channel
     void AddChannel(const std::string& channel,const std::string& command);
-
-    //Plugins part
-    //Load a plugin or plugins
-    void LoadPlugin(const std::string& path);
-    void LoadPlugins(const std::string& path);
-    
+ 
     //Get list of plugin's size       
     int getSize() const{ return kernel.getSize(); }     
-    
-    //Unload plugins 
-    void UnloadPlugins(){ kernel.unloadPlugins(); }
   };
 } // namespcace Tsuki
 

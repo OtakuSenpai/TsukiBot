@@ -52,4 +52,6 @@ Oct 02,2017: 0.3.06 --> Ping Plugin finally works perfectly.Changed
                         another note in README.md
 Oct 02,2017: 0.3.07 --> Lil polishing the Readme.md file. Plus solved a small 
                         problem in ping plugin.
+Oct 15,2017: 0.3.08 --> Made the bot reconnect after a ping timeout(maybe),solving the issue of ping 
+                        timouts.Have to fix the ping plugin though.
 

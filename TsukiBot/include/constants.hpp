@@ -147,13 +147,14 @@ namespace Tsuki {
     Channel chan;
     Nick nick;
     User user;
+    std::string realname;
     std::string pass;
     unsigned int port;
 
     Join_Data() : server{}, chan{}, nick{}, user{}, pass{}, port{6667} {}
     Join_Data(const std::string& serv,const std::string& channel,const std::string& nickname,
-              const std::string& username,const std::string& password,
-	           const unsigned int& p) : chan{channel}, nick{nickname}, user{username} {
+              const std::string& username,const std::string& rname,const std::string& password,
+	           const unsigned int& p) : chan{channel}, nick{nickname}, user{username}, realname{rname} {
       server = serv;
       pass = password;  port =p;
     }
@@ -161,10 +162,12 @@ namespace Tsuki {
     void setUser(const std::string& obj) { user.setData(obj); }
     void setNick(const std::string& obj) { nick.setData(obj); }
     void setChan(const std::string& obj) { chan.setData(obj); }
-    std::string getNick() const{ return nick.getData(); }
-    std::string getChan() const{ return chan.getData(); }
-    std::string getUser() const{ return user.getData(); }
-    User getUserObj() const{ return user; }
+    Nick getNick() const{ return nick; }
+    Channel getChannel() const{ return chan; }
+    User getUser() const{ return user; }
+    std::string getRealName() const{ return realname; }
+    std::string getPassword() const{ return pass; }
+    unsigned int getPort() const{ return port; } 
   };
 } //namespace Tsuki
 
