@@ -12,19 +12,19 @@ GOALS:
                 properly to the network
 [+] 0.0.01 --> Get the /me,JOIN,PART message and coffee giving system working
 [+] 0.0.02 --> Make a plugin system for the bot
-[?] 0.0.03 --> Get a Poke,tea,weed,ping,help,moo functions working in plugins
+[?] 0.0.03 --> Get a Tea,weed,ping,help,moo functions working in plugins
 [-] 0.0.04 --> Get MODE,QUERY,QUIT and TOPIC function working,and make the 
                bot and accept PRIVMSGs.Write all plugins(except coffee) in
                plugin classes totally    
-[-] 0.0.05 --> Get a topic system and plugin loading system working.Also 
-                make a channel logging plugin.Plugins should hav the ability 
-                to load/unload on the fly.Plus plugins(which require this) 
-                should have a config file.
+[-] 0.0.05 --> Get a  plugin loading system working.Also make a channel 
+               logging plugin.Plugins should hav the ability to load/unload 
+               on the fly.Plus plugins(which require this) should have a 
+               config file.
 [-] 0.0.06 --> Get the nickserv register and login system working
 [-] 0.0.07 --> Move coffee function to a plugin. Also make a reminder,a 
                seen,a tictactoe game and a gomoku game plugin 
 [-] 0.0.08 --> Fix some bugs.Also make it autojoin when kicked from a  
-                channel.
+               channel.
 [-] 0.0.09 --> Make some cool plugins for it(number 1,2,3)
 [-] 0.0.10 --> Fix some bugs and add feature enhancements and all.
 [-] 0.0.11 --> Do some profiling and optimisations of the code base
