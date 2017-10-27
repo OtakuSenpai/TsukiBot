@@ -3,6 +3,10 @@ TsukiBot - A hand made C++ IRC bot!
 
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
 
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/uHkisy8rnKZw1df3usxYSPcy/OtakuSenpai/TsukiBot'>
+  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/uHkisy8rnKZw1df3usxYSPcy/OtakuSenpai/TsukiBot.svg' />
+</a>
+
 [TsukiBot](https://github.com/OtakuSenpai/TsukiBot) is my second attempt at making a C++ IRC bot. Currently this bot joins a channel on Freenode and accepts commands to join additional channels,ping others plus give coffee,and ofc moo!!!
 
 I plan to make a plugin system for this bot to do things like show weather,make jokes or serve tea,do some AI shit,remind people of things,google,show youtube links,give the appropriate description of links,sing songs at the appropriate moments,etc.
