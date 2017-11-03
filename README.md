@@ -89,7 +89,7 @@ Then you have to add another library,which is a plugin system I made during my s
 Create a new folder,name it "TryxPS",one inside the other folder,and inside that new folder("TryxPS"),type this(again,if you are on Windows use TortoiseGit):-
 
 ```
-git pull -v https://github.com/OtakuSenpai/TryxPS.git
+git clone https://github.com/OtakuSenpai/TryxPS.git
 
 ```
 Now,in the folder which contains TryxPS,run this two commands,
@@ -113,7 +113,7 @@ Your executable should be inside the bin directory of TsukiBot folder. Now enjoy
 Notes
 -----
 
-1) The main code of the bot is ready, I just have to implement the plugins now. Things like SSL and proxies will be done in v0.01.
+1) The main code of the bot is ready, I just have to implement the plugins now. Things like tor and proxies will be done in v0.01.
 2) Don't use the compile.sh script to compile,use cmake. That script is way outdated. Though the gdb-compile.sh script uses cmake to do the dirty job.
 3) This bot was only meant to be used on the Freenode network. Additional servers,if required,will be added in later versions.
 4) More will be added on notice. 😜

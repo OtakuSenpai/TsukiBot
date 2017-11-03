@@ -1,6 +1,8 @@
 CmakeFiles/
 plugins/
 bin/
+TryxPS/
+releases/
 
 libhttp_parser.a
 CMakeCache.txt 

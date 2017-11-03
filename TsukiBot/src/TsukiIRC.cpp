@@ -441,13 +441,15 @@ void Tsuki :: Bot :: handle_msg(std::string& message)
 		    
 		     if(nicks.size() > 0) {
 			   std::string msg;
-			   for(auto&& i: nicks) {  
-			     const char* retValue = p->onCommand(i.c_str());
-		         std::cout<<"\nRetvalue: "<<retValue<<"\n"
-		                  <<"Tempvar: "<<tempVar<<"\n";
-		         msg.assign(retValue);
-		         SendMsg(std::string("PRIVMSG " + from),msg);
-		         msg.clear();
+			   for(auto&& i: nicks) { 
+				 if(has_in_chan(i,from)) {   
+			       const char* retValue = p->onCommand(i.c_str());
+		           std::cout<<"\nRetvalue: "<<retValue<<"\n"
+		                    <<"Tempvar: "<<tempVar<<"\n";
+		           msg.assign(retValue);
+		           SendMsg(std::string("PRIVMSG " + from),msg);
+		           msg.clear();
+		         }  
 		       }
 		     } 
 		   }

@@ -55,4 +55,8 @@ Oct 02,2017: 0.3.07 --> Lil polishing the Readme.md file. Plus solved a small
 Oct 15,2017: 0.3.08 --> Made the bot reconnect after a ping timeout
                         (maybe),solving the issue of ping timouts.Have to 
                         fix the ping plugin though.
+Oct 15,2017: 0.3.09 --> Fixed the ping plugin. Added a .gitignore file.
+Nov 03,2017: 0.3.10 --> Removed the Irc_Data class. Added its features to 
+                        IRCMessage class.Updated TODO.
+
 
