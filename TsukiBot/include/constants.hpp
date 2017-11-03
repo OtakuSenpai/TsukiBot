@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 
 namespace Tsuki {
 
@@ -20,22 +21,41 @@ namespace Tsuki {
   static constexpr char Power = static_cast<char>(94);  //The character  "^"
   static constexpr char LeftCurlyBraces = static_cast<char>(123);  //The character  "{ "
   static constexpr char RightCurlyBraces = static_cast<char>(125);	 //The character  " } "
-  static const std::string RPL_LIST = "322";
-  static const std::string RPL_LISTEND = "323";
-  static const std::string RPL_ENDOFMOTD = "376";
-  static const std::string ERR_NOSUCHNICK = "401";
-  static const std::string ERR_NOSUCHSERVER = "402";
-  static const std::string ERR_NOSUCHCHANNEL = "403";
-  static const std::string ERR_CANNOTSENDTOCHAN = "404";
-  static const std::string ERR_TOOMANYCHANNELS = "405";
-  static const std::string ERR_WASNOSUCHNICK = "406";
-  static const std::string ERR_TOOMANYTARGETS = "407";
-  static const std::string ERR_NOORIGIN = "409";
-  static const std::string ERR_NORECIPIENT = "411";
-  static const std::string ERR_NOTEXTTOSEND = "412";
-  static const std::string ERR_NOTOPLEVEL = "413";
-
-  static const std::string Join = "JOIN";
+  
+  enum class PacketType{
+    RPL_LIST = 322,
+    RPL_LISTEND = 323;
+    RPL_ENDOFMOTD = 376,
+    ERR_NOSUCHNICK = 401,
+    ERR_NOSUCHSERVER = 402,
+    ERR_NOSUCHCHANNEL = 403,
+    ERR_CANNOTSENDTOCHAN = 404,
+    ERR_TOOMANYCHANNELS = 405,
+    ERR_WASNOSUCHNICK = 406,
+    ERR_TOOMANYTARGETS = 407,
+    ERR_NOORIGIN = 409,
+    ERR_NORECIPIENT = 411,
+    ERR_NOTEXTTOSEND = 412,
+    ERR_NOTOPLEVEL = 413,
+    PRIVMSG,
+	JOIN,
+	PART,
+	KICK,
+	INVITE,
+	LIST,
+	MODE,
+	NICK,
+    PING,
+	PONG,
+	QUIT,
+	WHO,
+    WHOIS,
+	WHOWAS,
+	NOTICE,
+	OTHER
+ };
+ 
+  const std::string Join = "JOIN"; 
 
   enum ServerState
   {
@@ -99,75 +119,61 @@ namespace Tsuki {
 
   class Prefix {
   private:
-    std::string _data,_hostname,_ident;
+    std::string _hostname;
     Nick _nick;
     User _user;
-    void Parse();
+    void Parse(const std::string& data);
   public:
-    Prefix() : _data{}, _hostname{}, _ident{}, _nick{}, _user{} {}
+    Prefix() : _hostname{}, _nick{}, _user{} {}
     Prefix(const std::string& data): _data(data) { Parse(); }
     ~Prefix() {}
     void operator= (const Prefix& obj);
     void setData(const std::string& data);
     void setNick(const std::string& nick);
-    std::string getData() const { return _data; }
+    std::string getData() const { 
+	  std::string temp = _nick.getData() + "!" + _user.getData() + "@" + _hostname;
+	  return temp; 
+	}
     std::string getNickData() const{ return _nick.getData(); }
     std::string getHostname() const{ return _hostname; }
-    std::string getIdent() const{ return _ident; }
     Nick getNick() const { return _nick; }
     User getUser() const{ return _user; }
-  };
-
-  /* This struct is used in sending data through the IRC.
-   * Used in IRCMessage class.
-   */
-  struct  Irc_Data {
-    Prefix prefix;  //  nick!username@host
-    std::string command;   // the commands
-    std::vector<std::string> parameters;  //   the parameters to the command
-
-    Irc_Data() : prefix{}, command{}, parameters{} {}
-    Irc_Data(const std::string& pref,const std::string& comm): prefix{pref}, command{comm} {}
-    Irc_Data(const std::string& pref,const char* comm): prefix{pref}, command{comm} {}
-    ~Irc_Data() {}
-    void operator=(const Irc_Data& obj);
-    void setPrefix(const std::string& pref) { prefix.setData(pref); }
-    void setCommand(const std::string& obj) { command = obj; }
-    std::string getPrefix() const{ return prefix.getData(); }
-    std::string getCommand() const{ return command; }
-    std::vector<std::string> getParameters() const{ return parameters; }
-    std::string getSParameters() const;
   };
 
   /* This struct is used in joining to a given channel.
    * Used in IRCConnector class.
    */
-  struct  Join_Data {
-    std::string server;
-    Channel chan;
-    Nick nick;
-    User user;
-    std::string realname;
-    std::string pass;
-    unsigned int port;
-
-    Join_Data() : server{}, chan{}, nick{}, user{}, pass{}, port{6667} {}
-    Join_Data(const std::string& serv,const std::string& channel,const std::string& nickname,
-              const std::string& username,const std::string& rname,const std::string& password,
-	           const unsigned int& p) : chan{channel}, nick{nickname}, user{username}, realname{rname} {
-      server = serv;
-      pass = password;  port =p;
-    }
-    ~Join_Data() {}
-    void setUser(const std::string& obj) { user.setData(obj); }
-    void setNick(const std::string& obj) { nick.setData(obj); }
-    void setChan(const std::string& obj) { chan.setData(obj); }
-    Nick getNick() const{ return nick; }
-    Channel getChannel() const{ return chan; }
-    User getUser() const{ return user; }
-    std::string getRealName() const{ return realname; }
-    std::string getPassword() const{ return pass; }
-    unsigned int getPort() const{ return port; } 
+  class Join_Data {
+    private:
+      std::string server;
+      Channel chan;
+      Nick nick;
+      User user;
+      std::string realname;
+      std::string pass;
+      unsigned int port;
+    
+    public:  
+      Join_Data() : server{}, chan{}, nick{}, user{}, 
+                    pass{}, port{6667} {}
+      Join_Data(const std::string& serv,const std::string& channel,
+                const std::string& nickname,const std::string& username,
+                const std::string& rname,const std::string& password,
+	            const unsigned int& p) : chan{channel}, 
+	            nick{nickname}, user{username}, realname{rname} {
+        server = serv;
+        pass = password;  port =p;
+      }
+      ~Join_Data() {}
+      void setUser(const std::string& obj) { user.setData(obj); }
+      void setNick(const std::string& obj) { nick.setData(obj); }
+      void setChan(const std::string& obj) { chan.setData(obj); }
+      Nick getNick() const{ return nick; }
+      Channel getChannel() const{ return chan; }
+      User getUser() const{ return user; }
+      std::string getRealName() const{ return realname; }
+      std::string getPassword() const{ return pass; }
+      unsigned int getPort() const{ return port; } 
   };
 } //namespace Tsuki
 

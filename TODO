@@ -9,23 +9,27 @@ GOALS:
 ------
 
 [+] 0.0.00 --> Get the PONG function working,make the program connect
-                properly to the network
+               properly to the network
 [+] 0.0.01 --> Get the /me,JOIN,PART message and coffee giving system working
 [+] 0.0.02 --> Make a plugin system for the bot
-[?] 0.0.03 --> Get a Tea,weed,ping,help,moo functions working in plugins
-[-] 0.0.04 --> Get MODE,QUERY,QUIT and TOPIC function working,and make the 
-               bot and accept PRIVMSGs.Write all plugins(except coffee) in
-               plugin classes totally    
-[-] 0.0.05 --> Get a  plugin loading system working.Also make a channel 
-               logging plugin.Plugins should hav the ability to load/unload 
-               on the fly.Plus plugins(which require this) should have a 
-               config file.
-[-] 0.0.06 --> Get the nickserv register and login system working
+[?] 0.0.03 --> Get a Tea,weed,ping,help,moo functions working in plugins.
+               Get MODE,QUERY,QUIT and TOPIC function working,and make the 
+               bot and accept PRIVMSGs.  
+[-] 0.0.04 --> Make plugin 2. Make plugin called on the fly and synchronous 
+               with no hard coded loading functions. Make the bot connect
+               through TLS.        
+[-] 0.0.05 --> Get the nickserv register and login system working.
+[-] 0.0.06 --> Get a  plugin loading system working.Also make a channel 
+               logging system(user's choice to log or not).Plugins should  
+               hav the ability to load/unload on the fly(enabled through  
+               bot functions).Plus plugins(which require this) should have 
+               a config file. 
 [-] 0.0.07 --> Move coffee function to a plugin. Also make a reminder,a 
-               seen,a tictactoe game and a gomoku game plugin 
+               seen,a tictactoe game and a gomoku game plugin and a 
+               talk plugin.
 [-] 0.0.08 --> Fix some bugs.Also make it autojoin when kicked from a  
                channel.
-[-] 0.0.09 --> Make some cool plugins for it(number 1,2,3)
+[-] 0.0.09 --> Make some cool plugins for it(number 1,3,4,5)
 [-] 0.0.10 --> Fix some bugs and add feature enhancements and all.
 [-] 0.0.11 --> Do some profiling and optimisations of the code base
 
@@ -33,21 +37,19 @@ GOALS:
 
 [-] 0.1.01 --> Add Aliasing feature to the bot(alias commands)
 [-] 0.1.02 --> Add Groups feature to the bot. Each group has a set of 
-                function which only the group´s members can perform. Also    
-                make some commands to operate on the groups
-[-] 0.1.03 --> Make it connect through SSL
-[-] 0.1.04 --> Make the bot connect through a proxy
-[-] 0.1.05 --> Make some more plugins(numbers 4,5,6)
-[-] 0.1.06 --> Make it join one bot per network(use threads to do it)
-[-] 0.1.07 --> Fix some bugs and add feature enhancements
-[-] 0.1.08 --> Optimisations!!!
+               function which only the group´s members can perform. Also    
+               make some commands to operate on the groups
+[-] 0.1.03 --> Make the bot connect through a proxy
+[-] 0.1.04 --> Make some more plugins(numbers 6,7,8)
+[-] 0.1.05 --> Make it join one bot per network(use threads to do it)
+[-] 0.1.06 --> Fix some bugs and add feature enhancements
+[-] 0.1.07 --> Optimisations!!!
 ---------------
-[-] 0.2.01 --> Make a calc,sudoku,hangman,admin(administrative use plugin).
-               Also do number 7 in the list.
+[-] 0.2.01 --> Make a calc,sudoku,hangman. Also do number 9 in the list.
 [-] 0.2.02 --> Make the bot execute linux command line functions in a secure
-                (no-root) env. Include it in a plugin.
-[-] 0.2.03 --> Make the bot talk in a intelligent way(Feature set 10)
-[-] 0.2.04 --> Do number 9 and 11.
+               (no-root) env. Include it in a plugin.
+[-] 0.2.03 --> Make the bot talk in a intelligent way(Feature set 12)
+[-] 0.2.04 --> Do number 11 and 10.
 [-] 0.2.05 --> Do number 14.
 [-] 0.2.06 --> Do number 12 and 13.
 [-] 0.2.07 --> Fix some bugs and do some enhancements.
@@ -70,23 +72,29 @@ cusses,etc).
 
 5)Make a youtube search plugin
 
-6)Make a plugin which takes the quote of a user and stores it in a hash_map.
+6)Make a urban dictionary search plugin
+
+7)Make a wikipedia search plugin
+
+8)Make a plugin which takes the quote of a user and stores it in a hash_map.
   When asked for a quote listing,it shows a random quote.
 
-7)Make an openweather connected weather listing of cities
+9)Make an openweather connected weather listing of cities
 
-8)Make it will look for any easy newbie and attack or mock him continuously until a triggered instance.It will also store the users and their ips in a table and check if any just-logged-in user is a newbie or not.
+10)Make it will look for any easy newbie and attack or mock him continuously 
+until a triggered instance.It will also store the users and their ips in a 
+table and check if any just-logged-in user is a newbie or not.
 
-9)KaraokeMon class: It will sing some few lines of old songs,when asked.
+11)KaraokeMon class: It will sing some few lines of old songs,when asked.
 
-10)Brainz class: This class has various functions to help the bot
+12)Brainz class: This class has various functions to help the bot
 assimilate the server conversations and talk in an intelligent manner.
 (Algorithms and NLP Knowleadge Required.)
 
-11)Make a plugin which lists arbritrary xkcd quotes
+13)Make a plugin which lists arbritrary xkcd quotes
 
-12)Make a plugin which lists the latest Linux kernel patches
+14)Make a plugin which lists the latest Linux kernel patches
 
-13)Make a plugin which shows the code of the bot
+15)Make a plugin which shows the code of the bot
 
-14)Games like chess,othello,checkers,backgammon,etc.
+16)Games like chess,othello,checkers,backgammon,etc.

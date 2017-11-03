@@ -5,7 +5,7 @@
 #include "constants.hpp"
 
 void Tsuki :: Nick :: operator= (const Nick& obj) {
-  _data = obj.getData();
+  _data = std::move(obj.getData());
   Parse();
 }
 void Tsuki :: Nick :: setData(const std::string& data) {
@@ -54,7 +54,7 @@ void  Tsuki :: Nick :: Parse() {
 }
 
 void Tsuki :: Channel :: operator= (const Channel& obj) {
-  _data = obj.getData();
+  _data = std::move(obj.getData());
   Parse();
 }
 
@@ -99,7 +99,7 @@ void Tsuki :: Channel  :: Parse() {
 }
 
 void Tsuki :: User :: operator= (const User& obj) {
-  _data = obj.getData();
+  _data = std::move(obj.getData());
   Parse();
 }
 
@@ -132,23 +132,20 @@ void Tsuki :: User :: Parse() {
 }
 
 void Tsuki :: Prefix :: operator= (const Prefix& obj) {
-  _data = obj.getData();
-  _hostname = obj.getHostname();
-  _nick = obj.getNick();
-  _user = obj.getUser();
-  _ident = obj.getIdent();
+  _hostname = std::move(obj.getHostname());
+  _nick.setNick(std::move(obj.getNick()));
+  _user.setUser(std::move(obj.getUser()));
 }
 
 void Tsuki :: Prefix :: setData(const std::string& data) {
-  _data = data;
-  Parse();
+  Parse(data);
 }
 
 void Tsuki :: Prefix :: setNick(const std::string& nick) {
   _nick.setData(nick);
 }
 
-void Tsuki :: Prefix :: Parse() {
+void Tsuki :: Prefix :: Parse(const std::string& _data) {
   try {
     int i = 0;
     std::string temp;
@@ -185,17 +182,4 @@ void Tsuki :: Prefix :: Parse() {
   catch(std::exception& e) {
     std::cout<<"Caught exception : \n"<<e.what();
   }
-}
-
-std::string Tsuki :: Irc_Data :: getSParameters() const{
-  std::string temp;
-  for(auto iter = std::begin(parameters); iter != std::end(parameters); iter++)
-  { temp = temp + " " + *iter; }
-  return temp;
-}
-
-void Tsuki :: Irc_Data :: operator=(const Irc_Data& obj) {
-  command = obj.command;
-  parameters = obj.parameters;
-  prefix = obj.prefix;
 }
