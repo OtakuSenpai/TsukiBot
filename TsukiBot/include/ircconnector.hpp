@@ -20,18 +20,11 @@ namespace Tsuki
 
   public:
     IRCConnector(const std::string& server,const unsigned int& port);
-    ~IRCConnector() {
-      delete buffer; buffer = nullptr;
-      if(!(tcpsock == 0)) {
-        SDLNet_TCP_Close(tcpsock);
-      }
-      SDLNet_Quit();
-      SDL_Quit();
-    }
+    ~IRCConnector();
 
-    TCPsocket RetTCPsocket() { return tcpsock; }
-    bool isConnected() { return connected; }
-    char* RetBuffer() { return buffer; }
+    inline TCPsocket RetTCPsocket() { return tcpsock; }
+    inline bool isConnected() { return connected; }
+    inline char* RetBuffer() { return buffer; }
 
     //Connect to a server by using the Join_Data variable
     void Connect();
