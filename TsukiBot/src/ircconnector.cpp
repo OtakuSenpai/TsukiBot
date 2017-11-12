@@ -31,6 +31,15 @@ Tsuki :: IRCConnector :: IRCConnector(const std::string& server,const unsigned i
   }
 }
 
+Tsuki :: IRCConnector :: ~IRCConnector() {
+  delete buffer; buffer = nullptr;
+  if(!(tcpsock == 0)) {
+    SDLNet_TCP_Close(tcpsock);
+  }
+  SDLNet_Quit();
+  SDL_Quit();
+}
+
 void  Tsuki :: IRCConnector :: Connect()
 {
   try {
@@ -54,9 +63,9 @@ void Tsuki :: IRCConnector :: SendData(const IRCMessage& data)
 {
   try {
     int len,ret;
-    std::string msg,temp = ":" + data.getMsgData().getPrefix() + " " + data.getMsgData().getCommand() + " " + data.getMsgData().getSParameters();
+    std::string msg,temp = data.getData();
     if(temp.size() >= 512) {
-	  msg = temp.substr(0,512);
+    msg = temp.substr(0,512);
     }
     else { msg = temp; }
     len = msg.size();
@@ -77,7 +86,7 @@ void Tsuki :: IRCConnector :: SendData(const char* data)
     int len,ret;
     std::string temp{data},msg;
     if(temp.size() >= 512) {
-	  msg = temp.substr(0,512);
+    msg = temp.substr(0,512);
     }
     else { msg = temp; }
     len = msg.size();
@@ -117,14 +126,14 @@ void Tsuki :: IRCConnector :: SendData(const std::string& data)
 
 /*void Zen :: IRCConnector :: RecvData()
 {
-	int ret;
-	ret = SDLNet_TCP_Recv(tcpsock,&buffer,buf_size);
-	if(ret <= 0)
-	{
-		std::string s = "ZenIRC Error: Error in Zen :: IRCConnector :: RecvData(). Error is " + std::string(SDLNet_GetError()) + " .";
-		throw std::runtime_error{s};
-		DisConnect();
-	}
+  int ret;
+  ret = SDLNet_TCP_Recv(tcpsock,&buffer,buf_size);
+  if(ret <= 0)
+  {
+    std::string s = "ZenIRC Error: Error in Zen :: IRCConnector :: RecvData(). Error is " + std::string(SDLNet_GetError()) + " .";
+    throw std::runtime_error{s};
+    DisConnect();
+  }
 }*/
 
 std::string Tsuki :: IRCConnector :: RecvData()

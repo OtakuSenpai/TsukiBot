@@ -1,67 +1,100 @@
 #include "ircmessage.hpp"
+#include <regex>
+#include <iostream>
 
-
-Tsuki :: IRCMessage :: IRCMessage(const IRCMessage& obj)
-{
+Tsuki :: IRCMessage :: IRCMessage(const IRCMessage& obj) {
   _sender = obj.getSender();
-  msg_data = obj.getMsgData();
+  _data = obj.getSndData();
+  _command = obj.getCommand();
+  _prefix = obj.getPrefix();
 }
 
-void Tsuki :: IRCMessage :: Parse(std::string& data)
-{
-  auto front = data.begin();
-  auto end = data.end();
-
-  if(*front == ':') {
-    auto prefix = std::find(++front,end,' ');
-    _sender.assign(front,prefix);
-    msg_data.prefix.setData(_sender);
-    front = safe_iterate(front,prefix);
-  }
-  else {
-    std::string a ="";
-    msg_data.prefix.setData(a);
-  }
-  auto command = std::find(front,end,' ');
-  msg_data.command.assign(front,command);
-  front = safe_iterate(front,command);
-
-	/*
-	if( (temp2.compare("PASS") || temp2.compare("pass")) || (temp2.compare("NICK") || temp2.compare("nick"))  ||
-	    (temp2.compare("USER") || temp2.compare("user")) || (temp2.compare("OPER") || temp2.compare("oper")) ||
-	    (temp2.compare("MODE") || temp2.compare("mode")) || (temp2.compare("QUIT") || temp2.compare("quit")) ||
-	    (temp2.compare("SQUIT") || temp2.compare("squit")) ||  (temp2.compare("JOIN") || temp2.compare("join")) ||
-	    (temp2.compare("PART") || temp2.compare("part")) || (temp2.compare("TOPIC") || temp2.compare("topic")) ||
-	    (temp2.compare("NAMES") || temp2.compare("names")) || (temp2.compare("LIST") || temp2.compare("list")) ||
-	    (temp2.compare("INVITE") || temp2.compare("invite")) || (temp2.compare("KICK") || temp2.compare("kick")) ||
-	    (temp2.compare("PRIVMSG") || temp2.compare("privmsg")) || (temp2.compare("MSG") || temp2.compare("msg")) ||
-	    (temp2.compare("NOTICE") || temp2.compare("notice")) || (temp2.compare("MOTD") || temp2.compare("motd")) )
-	    {
-		IsACommand = true;
-		msg_data.command = temp2;
-	    }
-
-	else
-	{
-		IsACommand = false;
-	}
-	*/
-  std::string temp;
-  while(front != end) {
-    auto params = std::find(front,end,' ');
-    if(params == std::end(data)) params = std::find(front,end,',');
-    temp.assign(front,params);
-    msg_data.parameters.push_back(temp); temp.clear();
-    front = safe_iterate(front,params);
-  }
+Tsuki :: IRCMessage :: IRCMessage(IRCMessage&& obj) {
+  _sender = std::move(obj._sender);
+  _data = std::move(obj._content);
+  _command = std::move(obj._command);
+  _prefix = obj._prefix;
 }
 
-
-
-Irc_Data Tsuki :: IRCMessage :: dataParse(std::string& data)
-{
-  Parse(data);
-  return msg_data;
+void Tsuki :: IRCMessage :: operator= (const IRCMessage& obj) {
+  _sender = std::move(obj._sender);
+  _data = std::move(obj._content);
+  _command = std::move(obj._command);
+  _prefix = obj._prefix;
 }
 
+/* Example IRC messages
+ * :Nawab!~OtakuSenp@unaffiliated/otakusenpai PRIVMSG #freenode :like this one
+ *
+ * :hobana.freenode.net 311 Scott` Nawab ~OtakuSenp unaffiliated/otakusenpai * :OtakuSenpai
+ */
+
+void Tsuki :: IRCMessage :: Parse(std::string& data) {
+  try {
+    auto front = std::begin(data);
+    auto end = std::end(data);
+    std::regex integer("[[:d:]]+");
+
+    if(*front == ':') {
+      // Get the prefix
+      auto prefix = std::find(++front,end,' ');
+      _prefix.setData(data.assign(front,prefix));
+      auto tempPos1 = std::distance(front,prefix);
+      data = data.substr(tempPos1);
+      front = safe_iterate(front,prefix);
+
+      // Get the command
+      auto command = std::find(front,end,' ');
+      std::string tempStr = data.assign(front,command);
+      if(regex_match(tempStr,integer)) // if its integer
+        setPacketInfo(std::stoi(tempStr));
+      else if(tempStr == "INVITE" || tempStr == "TOPIC" ||
+        tempStr == "JOIN" || tempStr == "KICK" || tempStr == "PART" ||
+        tempStr == "NOTICE" || tempStr == "LIST" ||
+        tempStr == "MODE"  || tempStr == "PING" || tempStr == "PONG" ||
+        tempStr == "QUIT" || tempStr == "WHO" || tempStr == "WHOIS" ||
+        tempStr == "WHOWAS" || tempStr == "PRIVMSG" ) {
+        if(tempStr == "INVITE") setPacketInfo(111);
+        else if(tempStr == "TOPIC") setPacketInfo(111);
+        else if(tempStr == "JOIN") setPacketInfo(111);
+        else if(tempStr == "KICK") setPacketInfo(111);
+        else if(tempStr == "PART") setPacketInfo(111);
+        else if(tempStr == "PRIVMSG") setPacketInfo(111);
+        else if(tempStr == "NOTICE") setPacketInfo(111);
+        else if(tempStr == "LIST") setPacketInfo(111);
+        else if(tempStr == "MODE") setPacketInfo(111);
+        else if(tempStr == "PING") setPacketInfo(111);
+        else if(tempStr == "PONG") setPacketInfo(111);
+        else if(tempStr == "QUIT") setPacketInfo(111);
+        else if(tempStr == "WHO") setPacketInfo(111);
+        else if(tempStr == "WHOIS") setPacketInfo(111);
+        else if(tempStr == "WHOWAS")  setPacketInfo(111);
+      }
+
+      auto tempPos2 = std::distance(front,command);
+      data = data.substr(tempPos2);
+      front = safe_iterate(front,command);
+
+      // Get the sender
+      auto sender = std::find(front,end,' ');
+      _sender = data.assign(front,sender);
+      tempPos2 = std::distance(front,sender);
+      data = data.substr(tempPos2);
+      front = safe_iterate(front,sender);
+
+      // Get the real data
+      auto d = std::find(front,end,':');
+      _content = data.assign(++d,end);
+      data.clear();
+    }
+    else {
+      std::string temp("ircmessage.cpp : In Tsuki::IRCMessage::\
+                    Parse(std::string&) : Error while parsing data.\n");
+      throw  std::runtime_error(temp);
+    }
+  }
+  catch(const std::exception& e) {
+    std::cout<<"Caught exception : \n"<<e.what();
+  }
+}
 

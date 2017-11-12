@@ -42,13 +42,13 @@ namespace Tsuki
     bool has_in_chan(const std::string& name,const std::string& channel);
     void handle_msg(std::string& msg);
     void segragrator(const std::string& message,const char* data);
-    
-    void setState(const ServerState& s) { state = s; }
-    void setRunning(const bool& run) { running = run; }    
+
+    inline void setState(const ServerState& s) { state = s; }
+    inline void setRunning(const bool& run) { running = run; }
     void setName(const std::string& name);
-    bool isConnected() { return connected; }
-    void setConnected(const bool& connect) { connected = connect; }
-    
+    inline bool isConnected() { return connected; }
+    inline void setConnected(const bool& connect) { connected = connect; }
+
     //Set the connection
     void SetConn();
 
@@ -56,31 +56,31 @@ namespace Tsuki
     //Load a plugin or plugins
     void LoadPlugin(const std::string& path);
     void LoadPlugins(const std::string& path);
-    
-    //Unload plugins 
+
+    //Unload plugins
     void UnloadPlugins(){ kernel.unloadPlugins(); }
 
   public:
     Bot(const std::string& server,const std::string& channel,
-	    const std::string& nick,const std::string& nick2, 
-	    const std::string& user,const std::string& realname,
-	    const std::string& password,
-	    const unsigned int& port) : conn{server,port},
-	    server_data{server,channel,nick,user,realname,password,port},
-	    msglogs{}, bot_name{nick}, second_name{nick2}    
-      { 
+      const std::string& nick,const std::string& nick2,
+      const std::string& user,const std::string& realname,
+      const std::string& password,
+      const unsigned int& port) : conn{server,port},
+      server_data{server,channel,nick,user,realname,password,port},
+      msglogs{}, bot_name{nick}, second_name{nick2}
+      {
         setName(nick);
-        std::string mooplg{"./plugins/libmooplg.so"}; 
+        std::string mooplg{"./plugins/libmooplg.so"};
         std::string pingplg{"./plugins/libpingplg.so"};
-        LoadPlugin(pingplg);          
-        LoadPlugin(mooplg); 
+        LoadPlugin(pingplg);
+        LoadPlugin(mooplg);
       }
     ~Bot() { UnloadPlugins(); }
-    
-    std::string getName() const{ return bot_name; }
-    ServerState getState() const{ return state; }
-    bool isRunning() const{ return running; }    
-    
+
+    inline std::string getName() const{ return bot_name; }
+    inline ServerState getState() const{ return state; }
+    inline bool isRunning() const{ return running; }
+
     //Connect to the server
     void Connect();
 
@@ -95,7 +95,7 @@ namespace Tsuki
     void SendMsg(const std::string& msg);
     void SendMsg(const char* command,const std::string& message);
     void SendMsg(const std::string& command,const std::string& msg);
-    
+
     //Send NICK message
     void SendNick();
     void SendNick(const std::string& nick);
@@ -107,10 +107,10 @@ namespace Tsuki
 
     //Me message
     void SendMe(const std::string& message,const std::string& target);
-    
+
     //PrivMsg message
-    void SendPrivMsg(const std::string& target,const std::string& message);    
-    
+    void SendPrivMsg(const std::string& target,const std::string& message);
+
     //Send PONG message
     void SendPong(const std::string& contents);
 
@@ -120,9 +120,9 @@ namespace Tsuki
 
     //Add a channel
     void AddChannel(const std::string& channel,const std::string& command);
- 
-    //Get list of plugin's size       
-    int getSize() const{ return kernel.getSize(); }     
+
+    //Get list of plugin's size
+    inline int getSize() const{ return kernel.getSize(); }
   };
 } // namespcace Tsuki
 

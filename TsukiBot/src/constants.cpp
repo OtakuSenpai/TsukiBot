@@ -5,7 +5,7 @@
 #include "constants.hpp"
 
 void Tsuki :: Nick :: operator= (const Nick& obj) {
-  _data = std::move(obj.getData());
+  _data = std::move(obj._data);
   Parse();
 }
 void Tsuki :: Nick :: setData(const std::string& data) {
@@ -54,7 +54,7 @@ void  Tsuki :: Nick :: Parse() {
 }
 
 void Tsuki :: Channel :: operator= (const Channel& obj) {
-  _data = std::move(obj.getData());
+  _data = std::move(obj._data);
   Parse();
 }
 
@@ -67,7 +67,7 @@ void Tsuki :: Channel :: setUsers(const std::string& list) {
   try {
     size_t pos = 0;
     std::string token,delimiter{" "},tempValue;
-    tempValue = list;    
+    tempValue = list;
     while((pos = tempValue.find(delimiter)) != std::string::npos) {
       token = tempValue.substr(0,pos);
       chan_users.push_back(Nick{token});
@@ -99,7 +99,7 @@ void Tsuki :: Channel  :: Parse() {
 }
 
 void Tsuki :: User :: operator= (const User& obj) {
-  _data = std::move(obj.getData());
+  _data = std::move(obj._data);
   Parse();
 }
 
@@ -132,9 +132,9 @@ void Tsuki :: User :: Parse() {
 }
 
 void Tsuki :: Prefix :: operator= (const Prefix& obj) {
-  _hostname = std::move(obj.getHostname());
-  _nick.setNick(std::move(obj.getNick()));
-  _user.setUser(std::move(obj.getUser()));
+  _hostname = std::move(_hostname);
+  _nick = obj._nick;
+  _user = obj._user;
 }
 
 void Tsuki :: Prefix :: setData(const std::string& data) {

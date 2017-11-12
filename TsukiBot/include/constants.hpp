@@ -12,19 +12,19 @@ namespace Tsuki {
   static constexpr char Space = static_cast<char>(' ');
   static constexpr char Null = static_cast<char>(0);  //Not to be confused with C define NULL
   static constexpr char Lf = static_cast<char>(10);  //Newline
-  static constexpr char Cr = static_cast<char>(13);	 // Carriage Return
+  static constexpr char Cr = static_cast<char>(13);  // Carriage Return
   static constexpr char LeftSlash = static_cast<char>(92);  //The character " \ "
   static constexpr char Dash  = static_cast<char>(45);    //The character " - "
   static constexpr char LeftSquareBrackets = static_cast<char>(91);  //The character  " [ "
   static constexpr char RightSquareBrackets = static_cast<char>(93);  //The character " ] "
-  static constexpr char SingleQuote = static_cast<char>(96);	 //The character  " ' "
+  static constexpr char SingleQuote = static_cast<char>(96);     //The character  " ' "
   static constexpr char Power = static_cast<char>(94);  //The character  "^"
   static constexpr char LeftCurlyBraces = static_cast<char>(123);  //The character  "{ "
-  static constexpr char RightCurlyBraces = static_cast<char>(125);	 //The character  " } "
-  
-  enum class PacketType{
+  static constexpr char RightCurlyBraces = static_cast<char>(125);   //The character  " } "
+
+  enum PacketType{
     RPL_LIST = 322,
-    RPL_LISTEND = 323;
+    RPL_LISTEND = 323,
     RPL_ENDOFMOTD = 376,
     ERR_NOSUCHNICK = 401,
     ERR_NOSUCHSERVER = 402,
@@ -37,25 +37,25 @@ namespace Tsuki {
     ERR_NORECIPIENT = 411,
     ERR_NOTEXTTOSEND = 412,
     ERR_NOTOPLEVEL = 413,
-    PRIVMSG,
-	JOIN,
-	PART,
-	KICK,
-	INVITE,
-	LIST,
-	MODE,
-	NICK,
+    PRIVMSG = 111,
+    JOIN,
+    PART,
+    KICK,
+    INVITE,
+    LIST,
+    MODE,
+    NICK,
     PING,
-	PONG,
-	QUIT,
-	WHO,
+    PONG,
+    QUIT,
+    WHO,
     WHOIS,
-	WHOWAS,
-	NOTICE,
-	OTHER
+    WHOWAS,
+    NOTICE,
+    OTHER
  };
- 
-  const std::string Join = "JOIN"; 
+
+  //const std::string Join = "JOIN";
 
   enum ServerState
   {
@@ -80,7 +80,7 @@ namespace Tsuki {
     ~User() {}
     void operator= (const User& obj);
     void setData(const std::string& data);
-    std::string getData() const{ return _data; }
+    inline std::string getData() const{ return _data; }
   };
 
   /* Nick class stores the nickname of a connection to the network.
@@ -97,7 +97,7 @@ namespace Tsuki {
     ~Nick() {}
     void operator= (const Nick& obj);
     void setData(const std::string& data);
-    std::string getData() const { return _data; }
+    inline std::string getData() const { return _data; }
   };
 
   class Channel {
@@ -113,8 +113,8 @@ namespace Tsuki {
     void operator= (const Channel& obj);
     void setData(const std::string& data);
     void setUsers(const std::string& user_list);
-    std::string getData() const{ return _data; }
-    std::vector<Nick> getUserList() const{ return chan_users; }
+    inline std::string getData() const{ return _data; }
+    inline std::vector<Nick> getUserList() const{ return chan_users; }
   };
 
   class Prefix {
@@ -125,19 +125,23 @@ namespace Tsuki {
     void Parse(const std::string& data);
   public:
     Prefix() : _hostname{}, _nick{}, _user{} {}
-    Prefix(const std::string& data): _data(data) { Parse(); }
+    Prefix(const std::string& data)
+    {
+      Parse(data);
+    }
     ~Prefix() {}
     void operator= (const Prefix& obj);
     void setData(const std::string& data);
     void setNick(const std::string& nick);
-    std::string getData() const { 
-	  std::string temp = _nick.getData() + "!" + _user.getData() + "@" + _hostname;
-	  return temp; 
-	}
-    std::string getNickData() const{ return _nick.getData(); }
-    std::string getHostname() const{ return _hostname; }
-    Nick getNick() const { return _nick; }
-    User getUser() const{ return _user; }
+
+    inline std::string getData() const {
+      std::string temp = _nick.getData() + "!" + _user.getData() + "@" + _hostname;
+      return temp;
+    }
+    inline std::string getNickData() const{ return _nick.getData(); }
+    inline std::string getHostname() const{ return _hostname; }
+    inline Nick getNick() const { return _nick; }
+    inline User getUser() const{ return _user; }
   };
 
   /* This struct is used in joining to a given channel.
@@ -151,30 +155,32 @@ namespace Tsuki {
       User user;
       std::string realname;
       std::string pass;
-      unsigned int port;
-    
-    public:  
-      Join_Data() : server{}, chan{}, nick{}, user{}, 
+      unsigned short port;
+
+    public:
+      Join_Data() : server{}, chan{}, nick{}, user{},
                     pass{}, port{6667} {}
       Join_Data(const std::string& serv,const std::string& channel,
                 const std::string& nickname,const std::string& username,
                 const std::string& rname,const std::string& password,
-	            const unsigned int& p) : chan{channel}, 
-	            nick{nickname}, user{username}, realname{rname} {
+                const unsigned int& p) : chan{channel},
+                nick{nickname}, user{username}, realname{rname} {
         server = serv;
         pass = password;  port =p;
       }
       ~Join_Data() {}
-      void setUser(const std::string& obj) { user.setData(obj); }
-      void setNick(const std::string& obj) { nick.setData(obj); }
-      void setChan(const std::string& obj) { chan.setData(obj); }
-      Nick getNick() const{ return nick; }
-      Channel getChannel() const{ return chan; }
-      User getUser() const{ return user; }
-      std::string getRealName() const{ return realname; }
-      std::string getPassword() const{ return pass; }
-      unsigned int getPort() const{ return port; } 
+
+      inline void setUser(const std::string& obj) { user.setData(obj); }
+      inline void setNick(const std::string& obj) { nick.setData(obj); }
+      inline void setChan(const std::string& obj) { chan.setData(obj); }
+      inline Nick getNick() const{ return nick; }
+      inline Channel getChannel() const{ return chan; }
+      inline User getUser() const{ return user; }
+      inline std::string getRealName() const{ return realname; }
+      inline std::string getPassword() const{ return pass; }
+      inline unsigned int getPort() const{ return port; }
   };
+
 } //namespace Tsuki
 
 #endif
