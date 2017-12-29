@@ -60,4 +60,6 @@ Nov 03,2017: 0.3.10 --> Removed the Irc_Data class. Added its features to
                         IRCMessage class.Updated TODO.
 Nov 12,2017: 0.3.11 --> Made some changes in the codebase.Finetuned the
                         IRCMessage class.
+Dec 16,2017: 0.3.12 --> Made the IRCMessage class working. Integrated it
+                        with TsukiBot.
 
