@@ -18,7 +18,8 @@ GOALS:
 [-] 0.0.04 --> Make plugin 2. Make plugin called on the fly and synchronous
                with no hard coded loading functions. Make the bot connect
                through TLS.
-[-] 0.0.05 --> Get the nickserv register and login system working.
+[-] 0.0.05 --> Get the nickserv register and login system working.Make
+               the bot connect to different servers synchronously.
 [-] 0.0.06 --> Get a  bot settings class working.Also make a channel
                logging system(user's choice to log or not).Plugins should
                hav the ability to load/unload on the fly(enabled through

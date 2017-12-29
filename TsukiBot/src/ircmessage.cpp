@@ -1,95 +1,97 @@
 #include "ircmessage.hpp"
 #include <regex>
+#include <vector>
 #include <iostream>
+
+std::string Tsuki :: IRCMessage :: getData() const {
+  std::string temp = _prefix.getData() + " " + _command + " " +
+                     _sender + " " + _content;
+  return temp;
+}
 
 Tsuki :: IRCMessage :: IRCMessage(const IRCMessage& obj) {
   _sender = obj.getSender();
-  _data = obj.getSndData();
+  _content = obj.getContent();
   _command = obj.getCommand();
   _prefix = obj.getPrefix();
 }
 
 Tsuki :: IRCMessage :: IRCMessage(IRCMessage&& obj) {
   _sender = std::move(obj._sender);
-  _data = std::move(obj._content);
+  _content = std::move(obj._content);
   _command = std::move(obj._command);
   _prefix = obj._prefix;
 }
 
-void Tsuki :: IRCMessage :: operator= (const IRCMessage& obj) {
-  _sender = std::move(obj._sender);
-  _data = std::move(obj._content);
-  _command = std::move(obj._command);
+IRCMessage& Tsuki :: IRCMessage :: operator= (const IRCMessage& obj) {
+  _sender = obj._sender;
+  _content = obj._content;
+  _command = obj._command;
   _prefix = obj._prefix;
+  return *this;
 }
 
 /* Example IRC messages
  * :Nawab!~OtakuSenp@unaffiliated/otakusenpai PRIVMSG #freenode :like this one
- *
+ * :OtakuSenpai!~OtakuSenp@unaffiliated/otakusenpai PRIVMSG ##llamas :,moo
  * :hobana.freenode.net 311 Scott` Nawab ~OtakuSenp unaffiliated/otakusenpai * :OtakuSenpai
+ * :slow-iguana!~d@gateway/vpn/privateinternetaccess/d PRIVMSG ##llamas :good to see
  */
 
-void Tsuki :: IRCMessage :: Parse(std::string& data) {
+void Tsuki :: IRCMessage :: Parse(const std::string& data) {
   try {
-    auto front = std::begin(data);
-    auto end = std::end(data);
-    std::regex integer("[[:d:]]+");
+    std::string tempStr = data;
+    auto front = std::begin(tempStr);
+    auto end = std::end(tempStr);
+    std::regex integer("[0-9]+"); // for numbers larger than 0..9
+    std::regex alphabets("[A-Za-z]+"); //A~Z & a~z
 
-    if(*front == ':') {
+    if(tempStr.find_first_of(':',0) != std::string::npos) {
       // Get the prefix
-      auto prefix = std::find(++front,end,' ');
-      _prefix.setData(data.assign(front,prefix));
+      front += tempStr.find_first_of(':',0);
+      auto prefix = std::find(front,end,' ');
       auto tempPos1 = std::distance(front,prefix);
-      data = data.substr(tempPos1);
-      front = safe_iterate(front,prefix);
+      _prefix.setData(data.substr(0,tempPos1+1));
+      tempStr = tempStr.substr(tempPos1+1);
+      front = std::begin(tempStr);
+      end = std::end(tempStr);
 
       // Get the command
       auto command = std::find(front,end,' ');
-      std::string tempStr = data.assign(front,command);
-      if(regex_match(tempStr,integer)) // if its integer
-        setPacketInfo(std::stoi(tempStr));
-      else if(tempStr == "INVITE" || tempStr == "TOPIC" ||
-        tempStr == "JOIN" || tempStr == "KICK" || tempStr == "PART" ||
-        tempStr == "NOTICE" || tempStr == "LIST" ||
-        tempStr == "MODE"  || tempStr == "PING" || tempStr == "PONG" ||
-        tempStr == "QUIT" || tempStr == "WHO" || tempStr == "WHOIS" ||
-        tempStr == "WHOWAS" || tempStr == "PRIVMSG" ) {
-        if(tempStr == "INVITE") setPacketInfo(111);
-        else if(tempStr == "TOPIC") setPacketInfo(111);
-        else if(tempStr == "JOIN") setPacketInfo(111);
-        else if(tempStr == "KICK") setPacketInfo(111);
-        else if(tempStr == "PART") setPacketInfo(111);
-        else if(tempStr == "PRIVMSG") setPacketInfo(111);
-        else if(tempStr == "NOTICE") setPacketInfo(111);
-        else if(tempStr == "LIST") setPacketInfo(111);
-        else if(tempStr == "MODE") setPacketInfo(111);
-        else if(tempStr == "PING") setPacketInfo(111);
-        else if(tempStr == "PONG") setPacketInfo(111);
-        else if(tempStr == "QUIT") setPacketInfo(111);
-        else if(tempStr == "WHO") setPacketInfo(111);
-        else if(tempStr == "WHOIS") setPacketInfo(111);
-        else if(tempStr == "WHOWAS")  setPacketInfo(111);
+      auto tempPos2 = std::distance(front,command);
+      std::string str2Cmp = tempStr.substr(0,tempPos2);
+      if(regex_match(str2Cmp,alphabets)) {
+        _command = str2Cmp;
+        setPacketInfo(999);
+        std::cout<<"Alpha: "<<_command<<std::endl;
+      }
+      else if(regex_match(str2Cmp,integer)) { // if its integer
+        setPacketInfo(std::stoi(str2Cmp));
+        std::cout<<"Numeric: "<<static_cast<int>(getPacketInfo())<<std::endl;
       }
 
-      auto tempPos2 = std::distance(front,command);
-      data = data.substr(tempPos2);
-      front = safe_iterate(front,command);
+      tempStr = tempStr.substr(tempPos2+1);
+      front = std::begin(tempStr);
+      end = std::end(tempStr);
 
       // Get the sender
       auto sender = std::find(front,end,' ');
-      _sender = data.assign(front,sender);
       tempPos2 = std::distance(front,sender);
-      data = data.substr(tempPos2);
+      _sender = tempStr.substr(0,tempPos2);
+      tempStr = tempStr.substr(tempPos2);
       front = safe_iterate(front,sender);
+
+      front = std::begin(tempStr);
+      end = std::end(tempStr);
 
       // Get the real data
       auto d = std::find(front,end,':');
-      _content = data.assign(++d,end);
-      data.clear();
+      tempPos2 = std::distance(front,d);
+      _content = tempStr.substr(tempPos2);
     }
     else {
       std::string temp("ircmessage.cpp : In Tsuki::IRCMessage::\
-                    Parse(std::string&) : Error while parsing data.\n");
+                    Parse(const std::string&) : Error while parsing data.\n");
       throw  std::runtime_error(temp);
     }
   }

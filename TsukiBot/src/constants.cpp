@@ -174,10 +174,16 @@ void Tsuki :: Prefix :: Parse(const std::string& _data) {
         _hostname = temp.substr(i+1);
       }
     }
-    if(foundasterisk == false)
-      throw std::runtime_error("constants.cpp : In Tsuki::Prefix::Parse() : Problem parsing prefix,didnt find the nick.\n");
-    if(foundexclam == false)
-      throw std::runtime_error("constants.cpp : In Tsuki::Prefix::Parse() : Problem parsing prefix,didnt find the hostname and username.\n");
+    if(foundasterisk == false && foundexclam == false) {
+      _hostname = _data;
+      _is_server = true;
+    }
+    else {
+      if(foundasterisk == false)
+        throw std::runtime_error("constants.cpp : In Tsuki::Prefix::Parse() : Problem parsing prefix,didnt find the nick.\n");
+      else if(foundexclam == false)
+        throw std::runtime_error("constants.cpp : In Tsuki::Prefix::Parse() : Problem parsing prefix,didnt find the hostname and username.\n");
+    }
   }
   catch(std::exception& e) {
     std::cout<<"Caught exception : \n"<<e.what();

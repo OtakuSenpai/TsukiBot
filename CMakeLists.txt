@@ -1,9 +1,9 @@
-cmake_minimum_required (VERSION 3.7)
+cmake_minimum_required (VERSION 3.0)
 
 project (TsukiBot)
 
-set(TsukiBot_VERSION_MAJOR 0.00.1)
-set(TsukiBot_VERSION_MINOR 13)
+set(TsukiBot_VERSION_MAJOR 0.3)
+set(TsukiBot_VERSION_MINOR 12)
 
 set(CMAKE_CXX_EXTENSIONS 14)
 
@@ -36,7 +36,7 @@ find_file(SDL2NET_INCLUDE_DIR NAME SDL_net.h HINTS SDL2_net)
 find_library(SDL2NET_LIBRARY NAME SDL2_net HINTS SDL2_net)
 
 add_library(mooplg SHARED ${MOOPLG})
-add_library(pingplg SHARED ${PINGPLG}) 
+add_library(pingplg SHARED ${PINGPLG})
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -O2")
 
