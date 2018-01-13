@@ -3,11 +3,71 @@
 #include <vector>
 #include <iostream>
 
+void Tsuki :: IRCMessage :: clear() {
+  _command.clear();
+  _sender.clear();
+  _content.clear();
+  _prefix.clear();
+}
+
+void Tsuki :: IRCMessage :: setPrefix(const std::string& prefix) {
+  _prefix.setData(prefix);
+}
+
+void Tsuki :: IRCMessage :: setCommand(const std::string& command) {
+  _command = command;
+}
+
+void Tsuki :: IRCMessage :: setSender(const std::string& sender) {
+  _sender = sender;
+}
+
+void Tsuki :: IRCMessage :: setContent(const std::string& dataReceived) {
+  _content = dataReceived;
+}
+
+void Tsuki :: IRCMessage :: setPacketInfo(const PacketType& packet) {
+  _pckType = packet;
+}
+
+void Tsuki :: IRCMessage :: setPacketInfo(const unsigned short& packet) {
+  _pckType = static_cast<PacketType>(packet);
+}
+
 std::string Tsuki :: IRCMessage :: getData() const {
   std::string temp = _prefix.getData() + " " + _command + " " +
                      _sender + " " + _content;
   return temp;
 }
+
+std::string Tsuki ::IRCMessage :: getPrefix() const { 
+  return _prefix.getData(); 
+}
+
+std::string Tsuki ::IRCMessage :: getCommand() const { 
+  return _command; 
+}
+
+std::string Tsuki :: IRCMessage :: getSender() const { 
+  return _sender; 
+}
+
+std::string Tsuki :: IRCMessage :: getContent() const { 
+  return _content; 
+}
+
+PacketType Tsuki :: IRCMessage :: getPacketInfo() const { 
+  return _pckType; 
+}
+
+bool Tsuki :: IRCMessage :: isServer() const {
+  bool found = false;
+  if(_sender.at(0) == '#') {
+	found = true;
+  }
+  else { found = false; }
+  return found;
+}  
 
 Tsuki :: IRCMessage :: IRCMessage(const IRCMessage& obj) {
   _sender = obj.getSender();
@@ -63,11 +123,9 @@ void Tsuki :: IRCMessage :: Parse(const std::string& data) {
       if(regex_match(str2Cmp,alphabets)) {
         _command = str2Cmp;
         setPacketInfo(999);
-        std::cout<<"Alpha: "<<_command<<std::endl;
       }
       else if(regex_match(str2Cmp,integer)) { // if its integer
         setPacketInfo(std::stoi(str2Cmp));
-        std::cout<<"Numeric: "<<static_cast<int>(getPacketInfo())<<std::endl;
       }
 
       tempStr = tempStr.substr(tempPos2+1);
@@ -79,7 +137,6 @@ void Tsuki :: IRCMessage :: Parse(const std::string& data) {
       tempPos2 = std::distance(front,sender);
       _sender = tempStr.substr(0,tempPos2);
       tempStr = tempStr.substr(tempPos2);
-      front = safe_iterate(front,sender);
 
       front = std::begin(tempStr);
       end = std::end(tempStr);

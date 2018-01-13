@@ -12,9 +12,9 @@ GOALS:
                properly to the network
 [+] 0.0.01 --> Get the /me,JOIN,PART message and coffee giving system working
 [+] 0.0.02 --> Make a plugin system for the bot
-[?] 0.0.03 --> Get a Tea,weed,ping,help,moo functions working in plugins.
-               Get MODE,QUERY,QUIT and TOPIC function working,and make the
-               bot and accept PRIVMSGs. Make IRCMessage class working.
+[?] 0.0.03 --> Get a Tea/coffee,source,ping,help,moo,reminder functions working 
+               in plugins.Get MODE,QUERY,QUIT and TOPIC function working,and
+               make the bot and accept PRIVMSGs. Make IRCMessage class working.
 [-] 0.0.04 --> Make plugin 2. Make plugin called on the fly and synchronous
                with no hard coded loading functions. Make the bot connect
                through TLS.

@@ -63,11 +63,11 @@ void Tsuki :: IRCConnector :: SendData(const IRCMessage& data)
 {
   try {
     int len,ret;
-    std::string msg,temp = data.getData();
-    if(temp.size() >= 512) {
-    msg = temp.substr(0,512);
+    std::string msg;
+    if(data.getData().size() >= 512) {	
+      msg = data.getData().substr(0,512);
     }
-    else { msg = temp; }
+    else { msg = data.getData(); }
     len = msg.size();
     ret = SDLNet_TCP_Send(tcpsock,msg.c_str(),len);
     if(ret<len) {
@@ -86,7 +86,7 @@ void Tsuki :: IRCConnector :: SendData(const char* data)
     int len,ret;
     std::string temp{data},msg;
     if(temp.size() >= 512) {
-    msg = temp.substr(0,512);
+      msg = temp.substr(0,512);
     }
     else { msg = temp; }
     len = msg.size();
@@ -141,7 +141,7 @@ std::string Tsuki :: IRCConnector :: RecvData()
   std::string message,s;
   try {
     int ret;
-    std::fill(buffer,buffer+2048,0);
+    std::fill(buffer,buffer+512,0);
     ret = SDLNet_TCP_Recv(tcpsock,reinterpret_cast<void*>(buffer),buf_size);
     if(ret <= 0) {
       std::string s = "ircconnector.cpp: In Tsuki::IRCConnector::RecvData(). Error is " + std::string(SDLNet_GetError()) + ".\n";
@@ -161,12 +161,11 @@ std::string Tsuki :: IRCConnector :: RecvData()
   return message;
 }
 
-// Can't const it due to a weird error
 bool Tsuki :: IRCConnector :: RecvData(std::string& msg)
 {
   bool hasit = false;
   std::string s;
-  std::fill(buffer,buffer+2048,0);
+  std::fill(buffer,buffer+512,0);
   try {
     int ret;
     ret = SDLNet_TCP_Recv(tcpsock,reinterpret_cast<void*>(buffer),buf_size);
@@ -186,3 +185,30 @@ bool Tsuki :: IRCConnector :: RecvData(std::string& msg)
   }
   return hasit;
 }
+
+bool Tsuki :: IRCConnector :: RecvData(Tsuki::IRCMessage& msg)
+{
+  bool hasit = false;
+  std::string s,temp;
+  std::fill(buffer,buffer+512,0);
+  try {
+    int ret;
+    ret = SDLNet_TCP_Recv(tcpsock,reinterpret_cast<void*>(buffer),buf_size);
+    if(ret<=0) {
+      std::string s = "ircconnector.cpp: In Tsuki::IRCConnector::RecvData(std::string&). Error is " + std::string(SDLNet_GetError()) + ".\n";
+      throw std::runtime_error(s);
+    }
+    else { hasit =true; }
+    temp.assign(buffer);
+    while(temp.at(temp.size() - 1) != '\n') {
+      s = RecvData();
+      temp = temp + s; s.clear();
+    }
+    msg.Parse(temp);
+  }
+  catch(std::exception& e) {
+    std::cout<<"Caught exception : \n"<<e.what();
+  }
+  return hasit;
+}
+
