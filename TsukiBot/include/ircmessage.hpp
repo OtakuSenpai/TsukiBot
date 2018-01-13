@@ -28,31 +28,12 @@ namespace Tsuki {
     std::string _sender; // Who send it(channel or user)
     PacketType _pckType; // Type of packet
 
-    inline void setPrefix(const std::string& prefix) {
-      _prefix.setData(prefix);
-    }
-
-    inline void setCommand(const std::string& command) {
-      _command = command;
-    }
-
-    inline void setSender(const std::string& sender) {
-      _sender = sender;
-    }
-
-    inline void setContent(const std::string& dataReceived) {
-      _content = dataReceived;
-    }
-
-    inline void setPacketInfo(const PacketType& packet) {
-      _pckType = packet;
-    }
-
-    inline void setPacketInfo(const unsigned short& packet) {
-      _pckType = static_cast<PacketType>(packet);
-    }
-
-    void Parse(const std::string& data);
+    void setPrefix(const std::string& prefix);
+    void setCommand(const std::string& command);
+    void setSender(const std::string& sender);
+    void setContent(const std::string& dataReceived);
+    void setPacketInfo(const PacketType& packet);
+    void setPacketInfo(const unsigned short& packet);
 
   public:
     IRCMessage() : _prefix{}, _command{}, _content{}, _sender{} {}
@@ -64,13 +45,16 @@ namespace Tsuki {
     IRCMessage& operator= (const IRCMessage& obj);
     ~IRCMessage() {}
 
-    inline std::string getPrefix() const { return _prefix.getData(); }
-    inline std::string getCommand() const { return _command; }
-    inline std::string getSender() const { return _sender; }
-    inline std::string getContent() const { return _content; }
-    inline PacketType getPacketInfo() const { return _pckType; }
-
+    std::string getPrefix() const;
+    std::string getCommand() const;
+    std::string getSender() const;
+    std::string getContent() const;
+    PacketType getPacketInfo() const;
+    
+    void clear();
     std::string getData() const;
+    bool isServer() const;
+    void Parse(const std::string& data);
   };
 } // namespace Tsuki
 

@@ -62,4 +62,8 @@ Nov 12,2017: 0.3.11 --> Made some changes in the codebase.Finetuned the
                         IRCMessage class.
 Dec 16,2017: 0.3.12 --> Made the IRCMessage class working. Integrated it
                         with TsukiBot.
-
+Dec 29,2017: 0.3.13 --> Pushed all changes made to IRCMessage class to the
+                        cloud.
+Jan 13,2017: 0.3.14 --> Made some changes in TsukiIRC.cpp.Will be using a custom 
+                        BasePlugin class, and use it to make other plugins.
+                        Made changes to constant.cpp and IRCMessage class.  

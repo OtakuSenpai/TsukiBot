@@ -15,7 +15,7 @@ namespace Tsuki
     IPaddress ipaddress;
     TCPsocket tcpsock;
     char* buffer = nullptr;
-    const int buf_size =2048;
+    const int buf_size =512;
     bool connected = false;
 
   public:
@@ -40,6 +40,7 @@ namespace Tsuki
     //Receive data from the server
     std::string RecvData();
     bool RecvData(std::string& message);
+    bool RecvData(Tsuki::IRCMessage& message);
   };
 } // namespace Tsuki
 

@@ -191,7 +191,12 @@ namespace Tsuki {
     ~User() {}
     void operator= (const User& obj);
     void setData(const std::string& data);
-    inline std::string getData() const{ return _data; }
+    std::string getData() const;
+    void clear(); 
+  
+    inline bool empty() const {
+	  return _data.empty();
+    } 
   };
 
   /* Nick class stores the nickname of a connection to the network.
@@ -208,7 +213,12 @@ namespace Tsuki {
     ~Nick() {}
     void operator= (const Nick& obj);
     void setData(const std::string& data);
-    inline std::string getData() const { return _data; }
+    std::string getData() const; 
+    void clear();
+    
+    inline bool empty() const {
+	  return _data.empty(); 
+    }
   };
 
   class Channel {
@@ -226,6 +236,7 @@ namespace Tsuki {
     void setUsers(const std::string& user_list);
     inline std::string getData() const{ return _data; }
     inline std::vector<Nick> getUserList() const{ return chan_users; }
+    void clear();
   };
 
   class Prefix {
@@ -234,11 +245,13 @@ namespace Tsuki {
     Nick _nick;
     User _user;
     bool _is_server = false;
+    bool _is_client = false;
+    
     void Parse(const std::string& data);
+ 
   public:
     Prefix() : _hostname{}, _nick{}, _user{} {}
-    Prefix(const std::string& data)
-    {
+    Prefix(const std::string& data) {
       Parse(data);
     }
     ~Prefix() {}
@@ -246,17 +259,17 @@ namespace Tsuki {
     void setData(const std::string& data);
     void setNick(const std::string& nick);
 
-    inline std::string getData() const {
-      std::string temp;
-      if(!_is_server)
-        temp = _nick.getData() + "!" + _user.getData() + "@" + _hostname;
-      else temp = _hostname;
-      return temp;
-    }
+    std::string getData() const;
     inline std::string getNickData() const{ return _nick.getData(); }
     inline std::string getHostname() const{ return _hostname; }
     inline Nick getNick() const { return _nick; }
     inline User getUser() const{ return _user; }
+    
+    inline void clear() {
+	  _hostname.clear();
+	  _nick.clear();
+	  _user.clear();
+    }
   };
 
   /* This struct is used in joining to a given channel.
@@ -295,6 +308,13 @@ namespace Tsuki {
       inline std::string getPassword() const{ return pass; }
       inline unsigned int getPort() const{ return port; }
   };
+  
+  bool begins_with(const std::string& message,const char* command);
+  bool has_alnum(const std::string& data);
+  bool has_only_spec(const std::string& data);
+  bool has_only_space(const std::string& data);
+  bool has_it(const std::string& data,const char* command);
+  bool has_it(const std::string& data,const char& command);
 
 } //namespace Tsuki
 

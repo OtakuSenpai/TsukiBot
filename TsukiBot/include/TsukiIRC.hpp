@@ -24,19 +24,13 @@ namespace Tsuki
     IRCConnector conn;
     Join_Data server_data;
     std::vector<Channel> chan_list;
-    std::vector<std::string> msglogs;
+    std::vector<Tsuki::IRCMessage> msglogs;
     std::string bot_name,second_name;
     ServerState state;
     Kernel kernel;
     std::string plgPath;
 
     //Utility functions
-    bool begins_with(const std::string& message,const char* command);
-    bool has_alnum(const std::string& data);
-    bool has_only_spec(const std::string& data);
-    bool has_only_space(const std::string& data);
-    bool has_it(const std::string& data,const char* command);
-    bool has_it(const std::string& data,const char& command);
     std::vector<Tsuki::Nick> get_user_list(const std::string& from);
     std::string get_text_after_command(const std::string& message,const char* command);
     bool has_in_chan(const std::string& name,const std::string& channel);
