@@ -16,12 +16,14 @@ int main() {
     exit(0);
   }
   while(std::getline(fio,temp,'\n')) {
-    msg.Parse(temp);
-    std::cout<<"Prefix: "<<msg.getPrefix()<<std::endl
+    msg.handleParse(temp);
+    std::cout<<"Total: "<<msg.getData()<<std::endl
+                
+             <<"Prefix: "<<msg.getPrefix()<<std::endl
              <<"Command: "<<msg.getCommand()<<std::endl
              <<"Packet: "<<static_cast<int>(msg.getPacketInfo())<<std::endl
              <<"Sender: "<<msg.getSender()<<std::endl
-             <<"Content: "<<msg.getContent()<<std::endl;
+             <<"Content: "<<msg.getContent()<<std::endl<<std::endl;
     msg.clear();
   }
   fio.close();

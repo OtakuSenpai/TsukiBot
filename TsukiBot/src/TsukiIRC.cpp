@@ -1,6 +1,5 @@
 #include "TsukiIRC.hpp"
 
-#include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <sstream>
@@ -13,22 +12,19 @@
 
 using namespace Tryx;
 
-void Tsuki :: Bot :: setName(const std::string& name)
-{
+void Tsuki :: Bot :: setName(const std::string& name) {
   bot_name = name;
   server_data.setNick(bot_name);
 }
 
-std::string Tsuki :: Bot :: get_text_after_command(const std::string& message,const char* command)
-{
+std::string Tsuki :: Bot :: get_text_after_command(const std::string& message,const char* command) {
   std::string temp;
   std::string comm{command};
   temp = message.substr(comm.size());
   return temp;
 }
 
-bool Tsuki :: Bot :: has_in_chan(const std::string& name,const std::string& channel)
-{
+bool Tsuki :: Bot :: has_in_chan(const std::string& name,const std::string& channel) {
   bool has_it = false;
   for(auto&& i: chan_list) {
     if(channel == i.getData()) {
@@ -44,24 +40,36 @@ bool Tsuki :: Bot :: has_in_chan(const std::string& name,const std::string& chan
   return has_it;
 }
 
-void Tsuki :: Bot :: handle_msg(std::string& message)
-{
-  try {  
-    std::cout<<std::endl<<"Server Data: "<<message<<std::endl<<std::endl;
-    segragrator(message, "\r\n"); // separate whole messages
-    //std::cout<<std::endl<<"Size of chan_list: "<<chan_list.size()<<std::endl<<std::endl;
-    
-    message.clear();
-    msglogs.clear();
-
-  }  
-  catch(std::exception& e){
-    std::cout<<"Caught exception: \n"<<e.what(); 
+void Tsuki :: Bot  :: handleNickList(IRCMessage& temp) {
+  std::string total;
+  Tsuki::Channel channel;
+  if(temp.getPacketInfo() != PacketType::RPL_ENDOFNAMES) { return; }
+  else if(temp.getPacketInfo() == PacketType::RPL_NAMREPLY) {
+    channel =  temp.getContent().substr(0,temp.getContent().find(" "));
+    total = total + temp.getContent().substr(temp.getContent().find(":"));
+    for(auto&& i : chan_list) {
+      if(i == channel) {
+        i.setUsers(total);
+      }
+    }
   }
 }
 
-std::vector<Tsuki::Nick> Tsuki :: Bot :: get_user_list(const std::string& from)
-{
+
+void Tsuki :: Bot :: handle_msg(std::string& message) {
+  try {
+    std::cout<<std::endl<<"Server Data: "<<message<<std::endl<<std::endl;
+    segragrator(message, "\r\n"); // separate whole messages
+    if(msglogs.size() > 100000) { makeSpace(msglogs); }
+
+    message.clear();
+  }
+  catch(std::exception& e){
+    std::cout<<"Caught exception: \n"<<e.what();
+  }
+}
+
+std::vector<Tsuki::Nick> Tsuki :: Bot :: get_user_list(const std::string& from) {
   std::vector<Tsuki::Nick> nick_list;
   bool isthere = false;
   for(auto&& i = std::begin(chan_list); i != std::end(chan_list); i++) {
@@ -75,15 +83,14 @@ std::vector<Tsuki::Nick> Tsuki :: Bot :: get_user_list(const std::string& from)
   return nick_list;
 }
 
-void Tsuki :: Bot :: segragrator(const std::string& message,const char* data)
-{
+void Tsuki :: Bot :: segragrator(const std::string& message,const char* data) {
   size_t pos = 0;
   std::string token,delimiter{data},tempValue = message;
-  Tsuki::IRCMessage temp;
 
   while ((pos = tempValue.find(delimiter)) != std::string::npos) {
     token = tempValue.substr(0, pos);
-    temp.Parse(token);
+    tempValue.erase(std::remove(tempValue.begin(),tempValue.end(),'\n'),tempValue.end());
+    Tsuki::IRCMessage temp(token);
     msglogs.push_back(temp); temp.clear(); token.clear();
     tempValue.erase(0, pos + delimiter.length());
   }
@@ -115,9 +122,8 @@ void Tsuki :: Bot :: SetConn() {
   }
 }
 
-void Tsuki :: Bot :: Connect()
-{
-  try {	
+void Tsuki :: Bot :: Connect() {
+  try {
     std::string contents,command{"PING"};
     std::string serv_data;
     running = false;
@@ -126,9 +132,9 @@ void Tsuki :: Bot :: Connect()
       std::this_thread::sleep_for(wait_time);
       SetConn();
     }
-  
+
     std::cout<<"Entering loop...\n";
-    while(conn.RecvData(serv_data) && isRunning()) { 
+    while(conn.RecvData(serv_data) && isRunning()) {
       if(begins_with(serv_data,"PING")) {
         if(contents == "") contents = serv_data.substr(command.size());
         SendPong(contents);
@@ -149,9 +155,9 @@ void Tsuki :: Bot :: Connect()
         SendPong(contents);
         setState(Tsuki::ServerState::WORKING);
       }
-      
+
       //:nick!user@host QUIT :Ping timeout: 200 seconds
-      if(has_it(serv_data,":Ping timeout:") &&   
+      if(serv_data.find(":Ping timeout:",0) != std::string::npos &&
         ((has_it(serv_data,bot_name.c_str())) || (has_it(serv_data,second_name.c_str()))) &&
         has_it(serv_data,"QUIT")) {
 		setState(Tsuki::ServerState::NOT_CONNECTED);
@@ -161,117 +167,104 @@ void Tsuki :: Bot :: Connect()
           std::this_thread::sleep_for(wait_time);
           SetConn();
         }
-	  }	
+	  }
       handle_msg(serv_data);
       serv_data.clear();
     }
     std::cout<<"Exiting Tsuki::Bot::Connect....\n";
   }
-  catch(std::exception& e) { 
+  catch(std::exception& e) {
 	std::cerr<<"Caught exception: \n"<<e.what();
 	conn.DisConnect();
 	std::exit(EXIT_FAILURE);
-  }   
+  }
 }
 
-void Tsuki :: Bot :: Disconnect()
-{
+void Tsuki :: Bot :: Disconnect() {
   conn.DisConnect();
   setState(Tsuki::ServerState::NOT_CONNECTED);
 }
 
-void Tsuki :: Bot :: JoinChannel(const Channel& chan)
-{
+void Tsuki :: Bot :: JoinChannel(const Channel& chan) {
   std::string data = std::string{"JOIN "} + chan.getData() + std::string{"\r\n"};
   conn.SendData(data);
 }
 
-void Tsuki :: Bot :: JoinChannel(const std::string& channel)
-{
+void Tsuki :: Bot :: JoinChannel(const std::string& channel) {
   std::string data = std::string{"JOIN "} + channel + std::string{"\r\n"};
   conn.SendData(data);
 }
 
-void Tsuki :: Bot :: SendMsg(const std::string& msg)
-{
+void Tsuki :: Bot :: SendMsg(const std::string& msg) {
   conn.SendData(msg);
 }
 
-void Tsuki :: Bot :: SendMsg(const char* command,const std::string& msg)
-{
+void Tsuki :: Bot :: SendMsg(const char* command,const std::string& msg) {
   std::string s = std::string(command) + " :" + msg;
   conn.SendData(s);
 }
 
-void Tsuki :: Bot :: SendMsg(const std::string& command,const std::string& msg)
-{
+void Tsuki :: Bot :: SendMsg(const std::string& command,const std::string& msg) {
   std::string s = command + " :" + msg;
   conn.SendData(s);
 }
 
 
-void Tsuki :: Bot :: SendNick()
-{
+void Tsuki :: Bot :: SendNick() {
   std::string s;
   s = "NICK " + bot_name + "\r\n";
   std::cout<<"Nick: "<<s<<std::endl;
   conn.SendData(s);
 }
 
-void Tsuki :: Bot :: SendNick(const std::string& nick)
-{
+void Tsuki :: Bot :: SendNick(const std::string& nick) {
   std::string s;
   s = "NICK " + nick + "\r\n";
   conn.SendData(s);
 }
 
-void Tsuki :: Bot :: SendUser(const User& user,const std::string& realname,const int& mode)
-{
+void Tsuki :: Bot :: SendUser(const User& user,const std::string& realname,const int& mode) {
   std::string s = "USER " + user.getData() + " " + std::to_string(mode) + " * :" + realname + "\r\n";
   conn.SendData(s);
 }
 
-void Tsuki :: Bot :: SendUser(const User& user,const char* realname,const int& mode)
-{
-  std::string s = "USER " + user.getData() + " " + std::to_string(mode) + " *" + " :" + std::string(realname) + "\r\n";
+void Tsuki :: Bot :: SendUser(const User& user,const char* realname,const int& mode) {
+  std::string s = "USER " + user.getData() + " " + std::to_string(mode) +
+                  " *" + " :" + std::string(realname) + "\r\n";
   std::cout<<"Sending user: "<<s<<std::endl;
   conn.SendData(s);
 }
 
-void Tsuki :: Bot :: SendMe(const std::string& message,const std::string& target)
-{
+void Tsuki :: Bot :: SendMe(const std::string& message,const std::string& target) {
   std::string temp = "PRIVMSG " + target + " :\001ACTION " + message + "\001\r\n";
-  std::cout<<std::endl<<std::endl<<std::endl<<"Sending /me : "<<temp<<std::endl<<std::endl<<std::endl;
+  std::cout<<std::endl<<std::endl<<std::endl<<"Sending /me : "
+           <<temp<<std::endl<<std::endl<<std::endl;
   conn.SendData(temp);
 }
 
 void Tsuki :: Bot :: SendPrivMsg(const std::string& target,const std::string& msg) {
   std::string temp = "PRIVMSG " + target + " :" + msg + "\r\n";
-  std::cout<<"Retvalue: "<<temp<<"\n"; 
+  std::cout<<"Retvalue: "<<temp<<"\n";
   SendMsg(temp);
 }
 
-void Tsuki :: Bot :: SendPong(const std::string& contents)
-{
+void Tsuki :: Bot :: SendPong(const std::string& contents) {
   std::string temp = "PONG " + contents + "\r\n";
   conn.SendData(temp);
 }
 
-void Tsuki :: Bot :: SendPart(const std::string& channel)
-{
+void Tsuki :: Bot :: SendPart(const std::string& channel) {
   std::string temp = "PART " + channel + "\r\n";
   conn.SendData(temp);
 }
 
-void Tsuki :: Bot :: SendPart(const std::string& channel,const std::string& message)
-{
+void Tsuki :: Bot :: SendPart(const std::string& channel,const std::string& message) {
   std::string temp = "PART " + channel + " :" + message + "\r\n";
   std::cout<<"\nSending part message: "<<temp<<std::endl;
   conn.SendData(temp);
 }
 
-void Tsuki :: Bot :: AddChannel(const std::string& channel,const std::string& command)
-{
+void Tsuki :: Bot :: AddChannel(const std::string& channel,const std::string& command) {
   size_t j = chan_list.size();
   bool has_chan = false,chan_is_not_command = false;
   std::string from = channel;
@@ -303,4 +296,9 @@ void Tsuki :: Bot :: LoadPlugin(const std::string& path) {
 
 void Tsuki :: Bot :: LoadPlugins(const std::string& path) {
   kernel.loadPlugins(path,true);
+}
+
+void Tsuki :: Bot :: makeSpace(std::vector<IRCMessage> msgs) {
+  std::move(msgs.begin() + 80000, msgs.end(),msgs.begin());
+  msgs.resize(20000);
 }
