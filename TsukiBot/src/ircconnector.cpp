@@ -204,7 +204,7 @@ bool Tsuki :: IRCConnector :: RecvData(Tsuki::IRCMessage& msg)
       s = RecvData();
       temp = temp + s; s.clear();
     }
-    msg.Parse(temp);
+    msg.handleParse(temp);
   }
   catch(std::exception& e) {
     std::cout<<"Caught exception : \n"<<e.what();

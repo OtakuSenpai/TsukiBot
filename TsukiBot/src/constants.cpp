@@ -9,13 +9,18 @@ void Tsuki :: Nick :: operator= (const Nick& obj) {
   _data = std::move(obj._data);
   Parse();
 }
+
+bool Tsuki :: Nick :: operator== (const Nick& obj) {
+  return ((*this)._data == obj._data);
+}
+
 void Tsuki :: Nick :: setData(const std::string& data) {
   _data = data;
   Parse();
 }
 
-std::string Tsuki :: Nick :: getData() const { 
-  return _data; 
+std::string Tsuki :: Nick :: getData() const {
+  return _data;
 }
 
 void Tsuki :: Nick :: clear() {
@@ -28,9 +33,10 @@ void  Tsuki :: Nick :: Parse() {
     if(static_cast<bool>(std::isalpha(_data[0])) == false &&
       (_data[0] != static_cast<char>(95) && _data[1] != static_cast<char>(95)) &&
        _data[0] != '+' && _data[0] != '@' && _data[0] != '[' && _data[0] != ']' &&
-       _data[0] != static_cast<char>(39) && _data[0] != '{' && _data[0] != '}' && _data[0] != '<' &&
-       _data[0] != '>' && _data[0] != '^' && _data[0] != '&' && _data[0] != '*' && _data[0] != '$'
-       && _data[0] != static_cast<char>(96) && _data[0] != '|' && _data[0] != '\\' && _data[0] != '/' ) { 
+       _data[0] != static_cast<char>(39) && _data[0] != '{' && _data[0] != '}' &&
+       _data[0] != '<' && _data[0] != '>' && _data[0] != '^' && _data[0] != '&' &&
+       _data[0] != '*' && _data[0] != '$' && _data[0] != static_cast<char>(96) &&
+       _data[0] != '|' && _data[0] != '\\' && _data[0] != '/' ) {
        std::string temp = temp + "constants.cpp : In Tsuki::Nick::Parse : " +
                        "First character of a nick can't be non-alpha.\n";
        throw std::runtime_error(temp);
@@ -63,7 +69,21 @@ void  Tsuki :: Nick :: Parse() {
 
 void Tsuki :: Channel :: operator= (const Channel& obj) {
   _data = std::move(obj._data);
+  chan_users = std::move(obj.chan_users);
   Parse();
+}
+
+void Tsuki :: Channel :: operator= (const std::string& obj) {
+  setData(obj);
+}
+
+void Tsuki :: Channel :: operator= (const char* obj) {
+  std::string temp(obj);
+  setData(temp);
+}
+
+bool Tsuki :: Channel :: operator== (const Channel& obj) {
+  return (_data == obj._data);
 }
 
 void Tsuki :: Channel :: setData(const std::string& data) {
@@ -81,6 +101,11 @@ void Tsuki :: Channel :: setUsers(const std::string& list) {
       chan_users.push_back(Nick{token});
       tempValue.erase(0,pos + delimiter.size());
     }
+    std::sort(chan_users.begin(),chan_users.end(),[](Tsuki::Nick a,Tsuki::Nick b) {
+      return a.getData() < b.getData();
+    });
+    auto last = std::unique(chan_users.begin(), chan_users.end());
+    chan_users.erase(last, chan_users.end());
   }
   catch(std::exception& e) {
     std::cout<<"Caught exception : \n"<<e.what();
@@ -116,8 +141,8 @@ void Tsuki :: User :: setData(const std::string& data) {
   Parse();
 }
 
-std::string Tsuki :: User :: getData() const { 
-  return _data; 
+std::string Tsuki :: User :: getData() const {
+  return _data;
 }
 
 void Tsuki :: User :: clear() {
@@ -133,13 +158,12 @@ void Tsuki :: User :: Parse() {
         continue;
       else if(_data[i] == Tsuki::Dash || _data[i] == Tsuki::LeftSquareBrackets ||
         _data[i] == Tsuki::RightSquareBrackets || _data[i] == Tsuki::LeftSlash ||
-        _data[i] == Tsuki::SingleQuote || _data[i] == Tsuki::Power ||
+        _data[i] == Tsuki::SingleQuote || _data[i] == Tsuki::Power || _data[i] == '~' ||
         _data[i] == Tsuki::LeftCurlyBraces  || _data[i] == Tsuki::RightCurlyBraces)
         continue;
       else {
         std::string temp = "constants.cpp : In Tsuki::User::Parse() : Can't have a '" +
                            std::string{_data.at(i)}+ "' in the User field.\n";
-        std::cout<<"Caught error at line 121, data: "<<_data<<std::endl;
         throw std::runtime_error(temp);
       }
     }
@@ -152,8 +176,28 @@ void Tsuki :: Prefix :: operator= (const Prefix& obj) {
   _user = obj._user;
 }
 
-void Tsuki :: Prefix :: setData(const std::string& data) {
+void Tsuki :: Prefix :: operator= (const std::string& obj) {
+  Parse(obj);
+}
+
+void Tsuki :: Prefix :: operator= (const char* obj) {
+  std::string temp(obj);
+  Parse(temp);
+}
+
+void Tsuki :: Prefix :: setData(const std::string& data,
+                                const Type& type,const bool msg_status) {
+  _type = type;
+  _is_server = msg_status;
   Parse(data);
+}
+
+void Tsuki :: Prefix :: setData(const char* data,
+                                const Type& type,const bool msg_status) {
+  _type = type;
+  _is_server = msg_status;
+  std::string temp(data);
+  Parse(temp);
 }
 
 void Tsuki :: Prefix :: setNick(const std::string& nick) {
@@ -162,41 +206,50 @@ void Tsuki :: Prefix :: setNick(const std::string& nick) {
 
 std::string Tsuki :: Prefix :: getData() const {
   std::string temp;
-  if(_is_server == false) {
+  if(_is_server == false && !_nick.empty() && !_user.empty()) {
     temp = _nick.getData() + "!" + _user.getData() + "@" + _hostname;
   }
-  else if(_is_server == true) { temp = _hostname; }
+  else if(_type == Type::mode && _is_server) { temp = _nick.getData(); }
+  else if(_is_server == true && _type != Type::mode) { temp = _hostname; }
   return temp;
+}
+
+void Tsuki :: Prefix :: setStatus(const bool& _msg_status,const Type t) {
+  _is_server = _msg_status;
+  _type = t;
 }
 
 void Tsuki :: Prefix :: Parse(const std::string& _data) {
   try {
     std::string temp = _data;
-    
-    if(_data.find_last_of("net",_data.size()-3) != std::string::npos &&
-       _data.find_first_of('!',0) == std::string::npos) {
-	  _hostname = _data;
-	  _nick.setData("");
-      _user.setData("");
-      _is_server = true;
-	  _is_client = false;
+    if(temp.at(0) == ':' && temp.size() > 0) {
+      temp = temp.substr(1);
     }
-    if(_data.find_first_of('!',0) != std::string::npos && has_alnum(_data) &&
-      (_data.find_last_of("net",_data.size()-3) == std::string::npos)) {
-	  _is_client = true;
-	  _is_server = false;
-	  std::string nick = temp.substr(0,temp.find('!'));
-      _nick.setData(nick); 
-      temp = temp.substr(temp.find('!'));
+    temp.erase(std::remove(temp.begin(),temp.end(),' '),temp.end());
+
+    if((_data.find("net") == _data.size() - 3) && _is_server && _type != Type::mode) {
+      _hostname = temp;
+      _nick.setData("");
+      _user.setData("");
+    }
+    else if(_type == Type::mode) {
+      _nick.setData(temp);
+      _user.setData("");
+      _hostname = "";
+    }
+    else if(has_it(temp,'!') && !_is_server) {
+      std::string nick = temp.substr(0,temp.find('!'));
+      _nick.setData(nick);
+      temp = temp.substr(temp.find('!')+1);
       std::string user = temp.substr(0,temp.find('@'));
-      _user.setData(user); 
+      _user.setData(user);
       temp = temp.substr(temp.find('@'));
       _hostname = temp;
     }
   }
-  catch(std::exception& e) { 
-    std::cout<<"Caught exception : \n"<<e.what();
-    clear();   
+  catch(std::exception& e) {
+    std::cerr<<"Caught exception: \n"<<e.what();
+    clear();
   }
 }
 
@@ -241,7 +294,7 @@ bool Tsuki :: has_only_space(const std::string& data)
     if(data[i] == Tsuki::Space) { values[i] = false; }
 
     else if(static_cast<bool>(std::isalpha(data[i])) == true || data[i] == static_cast<char>(95) ||
-    data[i] == static_cast<char>(95) || data[i] == static_cast<char>(39) || data[i] == static_cast<char>(96) ||
+    data[i] == static_cast<char>(39) || data[i] == static_cast<char>(96) ||
     data[i] == '+' || data[i] == '@' || data[i] == ':' || data[i] == '[' || data[i] == ']' ||
     data[i] == '{' || data[i] == '}' || data[i] == '<' || data[i] == '_' || data[i] == '-' ||
     data[i] == '>' || data[i] == '^' || data[i] == '&' || data[i] == '*' || data[i] == '$' ||
@@ -275,8 +328,8 @@ bool Tsuki :: has_it(const std::string& data,const char* command)
   std::string comm{command};
   std::istringstream s(data);
   std::copy(std::istream_iterator<std::string>(s),
-	    std::istream_iterator<std::string>(),
-	    std::back_inserter(v));
+        std::istream_iterator<std::string>(),
+        std::back_inserter(v));
   for(auto i: v) {
     if(i == comm) ret = true;
   }
@@ -285,15 +338,21 @@ bool Tsuki :: has_it(const std::string& data,const char* command)
 }
 bool Tsuki :: has_it(const std::string& data,const char& command)
 {
-  std::vector<std::string> v;  bool ret = false;
-  std::string comm{command};
-  std::istringstream s(data);
-  std::copy(std::istream_iterator<std::string>(s),
-	    std::istream_iterator<std::string>(),
-	    std::back_inserter(v));
-  for(auto i: v) {
-    if(i == comm)
-    ret = true;
+  bool ret = false;
+
+  for(auto&& i: data) {
+    if(i == command) { ret = true; break;}
+    else { continue; }
   }
+
   return ret;
+}
+
+bool Tsuki :: parseNumeral(const std::string& msg,const char* numeral) {
+  std::string num(numeral),tempStr = msg;
+  std::string x = [](std::string a) { std::string temp;
+                                 a = a.substr(a.find(" ")+1);
+                                 temp = a.substr(0,a.find(" "));
+                                 return temp; }(tempStr);
+  return (x == num);
 }

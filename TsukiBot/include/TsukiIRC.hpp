@@ -36,6 +36,7 @@ namespace Tsuki
     bool has_in_chan(const std::string& name,const std::string& channel);
     void handle_msg(std::string& msg);
     void segragrator(const std::string& message,const char* data);
+    void makeSpace(std::vector<IRCMessage> msgs);
 
     inline void setState(const ServerState& s) { state = s; }
     inline void setRunning(const bool& run) { running = run; }
@@ -45,7 +46,8 @@ namespace Tsuki
 
     //Set the connection
     void SetConn();
-
+    //Set the channel user list
+    void handleNickList(IRCMessage& temp);
     //Plugins part
     //Load a plugin or plugins
     void LoadPlugin(const std::string& path);
@@ -56,19 +58,18 @@ namespace Tsuki
 
   public:
     Bot(const std::string& server,const std::string& channel,
-      const std::string& nick,const std::string& nick2,
-      const std::string& user,const std::string& realname,
-      const std::string& password,
-      const unsigned int& port) : conn{server,port},
-      server_data{server,channel,nick,user,realname,password,port},
-      msglogs{}, bot_name{nick}, second_name{nick2}
-      {
-        setName(nick);
-        std::string mooplg{"./plugins/libmooplg.so"};
-        std::string pingplg{"./plugins/libpingplg.so"};
-        LoadPlugin(pingplg);
-        LoadPlugin(mooplg);
-      }
+       const std::string& nick,const std::string& nick2,
+       const std::string& user,const std::string& realname,
+       const std::string& password,
+       const unsigned int& port) : conn{server,port},
+       server_data{server,channel,nick,user,realname,password,port},
+       msglogs{}, bot_name{nick}, second_name{nick2} {
+         setName(nick);
+         std::string mooplg{"./plugins/libmooplg.so"};
+         std::string pingplg{"./plugins/libpingplg.so"};
+         LoadPlugin(pingplg);
+         LoadPlugin(mooplg);
+    }
     ~Bot() { UnloadPlugins(); }
 
     inline std::string getName() const{ return bot_name; }

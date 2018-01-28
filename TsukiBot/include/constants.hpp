@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <cctype>
 
 namespace Tsuki {
 
@@ -23,6 +24,7 @@ namespace Tsuki {
   static constexpr char RightCurlyBraces = static_cast<char>(125);   //The character  " } "
 
   enum class PacketType{
+    NONE = 0,
     RPL_WELCOME = 1,    // First four mean successful connection
     RPL_YOURHOST = 2,
     RPL_CREATED = 3,
@@ -159,14 +161,29 @@ namespace Tsuki {
                                 // return this error if the client making the attempt is not
                                 // a chanop on the specified channel.
     // My own research
-    RPL_NAMESLIST = 353, // :verne.freenode.net 353 G33kb0i = #tsukibot :G33kb0i @ChanServ OtakuSenpai
+    RPL_NAMREPLY = 353, // :verne.freenode.net 353 G33kb0i = #tsukibot :G33kb0i @ChanServ OtakuSenpai
+    RPL_ENDOFNAMES = 366,
     OTHER = 999,
 
     // List of commands with no numeric replies:-
     // PING, JOIN, PRIVMSG
  };
 
-  //const std::string Join = "JOIN";
+  enum class Type { // Ping message or other
+	none = 0,
+	normal = 1,     // If there is a irc numeral to it
+	ping = 2,     // PING :hitchcock.freenode.net
+	join = 3,     // :WiZ!jto@tolsun.oulu.fi JOIN #Twilight_zone
+	                // JOIN #foo,#bar fubar,foobar
+	privmsg = 4,  // PRIVMSG Angel :yes I'm receiving it !
+	                // :Angel!wings@irc.org PRIVMSG Wiz :Are you receiving this message ?
+	                // first is from user, second from server
+	                // :WiZ!jto@tolsun.oulu.fi PART #playzone
+	notice = 5,   //:cherryh.freenode.net NOTICE * :*** Looking up your hostname...
+	mode = 6,     // :G33kb0i MODE G33kb0i :+i
+	special = 7,  // numerals on join of a network and are sent from server
+	other = 10
+  };
 
   enum ServerState
   {
@@ -192,11 +209,11 @@ namespace Tsuki {
     void operator= (const User& obj);
     void setData(const std::string& data);
     std::string getData() const;
-    void clear(); 
-  
+    void clear();
+
     inline bool empty() const {
-	  return _data.empty();
-    } 
+	    return _data.empty();
+    }
   };
 
   /* Nick class stores the nickname of a connection to the network.
@@ -212,12 +229,13 @@ namespace Tsuki {
     Nick(const std::string& data) : _data(data) { Parse(); }
     ~Nick() {}
     void operator= (const Nick& obj);
+    bool operator== (const Nick& obj);
     void setData(const std::string& data);
-    std::string getData() const; 
+    std::string getData() const;
     void clear();
-    
+
     inline bool empty() const {
-	  return _data.empty(); 
+	    return _data.empty();
     }
   };
 
@@ -226,12 +244,16 @@ namespace Tsuki {
     std::string _data;
     std::vector<Nick> chan_users;
     void Parse();
+    friend class IRCMessage;
 
   public:
     Channel() : _data{} {}
     Channel(const std::string& data): _data(data), chan_users{} { Parse(); }
     ~Channel() {}
     void operator= (const Channel& obj);
+    void operator= (const std::string& obj);
+    void operator= (const char* obj);
+    bool operator== (const Channel& obj);
     void setData(const std::string& data);
     void setUsers(const std::string& user_list);
     inline std::string getData() const{ return _data; }
@@ -244,19 +266,24 @@ namespace Tsuki {
     std::string _hostname;
     Nick _nick;
     User _user;
-    bool _is_server = false;
-    bool _is_client = false;
-    
+    bool _is_server;
+    Type _type;
+
     void Parse(const std::string& data);
- 
+
   public:
     Prefix() : _hostname{}, _nick{}, _user{} {}
-    Prefix(const std::string& data) {
+    Prefix(const std::string& data,const Type& type,const bool msg_status) {
+      _type = type;
+       _is_server = msg_status;
       Parse(data);
     }
     ~Prefix() {}
     void operator= (const Prefix& obj);
-    void setData(const std::string& data);
+    void operator= (const std::string& obj);
+    void operator= (const char* obj);
+    void setData(const std::string& data,const Type& type,const bool msg_status);
+    void setData(const char* data,const Type& type,const bool msg_status);
     void setNick(const std::string& nick);
 
     std::string getData() const;
@@ -264,11 +291,14 @@ namespace Tsuki {
     inline std::string getHostname() const{ return _hostname; }
     inline Nick getNick() const { return _nick; }
     inline User getUser() const{ return _user; }
-    
+
+    void setStatus(const bool& _msg_status,const Type t);
+
     inline void clear() {
 	  _hostname.clear();
 	  _nick.clear();
 	  _user.clear();
+	  _type = Type::none;
     }
   };
 
@@ -308,17 +338,14 @@ namespace Tsuki {
       inline std::string getPassword() const{ return pass; }
       inline unsigned int getPort() const{ return port; }
   };
-  
+
   bool begins_with(const std::string& message,const char* command);
   bool has_alnum(const std::string& data);
   bool has_only_spec(const std::string& data);
   bool has_only_space(const std::string& data);
   bool has_it(const std::string& data,const char* command);
   bool has_it(const std::string& data,const char& command);
-
+  bool parseNumeral(const std::string& msg,const char* numeral);
 } //namespace Tsuki
 
 #endif
-
-
-

@@ -27,19 +27,32 @@ namespace Tsuki {
     std::string _content; // Data send by the sender
     std::string _sender; // Who send it(channel or user)
     PacketType _pckType; // Type of packet
+    Type _type;
+    bool _from_server = true; // If true, it is from server
+                            // If false, it is from client
 
-    void setPrefix(const std::string& prefix);
-    void setCommand(const std::string& command);
-    void setSender(const std::string& sender);
-    void setContent(const std::string& dataReceived);
-    void setPacketInfo(const PacketType& packet);
-    void setPacketInfo(const unsigned short& packet);
+    friend class Bot;
+
+    void setPrefix(const std::string prefix,const Type& type,const bool msg_status);
+    void setCommand(const std::string command);
+    void setSender(const std::string sender);
+    void setContent(const std::string dataReceived);
+    void setPacketInfo(const PacketType packet);
+    void setPacketInfo(const unsigned short packet);
+    void Parse(const std::string& data);
+
+    void parsePing(std::string& msg);
+    void parseJoin(std::string& msg);
+    void parsePrivmsg(std::string& msg);
+    void parseNotice(std::string& msg);
+    void parseMode(std::string& msg);
+    void parseSpecial(std::string& msg);
+    void parseNamelist(std::string& msg);
+    void parseEndofNamelist(std::string& msg);
 
   public:
     IRCMessage() : _prefix{}, _command{}, _content{}, _sender{} {}
-    IRCMessage(const std::string& message) {
-      Parse(message);
-    }
+    IRCMessage(const std::string& message);
     IRCMessage(const IRCMessage& obj);
     IRCMessage(IRCMessage&& obj);
     IRCMessage& operator= (const IRCMessage& obj);
@@ -50,14 +63,13 @@ namespace Tsuki {
     std::string getSender() const;
     std::string getContent() const;
     PacketType getPacketInfo() const;
-    
+    Type getType() const;
+
     void clear();
     std::string getData() const;
     bool isServer() const;
-    void Parse(const std::string& data);
+    void handleParse(const std::string& msg);
   };
 } // namespace Tsuki
 
 #endif
-
-
