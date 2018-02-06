@@ -127,7 +127,9 @@ void Tsuki :: IRCMessage :: handleParse(const std::string& message) {
     _type = Type::mode;
     _prefix.setStatus(_from_server,_type);
   }
-  else if(parseNumeral(message,"353") || parseNumeral(message,"366")) {
+  else if(parseNumeral(message,"353") || parseNumeral(message,"366") ||
+          parseNumeral(message,"332") || parseNumeral(message,"331") ||
+          parseNumeral(message,"333")) {
     _from_server = true;
     _type = Type::normal;
     _prefix.setStatus(_from_server,_type);
@@ -207,9 +209,9 @@ void Tsuki :: IRCMessage :: Parse(const std::string& data) {
     std::regex integer("[0-9]+"); // for numbers larger than 0..9
     std::regex alphabets("[A-Za-z]+"); //A~Z & a~z
 
-    if(tempStr.find_first_of(':',0) != std::string::npos &&
-       _type == Type::normal && (tempStr.substr(0,tempStr.find(" ")).find("net") !=
-       tempStr.substr(0,tempStr.find(" ")).size() - 3)) {
+    // && (tempStr.substr(0,tempStr.find(" ")).find("net") !=
+    // tempStr.substr(0,tempStr.find(" ")).size() - 3)
+    if(tempStr.find_first_of(':',0) != std::string::npos && _type == Type::normal) {
       auto prefix = std::find(front,end,' ');
       auto tempPos1 = std::distance(front,prefix);
       setPrefix(tempStr.substr(0,tempPos1+1),Type::normal,false);
@@ -269,6 +271,9 @@ void Tsuki :: IRCMessage :: Parse(const std::string& data) {
     else if(_type == Type::normal && _from_server) {
       if(parseNumeral(tempStr,"353")) { parseNamelist(tempStr); }
       else if(parseNumeral(tempStr,"366")) { parseEndofNamelist(tempStr); }
+      else if(parseNumeral(tempStr,"332")) { parseTopic(tempStr); }
+      else if(parseNumeral(tempStr,"331")) { parseNoTopic(tempStr); }
+      else if(parseNumeral(tempStr,"333")) { parseWhoTime(tempStr); }
     }
     else {
       std::string temp = "ircmessage.cpp : In Tsuki::IRCMessage::Parse(const std::string&) : \
@@ -386,5 +391,44 @@ void Tsuki :: IRCMessage :: parseEndofNamelist(std::string& tempStr) {
   tempStr = tempStr.substr(tempStr.find(" ",0)+1);
   _sender = tempStr.substr(0,tempStr.find(" ",0));
   tempStr = tempStr.substr(tempStr.find(":",0));
+  _content = tempStr;
+}
+
+//:cherryh.freenode.net 332 G33kb0i ##llamas :The official #1 off-topic
+void Tsuki :: IRCMessage :: parseTopic(std::string& tempStr) {
+  setPrefix(tempStr.substr(0,tempStr.find(" ",0)),Type::normal,_from_server);
+  tempStr = tempStr.substr(tempStr.find(" ",0)+1);
+  if(has_it(tempStr.substr(0,tempStr.find(" ",0)),"332")) {
+    setPacketInfo(PacketType::RPL_TOPIC);
+  }
+  tempStr = tempStr.substr(tempStr.find(" ",0)+1);
+  _sender = tempStr.substr(0,tempStr.find(" ",0));
+  tempStr = tempStr.substr(tempStr.find(" ",0)+1);
+  _content = tempStr;
+}
+
+//:cherryh.freenode.net 332 G33kb0i ##llamas :The official #1 off-topic
+void Tsuki :: IRCMessage :: parseNoTopic(std::string& tempStr) {
+  setPrefix(tempStr.substr(0,tempStr.find(" ",0)),Type::normal,_from_server);
+  tempStr = tempStr.substr(tempStr.find(" ",0)+1);
+  if(has_it(tempStr.substr(0,tempStr.find(" ",0)),"331")) {
+    setPacketInfo(PacketType::RPL_NOTOPIC);
+  }
+  tempStr = tempStr.substr(tempStr.find(" ",0)+1);
+  _sender = tempStr.substr(0,tempStr.find(" ",0));
+  tempStr = tempStr.substr(tempStr.find(" ",0)+1);
+  _content = tempStr;
+}
+
+//:cherryh.freenode.net 333 G33kb0i ##llamas letty 1506827147
+void Tsuki :: IRCMessage :: parseWhoTime(std::string& tempStr) {
+  setPrefix(tempStr.substr(0,tempStr.find(" ",0)),Type::normal,_from_server);
+  tempStr = tempStr.substr(tempStr.find(" ",0)+1);
+  if(has_it(tempStr.substr(0,tempStr.find(" ",0)),"333")) {
+    setPacketInfo(PacketType::RPL_TOPICWHOTIME);
+  }
+  tempStr = tempStr.substr(tempStr.find(" ",0)+1);
+  _sender = tempStr.substr(0,tempStr.find(" ",0));
+  tempStr = tempStr.substr(tempStr.find(" ",0)+1);
   _content = tempStr;
 }

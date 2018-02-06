@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <cctype>
+#include <iterator>
 
 namespace Tsuki {
 
@@ -163,6 +164,7 @@ namespace Tsuki {
     // My own research
     RPL_NAMREPLY = 353, // :verne.freenode.net 353 G33kb0i = #tsukibot :G33kb0i @ChanServ OtakuSenpai
     RPL_ENDOFNAMES = 366,
+    RPL_TOPICWHOTIME = 333,
     OTHER = 999,
 
     // List of commands with no numeric replies:-
@@ -242,13 +244,14 @@ namespace Tsuki {
   class Channel {
   private:
     std::string _data;
-    std::vector<Nick> chan_users;
+    std::vector<Nick> _chan_users;
+    std::string _topic;
     void Parse();
     friend class IRCMessage;
 
   public:
     Channel() : _data{} {}
-    Channel(const std::string& data): _data(data), chan_users{} { Parse(); }
+    Channel(const std::string& data): _data(data), _chan_users{}, _topic{} { Parse(); }
     ~Channel() {}
     void operator= (const Channel& obj);
     void operator= (const std::string& obj);
@@ -256,8 +259,10 @@ namespace Tsuki {
     bool operator== (const Channel& obj);
     void setData(const std::string& data);
     void setUsers(const std::string& user_list);
-    inline std::string getData() const{ return _data; }
-    inline std::vector<Nick> getUserList() const{ return chan_users; }
+    void setTopic(const std::string& topic) { _topic = topic; }
+    std::string getData() const{ return _data; }
+    std::vector<Nick> getUserList() const{ return _chan_users; }
+    std::string getTopic() const{ return _topic; }
     void clear();
   };
 
@@ -339,13 +344,16 @@ namespace Tsuki {
       inline unsigned int getPort() const{ return port; }
   };
 
+  // helper functions
   bool begins_with(const std::string& message,const char* command);
   bool has_alnum(const std::string& data);
   bool has_only_spec(const std::string& data);
   bool has_only_space(const std::string& data);
+  bool has_it(const std::string& data, const std::string& command);
   bool has_it(const std::string& data,const char* command);
   bool has_it(const std::string& data,const char& command);
   bool parseNumeral(const std::string& msg,const char* numeral);
+
 } //namespace Tsuki
 
 #endif

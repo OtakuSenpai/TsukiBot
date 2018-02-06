@@ -59,13 +59,93 @@ void Tsuki :: Bot  :: handleNickList(IRCMessage& temp) {
 void Tsuki :: Bot :: handle_msg(std::string& message) {
   try {
     std::cout<<std::endl<<"Server Data: "<<message<<std::endl<<std::endl;
-    segragrator(message, "\r\n"); // separate whole messages
-    if(msglogs.size() > 100000) { makeSpace(msglogs); }
+    std::vector<IRCMessage> tempMsgs; segragrator(message, "\r\n",tempMsgs); // separate whole messages
+    std::cout<<"Messages received: "<<msglogs.size()<<std::endl;
+    for(auto&& i: tempMsgs) {
+      if(i.getType() != Type::special && i.getType() != Type::join &&
+         i.getType() != Type::ping && i.getType() != Type::notice) {
+        std::cout<<"Content: "<<i.getContent()<<std::endl;
+        std::string tempContent = i.getContent().substr(1);
+        if(has_it(tempContent,std::string(specialChar + "join"))) {
+          std::string temp = i.getContent().substr(i.getContent().find(" ")+1);
+          std::cout<<"Channel is: "<<temp<<std::endl;
+          JoinChannel(temp,conn);
+          chan_list.push_back(Tsuki::Channel(temp));
+        }
+        else if(has_it(tempContent,std::string(specialChar + "part"))) {
+          // $part ##llamas
+          // $part ##llamas bye
+          //Content: :$part ##llamas
 
+          std::string total,chan,message;
+          size_t pos1 = -1;
+
+          total = tempContent.substr(total.find(" ")+1);
+          if(total.at(0) == ' ') { total = total.substr(1); }
+          total = tempContent.substr(total.find(" ")+1);
+          std::cout<<"Total: "<<total<<std::endl;
+
+          if(has_it(total,' ')) {
+            chan = total.substr(0,total.find(' '));
+            total = total.substr(total.find_first_of(' ')+1);
+            message = total;
+          }
+          else { chan = total; }
+
+
+          std::cout<<"Chan: "<<chan<<std::endl;
+          std::cout<<"Message: "<<message<<std::endl;
+
+          if(message.empty()) { SendPart(chan,conn); }
+          else if(!message.empty()) { SendPart(chan,message,conn); }
+
+          for(auto&& j: chan_list) {
+            ++pos1;
+            if(j.getData() == chan) {
+              chan_list.erase(chan_list.begin() + pos1);
+              break;
+            }
+          }
+        }
+        else if(has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_NAMREPLY))) ||
+                has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_TOPIC)))) {
+          if(has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_NAMREPLY)))) {
+            //:cherryh.freenode.net 353 G33kb0i = #tsukibot :G33kb0i OtakuSenpai
+            std::string tempChan = i.getContent().substr(0,i.getContent().find(" "));
+            std::string nameList = i.getContent().substr(i.getContent().find(":"));
+
+            for(auto j: chan_list) {
+              if(j.getData() == tempChan) {
+                j.setUsers(nameList); break;
+              }
+            }
+          }
+          else if(has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_TOPIC)))) {
+            //:cherryh.freenode.net 332 G33kb0i ##llamas :The official #1 off-topic
+
+            std::string chan = i.getContent().substr(0,i.getContent().find(" "));
+            std::string topic = i.getContent().substr(i.getContent().find(":"));
+            for(auto j: chan_list) {
+              if(j.getData() == chan) { j.setTopic(topic); break; }
+            }
+          }
+        }
+        else if(has_it(tempContent,std::string(specialChar + "quit"))) {
+          Disconnect(); disconnect = true; break;
+        }
+      }
+    }
+
+    // Move the messages from the temp storage to msglogs
+    msglogs.resize(tempMsgs.size() + msglogs.size());
+    std::move_backward(tempMsgs.begin(), tempMsgs.end(), msglogs.end());
+
+    if(msglogs.size() > 5000) { makeSpace(msglogs); }
     message.clear();
   }
   catch(std::exception& e){
-    std::cout<<"Caught exception: \n"<<e.what();
+    std::cout<<"Caught exception: \n"<<e.what()<<std::endl
+             <<"Data is: "<<message<<std::endl;
   }
 }
 
@@ -76,22 +156,21 @@ std::vector<Tsuki::Nick> Tsuki :: Bot :: get_user_list(const std::string& from) 
     if(i->getData() == from) {
       nick_list = i->getUserList();
       isthere = true;
-      std::cout<<std::endl<<"Found channel: "<<i->getData()<<std::endl<<std::endl;
       if(isthere) break;
     }
   }
   return nick_list;
 }
 
-void Tsuki :: Bot :: segragrator(const std::string& message,const char* data) {
+void Tsuki :: Bot :: segragrator(const std::string& message,const char* data,
+                                std::vector<Tsuki::IRCMessage>& msg) {
   size_t pos = 0;
   std::string token,delimiter{data},tempValue = message;
 
   while ((pos = tempValue.find(delimiter)) != std::string::npos) {
     token = tempValue.substr(0, pos);
-    tempValue.erase(std::remove(tempValue.begin(),tempValue.end(),'\n'),tempValue.end());
     Tsuki::IRCMessage temp(token);
-    msglogs.push_back(temp); temp.clear(); token.clear();
+    msg.push_back(temp); temp.clear(); token.clear();
     tempValue.erase(0, pos + delimiter.length());
   }
 }
@@ -109,13 +188,13 @@ void Tsuki :: Bot :: SetConn() {
   setState(Tsuki::ServerState::SETTING_NICK);
 
   if(getState() == Tsuki::ServerState::SETTING_NICK) {
-    SendNick();
+    SendNick(bot_name,conn);
     std::cout<<"Nick sent..."<<std::endl;
     setState(Tsuki::ServerState::SETTING_USER);
   }
   if(getState() == Tsuki::ServerState::SETTING_USER) {
     std::cout<<"Sending user..."<<std::endl;
-    SendUser(server_data.getUser(),server_data.getRealName(),0);
+    SendUser(server_data.getUser(),server_data.getRealName(),0,conn);
     std::cout<<"User sent..."<<std::endl;
     setState(Tsuki::ServerState::SETTING_PONG);
     setRunning(true);
@@ -127,6 +206,7 @@ void Tsuki :: Bot :: Connect() {
     std::string contents,command{"PING"};
     std::string serv_data;
     running = false;
+    disconnect = false;
 
     while(!isConnected() && !isRunning()) {
       std::this_thread::sleep_for(wait_time);
@@ -134,10 +214,10 @@ void Tsuki :: Bot :: Connect() {
     }
 
     std::cout<<"Entering loop...\n";
-    while(conn.RecvData(serv_data) && isRunning()) {
+    while(conn.RecvData(serv_data) && isRunning() && !disconnect) {
       if(begins_with(serv_data,"PING")) {
         if(contents == "") contents = serv_data.substr(command.size());
-        SendPong(contents);
+        SendPong(contents,conn);
         setState(Tsuki::ServerState::WORKING); setConnected(true);
       }
       if(has_it(serv_data,"004")) {
@@ -145,29 +225,29 @@ void Tsuki :: Bot :: Connect() {
         setConnected(true);
       }
       if(has_it(serv_data,"433")) {
-        SendNick(second_name);
+        SendNick(second_name,conn);
       }
       if(connected == true && joined == false) {
-        JoinChannel(server_data.getChannel()); joined = true;
+        JoinChannel(server_data.getChannel(),conn); joined = true;
       }
       if(getState() == Tsuki::ServerState::SETTING_PONG || begins_with(serv_data,"PING")) {
         if(contents == "") contents = serv_data.substr(command.size());
-        SendPong(contents);
+        SendPong(contents,conn);
         setState(Tsuki::ServerState::WORKING);
       }
 
       //:nick!user@host QUIT :Ping timeout: 200 seconds
       if(serv_data.find(":Ping timeout:",0) != std::string::npos &&
-        ((has_it(serv_data,bot_name.c_str())) || (has_it(serv_data,second_name.c_str()))) &&
-        has_it(serv_data,"QUIT")) {
-		setState(Tsuki::ServerState::NOT_CONNECTED);
-		setRunning(false);
-		setConnected(false);
-		while(!isConnected() && !isRunning()) {
+        ((has_it(serv_data,bot_name.c_str())) ||
+        (has_it(serv_data,second_name.c_str())))) {
+		    setState(Tsuki::ServerState::NOT_CONNECTED);
+		    setRunning(false);
+		    setConnected(false);
+		    while(!isConnected() && !isRunning()) {
           std::this_thread::sleep_for(wait_time);
           SetConn();
         }
-	  }
+	    }
       handle_msg(serv_data);
       serv_data.clear();
     }
@@ -185,111 +265,6 @@ void Tsuki :: Bot :: Disconnect() {
   setState(Tsuki::ServerState::NOT_CONNECTED);
 }
 
-void Tsuki :: Bot :: JoinChannel(const Channel& chan) {
-  std::string data = std::string{"JOIN "} + chan.getData() + std::string{"\r\n"};
-  conn.SendData(data);
-}
-
-void Tsuki :: Bot :: JoinChannel(const std::string& channel) {
-  std::string data = std::string{"JOIN "} + channel + std::string{"\r\n"};
-  conn.SendData(data);
-}
-
-void Tsuki :: Bot :: SendMsg(const std::string& msg) {
-  conn.SendData(msg);
-}
-
-void Tsuki :: Bot :: SendMsg(const char* command,const std::string& msg) {
-  std::string s = std::string(command) + " :" + msg;
-  conn.SendData(s);
-}
-
-void Tsuki :: Bot :: SendMsg(const std::string& command,const std::string& msg) {
-  std::string s = command + " :" + msg;
-  conn.SendData(s);
-}
-
-
-void Tsuki :: Bot :: SendNick() {
-  std::string s;
-  s = "NICK " + bot_name + "\r\n";
-  std::cout<<"Nick: "<<s<<std::endl;
-  conn.SendData(s);
-}
-
-void Tsuki :: Bot :: SendNick(const std::string& nick) {
-  std::string s;
-  s = "NICK " + nick + "\r\n";
-  conn.SendData(s);
-}
-
-void Tsuki :: Bot :: SendUser(const User& user,const std::string& realname,const int& mode) {
-  std::string s = "USER " + user.getData() + " " + std::to_string(mode) + " * :" + realname + "\r\n";
-  conn.SendData(s);
-}
-
-void Tsuki :: Bot :: SendUser(const User& user,const char* realname,const int& mode) {
-  std::string s = "USER " + user.getData() + " " + std::to_string(mode) +
-                  " *" + " :" + std::string(realname) + "\r\n";
-  std::cout<<"Sending user: "<<s<<std::endl;
-  conn.SendData(s);
-}
-
-void Tsuki :: Bot :: SendMe(const std::string& message,const std::string& target) {
-  std::string temp = "PRIVMSG " + target + " :\001ACTION " + message + "\001\r\n";
-  std::cout<<std::endl<<std::endl<<std::endl<<"Sending /me : "
-           <<temp<<std::endl<<std::endl<<std::endl;
-  conn.SendData(temp);
-}
-
-void Tsuki :: Bot :: SendPrivMsg(const std::string& target,const std::string& msg) {
-  std::string temp = "PRIVMSG " + target + " :" + msg + "\r\n";
-  std::cout<<"Retvalue: "<<temp<<"\n";
-  SendMsg(temp);
-}
-
-void Tsuki :: Bot :: SendPong(const std::string& contents) {
-  std::string temp = "PONG " + contents + "\r\n";
-  conn.SendData(temp);
-}
-
-void Tsuki :: Bot :: SendPart(const std::string& channel) {
-  std::string temp = "PART " + channel + "\r\n";
-  conn.SendData(temp);
-}
-
-void Tsuki :: Bot :: SendPart(const std::string& channel,const std::string& message) {
-  std::string temp = "PART " + channel + " :" + message + "\r\n";
-  std::cout<<"\nSending part message: "<<temp<<std::endl;
-  conn.SendData(temp);
-}
-
-void Tsuki :: Bot :: AddChannel(const std::string& channel,const std::string& command) {
-  size_t j = chan_list.size();
-  bool has_chan = false,chan_is_not_command = false;
-  std::string from = channel;
-  if(j == 0 ) {
-    if(command == "372" || command == "NOTICE" || from == "#freenode" || from == "##Linux" || command != "PRIVMSG")
-    { from = ""; chan_is_not_command = true; }
-    else
-    { Tsuki::Channel a{from}; chan_list.push_back(a); from = ""; }
-  }
-  else if(j > 0) {
-    if(command == "372" || command == "NOTICE" || from == "#freenode" ||  command != "PRIVMSG")
-    { from = ""; chan_is_not_command = true; }
-    for(auto i = std::begin(chan_list); i != std::end(chan_list); i++) {
-      size_t k = std::distance(std::begin(chan_list),i);
-      if(k > j) break;
-      if(i->getData() == from)
-      { has_chan = true; }
-    }
-    if(!has_chan) {
-      if(!chan_is_not_command)
-      { Tsuki::Channel a{from}; chan_list.push_back(a); }
-    }
-  }
-}
-
 void Tsuki :: Bot :: LoadPlugin(const std::string& path) {
   kernel.loadPlugin(path);
 }
@@ -299,6 +274,6 @@ void Tsuki :: Bot :: LoadPlugins(const std::string& path) {
 }
 
 void Tsuki :: Bot :: makeSpace(std::vector<IRCMessage> msgs) {
-  std::move(msgs.begin() + 80000, msgs.end(),msgs.begin());
-  msgs.resize(20000);
+  std::move(msgs.begin() + 3000, msgs.end(),msgs.begin());
+  msgs.resize(2000);
 }

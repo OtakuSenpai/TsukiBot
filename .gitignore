@@ -3,6 +3,7 @@ plugins/
 bin/
 TryxPS/
 releases/
+build/
 
 libhttp_parser.a
 CMakeCache.txt 
@@ -11,4 +12,11 @@ MakeFile
 TsukiBot.geany
 TsukiBot.tags
 tsukibot
+tests/constants.o
+tests/ircmessage.o
+tests/ircmsg-file-test
+tests/msg-test
+tests/parse-test
+tests/prefix-test
+
 
