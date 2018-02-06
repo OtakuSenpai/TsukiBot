@@ -15,7 +15,7 @@ As they say,one at a time 😉
 How to Compile
 --------------
 
-First create a folder,and from that folder,try this(assuming you are using cli,or else for Windows use TortoiseGit or something similar):-
+First,try this(assuming you are using cli,or else for Windows use TortoiseGit or something similar):-
 
 ```
 git clone https://github.com/OtakuSenpai/TsukiBot.git
@@ -31,7 +31,7 @@ As of writing this, this bot uses the following libraries and tools:-
 
 
  You hav to download the LibSDL2 and LibSDL2 Net development packages. Plus you also have to get the shared library packages for both LibSDL2 and LibSDL2-net. You will also need the cmake packages for your system to 
-build the bot. Also for debugging,you need to get LibSdl2 Net debugging package. The make package is for those who don't already have the make utility in their posix system. Also Cmake should be above version 3.7.
+build the bot. Also for debugging,you need to get LibSdl2 Net debugging package. The make package is for those who don't already have the make utility in their posix system. Also Cmake should be above version 3.0.
 
 
 For Ubuntu or Debian,run this command(package names may change with updates):
@@ -86,7 +86,7 @@ A lil googling helps too 😄
 
 Then you have to add another library,which is a plugin system I made during my summer vacations of 2017. It's name is Tryx Plugin System, and it's licensed under MIT License.
 
-Create a new folder,name it "TryxPS",one inside the other folder,and inside that new folder("TryxPS"),type this(again,if you are on Windows use TortoiseGit):-
+Type this inside the "TsukiBot" folder(again,if you are on Windows use TortoiseGit):-
 
 ```
 git clone https://github.com/OtakuSenpai/TryxPS.git
@@ -103,17 +103,19 @@ make
 Now,go back one directory and run this commands from the directory containing TsukiBot(remember,the TryxPS folder must be inside the directory containing TsukiBot),
 
 ```
-cmake CMakeLists.txt
+mkdir build && cd build/
+cmake ..
 make
+cp bin/tsukibot tsukibot
 
 ```
 
-Your executable should be inside the bin directory of TsukiBot folder. Now enjoy ;) !!
+Your executable should be inside the "build" directory of "TsukiBot" folder. Now enjoy ;) !!
 
 Notes
 -----
 
-1) The main code of the bot is ready, I just have to implement the plugins now. Things like tor and proxies will be done in v0.01.
+1) The main code of the bot is ready, I just have to implement the plugins now. The windows side of the plugin syustem is not fixed for now.
 2) Don't use the compile.sh script to compile,use cmake. That script is way outdated. Though the gdb-compile.sh script uses cmake to do the dirty job.
 3) This bot was only meant to be used on the Freenode network. Additional servers,if required,will be added in later versions.
 4) More will be added on notice. 😜
