@@ -5,7 +5,7 @@
 using namespace Tsuki;
 
 int main() {
-  std::string s1("niven.freenode.net"),s2("weber.freenode.net");
+  std::string s1(":duckgoose!~quack@fake.host.haxed.net"),s2(":weber.freenode.net");
   Prefix p1, p2;
   p1.setData(s1,Type::normal,true);
   p2.setData(s2,Type::normal,true);

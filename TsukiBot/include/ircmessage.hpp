@@ -49,6 +49,9 @@ namespace Tsuki {
     void parseSpecial(std::string& msg);
     void parseNamelist(std::string& msg);
     void parseEndofNamelist(std::string& msg);
+    void parseTopic(std::string& msg);
+    void parseNoTopic(std::string& msg);
+    void parseWhoTime(std::string& msg);
 
   public:
     IRCMessage() : _prefix{}, _command{}, _content{}, _sender{} {}

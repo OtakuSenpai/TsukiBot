@@ -3,10 +3,16 @@ cmake_minimum_required (VERSION 3.0)
 project (TsukiBot)
 
 set(TsukiBot_VERSION_MAJOR 0.3)
-set(TsukiBot_VERSION_MINOR 14)
+set(TsukiBot_VERSION_MINOR 16)
 
 set(CMAKE_CXX_EXTENSIONS 14)
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -O2")
+
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.3)
+        message(FATAL_ERROR "g++ version must be at least 6.3!")
+  endif() 
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -O2")
+endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
@@ -15,11 +21,13 @@ include_directories("${PROJECT_SOURCE_DIR}/TryxPS/include")
 set(HEADERS "TsukiBot/include/constants.hpp"
             "TsukiBot/include/ircconnector.hpp"
             "TsukiBot/include/ircmessage.hpp"
+             "TsukiBot/include/irchelpers.hpp"
             "TsukiBot/include/TsukiIRC.hpp")
 
 set(SOURCES "TsukiBot/src/constants.cpp"
             "TsukiBot/src/ircconnector.cpp"
             "TsukiBot/src/ircmessage.cpp"
+            "TsukiBot/src/irchelpers.cpp"
             "TsukiBot/src/TsukiIRC.cpp")
 
 set(MOOPLG "plugins-src/MooPlugin/mooplg.hpp"
