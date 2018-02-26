@@ -1,24 +1,43 @@
 #ifndef BASEPLUGIN_HPP
 #define BASEPLUGIN_HPP
 
+#define TRYX_SOURCE 1
+
 #include <string>
+#include <vector>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
 
 #include "config.hpp"
 
-namespace Tsuki {
-  class BasePlugin {
-	public:
-	  TRYX_API_EXP BasePlugin(const std::string& ts, const std::string& dscrpt,
-	                          const bool& adminReq = false) {}
-	  TRYX_API_EXP virtual BasePlugin() {} 
-	  TRYX_API_EXP virtual std::string onCommand(const std::string& packet
-	  
-	  virtual bool triggered(const IRCMessage& msg) {
-		return p.type == 
-	                                        
-	protected: 
-	  std::string trigStr;
-	  std::string description;
-	  bool adminRequired;
-  };
-}
+using namespace Tryx;
+
+class BasePlugin : public PluginInterface {
+  public:
+    TRYX_API_EXP BasePlugin(const char* trigger, const char* dscrpt,
+                            const bool& adminReq,const char* subTrigs);
+    TRYX_API_EXP virtual ~BasePlugin()=0;
+    TRYX_API_EXP virtual char* onCommand(const char* ident, const char* data)=0;
+
+    virtual char* onCall(const char* data)=0;
+
+    const char* getTrigStr();
+    const char* getDescription();
+    bool getAdminRequired();
+    const char* getSubTriggers();
+
+    virtual const char* triggered(const char* message)=0;
+
+    void setSubTriggers(const char* data);
+
+  protected:
+    std::string trigStr;
+    std::string description;
+    bool adminRequired;
+    std::vector<std::string> subTriggers;
+    std::string subTriggerStr;
+};
+
+
+#endif
