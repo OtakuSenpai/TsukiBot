@@ -1,14 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////////
 // TsukiBot IRC Bot made by Avra Neel Chakraborty                                //
 //                                                                               //
-// Copyright (c) 2018 Avra Neel Chakraborty                                      // 
+// Copyright (c) 2018 Avra Neel Chakraborty                                      //
 //                                                                               //
 // This Source Code Form is subject to the terms of the Mozilla Public           //
 // License, v. 2.0. If a copy of the MPL was not distributed with this           //
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.                      //
 //                                                                               //
-// The above copyright notice and this permission notice shall be included in    // 
-// all copies or substantial portions of the Software.                           // 
+// The above copyright notice and this permission notice shall be included in    //
+// all copies or substantial portions of the Software.                           //
 ///////////////////////////////////////////////////////////////////////////////////
 
 #include "TsukiIRC.hpp"
@@ -253,23 +253,23 @@ void Tsuki :: Bot :: Connect() {
       if(serv_data.find(":Ping timeout:",0) != std::string::npos &&
         ((has_it(serv_data,bot_name.c_str())) ||
         (has_it(serv_data,second_name.c_str())))) {
-		    setState(Tsuki::ServerState::NOT_CONNECTED);
-		    setRunning(false);
-		    setConnected(false);
-		    while(!isConnected() && !isRunning()) {
+        setState(Tsuki::ServerState::NOT_CONNECTED);
+        setRunning(false);
+        setConnected(false);
+        while(!isConnected() && !isRunning()) {
           std::this_thread::sleep_for(wait_time);
           SetConn();
         }
-	    }
+      }
       handle_msg(serv_data);
       serv_data.clear();
     }
     std::cout<<"Exiting Tsuki::Bot::Connect....\n";
   }
   catch(std::exception& e) {
-	std::cerr<<"Caught exception: \n"<<e.what();
-	conn.DisConnect();
-	std::exit(EXIT_FAILURE);
+  std::cerr<<"Caught exception: \n"<<e.what();
+  conn.DisConnect();
+  std::exit(EXIT_FAILURE);
   }
 }
 
@@ -284,6 +284,26 @@ void Tsuki :: Bot :: LoadPlugin(const std::string& path) {
 
 void Tsuki :: Bot :: LoadPlugins(const std::string& path) {
   kernel.loadPlugins(path,true);
+  std::string name,subtrigger,trigger;
+  std::vector<std::string> subTrigs;
+  Tryx::PluginInterface *p = nullptr;
+  size_t i;
+
+  for(i = 0; i<=kernel.getPlugins().size(); ++i) {
+    name = kernel.getPluginName(i);
+    p = kernel.getFuncHandle(name);
+    subtrigger = p->onCommand("getSubTriggers","");
+    std::stringstream s(subtrigger);
+    for(std::string temp; std::getline(s,temp,' '); ) {
+      subTrigs.push_back(temp);
+    }
+    trigger = p->onCommand("getTrigStr","");
+    pluginSubStrs.emplace(trigger,subTrigs);
+    trigger.clear(); subtrigger.clear();
+    name.clear(); subTrigs.clear();
+    delete p;
+  }
+  std::cout<<"Loaded: "<<i<<" plugins!"<<std::endl;
 }
 
 void Tsuki :: Bot :: makeSpace(std::vector<IRCMessage> msgs) {
