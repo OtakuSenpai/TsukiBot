@@ -1,14 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////////
 // TsukiBot IRC Bot made by Avra Neel Chakraborty                                //
 //                                                                               //
-// Copyright (c) 2018 Avra Neel Chakraborty                                      // 
+// Copyright (c) 2018 Avra Neel Chakraborty                                      //
 //                                                                               //
 // This Source Code Form is subject to the terms of the Mozilla Public           //
 // License, v. 2.0. If a copy of the MPL was not distributed with this           //
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.                      //
 //                                                                               //
-// The above copyright notice and this permission notice shall be included in    // 
-// all copies or substantial portions of the Software.                           // 
+// The above copyright notice and this permission notice shall be included in    //
+// all copies or substantial portions of the Software.                           //
 ///////////////////////////////////////////////////////////////////////////////////
 
 
@@ -186,19 +186,20 @@ namespace Tsuki {
  };
 
   enum class Type { // Ping message or other
-	none = 0,
-	normal = 1,     // If there is a irc numeral to it
-	ping = 2,     // PING :hitchcock.freenode.net
-	join = 3,     // :WiZ!jto@tolsun.oulu.fi JOIN #Twilight_zone
-	                // JOIN #foo,#bar fubar,foobar
-	privmsg = 4,  // PRIVMSG Angel :yes I'm receiving it !
-	                // :Angel!wings@irc.org PRIVMSG Wiz :Are you receiving this message ?
-	                // first is from user, second from server
-	                // :WiZ!jto@tolsun.oulu.fi PART #playzone
-	notice = 5,   //:cherryh.freenode.net NOTICE * :*** Looking up your hostname...
-	mode = 6,     // :G33kb0i MODE G33kb0i :+i
-	special = 7,  // numerals on join of a network and are sent from server
-	other = 10
+  none = 0,
+  normal = 1,     // If there is a irc numeral to it
+  ping = 2,     // PING :hitchcock.freenode.net
+  join = 3,     // :WiZ!jto@tolsun.oulu.fi JOIN #Twilight_zone
+                  // JOIN #foo,#bar fubar,foobar
+  privmsg = 4,  // PRIVMSG Angel :yes I'm receiving it !
+                  // :Angel!wings@irc.org PRIVMSG Wiz :Are you receiving this message ?
+                  // first is from user, second from server
+                  // :WiZ!jto@tolsun.oulu.fi PART #playzone
+  notice = 5,   //:cherryh.freenode.net NOTICE * :*** Looking up your hostname...
+  mode = 6,     // :G33kb0i MODE G33kb0i :+i
+  special = 7,  // numerals on join of a network and are sent from server
+  quit = 0,
+  other = 10
   };
 
   enum ServerState
@@ -228,7 +229,7 @@ namespace Tsuki {
     void clear();
 
     inline bool empty() const {
-	    return _data.empty();
+      return _data.empty();
     }
   };
 
@@ -251,7 +252,7 @@ namespace Tsuki {
     void clear();
 
     inline bool empty() const {
-	    return _data.empty();
+      return _data.empty();
     }
   };
 
@@ -314,10 +315,10 @@ namespace Tsuki {
     void setStatus(const bool& _msg_status,const Type t);
 
     inline void clear() {
-	  _hostname.clear();
-	  _nick.clear();
-	  _user.clear();
-	  _type = Type::none;
+    _hostname.clear();
+    _nick.clear();
+    _user.clear();
+    _type = Type::none;
     }
   };
 

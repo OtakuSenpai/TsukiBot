@@ -2,10 +2,11 @@
 
 #include <time.h>
 #include <sstream>
+#include <iostream>
 
 TRYX_DECL_PLUGIN(BasicPlg)
 SET_PLUGIN_NAME("BasicPlg")
-SET_PLUGIN_TYPE("helperss")
+SET_PLUGIN_TYPE("helpers")
 SET_PLUGIN_VERS("0.1")
 
 BasicPlg :: BasicPlg(): BasePlugin("basic","This plugin contains basic commands to help in daily channel maintanence like help and list, and also contains commands to play with like ping,coffee,tea and moo",
@@ -25,10 +26,9 @@ char* BasicPlg :: onCall(const char* data) {
   char* retValue;
   std::string msg(data),subtrigger,otherContent,ret;
   bool hasit = false;
+  std::string temp = msg.substr(0,msg.find(' '));
 
-  msg = msg.substr(1);
-
-  if(trigStr == msg.substr(0,msg.find(' '))) {
+  if(trigStr == temp) {
     msg = msg.substr(msg.find(' ')+1);
     subtrigger = msg.substr(0,msg.find(' '));
     otherContent = msg.substr(msg.find(' ')+1);
@@ -79,6 +79,8 @@ char* BasicPlg :: onCall(const char* data) {
       }
     }
   }
+
+  std::cout<<ret<<std::endl;
 
   retValue = (char*) calloc(ret.size(), sizeof(char));
   strcpy(retValue,ret.c_str());

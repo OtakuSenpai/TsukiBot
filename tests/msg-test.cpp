@@ -8,7 +8,7 @@ using namespace Tsuki;
 
 int main() {
 
-  std::string s1 = ":CurryWurst!~CurryWurs@server.samoylyk.net JOIN #freenode";
+  std::string s1 = ":nick!user@host QUIT :Ping timeout: 200 seconds";
   std::string s2(":wgma!~wgma00@2607:fea8:3160:420:c0a9:cccd:cc6e:c047 JOIN #freenode");
 
   IRCMessage m1(s1);

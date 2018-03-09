@@ -22,6 +22,7 @@
 
 #include "irchelpers.hpp"
 #include "kernel.hpp"
+#include "BasePlugin.hpp"
 
 
 using namespace std::chrono;
@@ -65,10 +66,11 @@ namespace Tsuki
     void SetConn();
     //Set the channel user list
     void handleNickList(IRCMessage& temp);
-    //Plugins part
-    //Load a plugin or plugins
+
+    //Plugins functions
     void LoadPlugin(const std::string& path);
     void LoadPlugins(const std::string& path);
+    BasePlugin* retPlugin(const std::string& trigger);
 
     //Unload plugins
     void UnloadPlugins(){ kernel.unloadPlugins(); }
@@ -96,6 +98,18 @@ namespace Tsuki
 
     //Disconnect
     void Disconnect();
+
+    //Join Function
+    void Join(std::string& content);
+
+    //Part Function
+    void Part(std::string& content);
+
+    //NameList Function
+    void Namelist(std::string& content);
+
+    //Topic Function
+    void Topic(std::string& content);
 
     //Get list of plugin's size
     inline int getKernelSize() const{ return kernel.getSize(); }

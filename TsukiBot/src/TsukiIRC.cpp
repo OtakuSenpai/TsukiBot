@@ -49,7 +49,6 @@ bool Tsuki :: Bot :: has_in_chan(const std::string& name,const std::string& chan
     }
     else continue;
   }
-  std::cout<<std::endl<<"Has_in_chan: "<<has_it<<std::endl<<std::endl;
   return has_it;
 }
 
@@ -77,74 +76,49 @@ void Tsuki :: Bot :: handle_msg(std::string& message) {
     for(auto&& i: tempMsgs) {
       if(i.getType() != Type::special && i.getType() != Type::join &&
          i.getType() != Type::ping && i.getType() != Type::notice) {
-        std::cout<<"Content: "<<i.getContent()<<std::endl;
+
         std::string tempContent = i.getContent().substr(1);
         if(has_it(tempContent,std::string(specialChar + "join"))) {
           std::string temp = i.getContent().substr(i.getContent().find(" ")+1);
-          std::cout<<"Channel is: "<<temp<<std::endl;
-          JoinChannel(temp,conn);
-          chan_list.push_back(Tsuki::Channel(temp));
+          Join(temp);
         }
         else if(has_it(tempContent,std::string(specialChar + "part"))) {
           // $part ##llamas
           // $part ##llamas bye
           //Content: :$part ##llamas
 
-          std::string total,chan,message;
-          size_t pos1 = -1;
-
-          total = tempContent.substr(total.find(" ")+1);
-          if(total.at(0) == ' ') { total = total.substr(1); }
-          total = tempContent.substr(total.find(" ")+1);
-          std::cout<<"Total: "<<total<<std::endl;
-
-          if(has_it(total,' ')) {
-            chan = total.substr(0,total.find(' '));
-            total = total.substr(total.find_first_of(' ')+1);
-            message = total;
-          }
-          else { chan = total; }
-
-
-          std::cout<<"Chan: "<<chan<<std::endl;
-          std::cout<<"Message: "<<message<<std::endl;
-
-          if(message.empty()) { SendPart(chan,conn); }
-          else if(!message.empty()) { SendPart(chan,message,conn); }
-
-          for(auto&& j: chan_list) {
-            ++pos1;
-            if(j.getData() == chan) {
-              chan_list.erase(chan_list.begin() + pos1);
-              break;
-            }
-          }
+          Part(tempContent);
         }
         else if(has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_NAMREPLY))) ||
                 has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_TOPIC)))) {
-          if(has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_NAMREPLY)))) {
-            //:cherryh.freenode.net 353 G33kb0i = #tsukibot :G33kb0i OtakuSenpai
-            std::string tempChan = i.getContent().substr(0,i.getContent().find(" "));
-            std::string nameList = i.getContent().substr(i.getContent().find(":"));
 
-            for(auto j: chan_list) {
-              if(j.getData() == tempChan) {
-                j.setUsers(nameList); break;
-              }
-            }
+          if(has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_TOPIC)))) {
+            Topic(tempContent);
           }
-          else if(has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_TOPIC)))) {
-            //:cherryh.freenode.net 332 G33kb0i ##llamas :The official #1 off-topic
-
-            std::string chan = i.getContent().substr(0,i.getContent().find(" "));
-            std::string topic = i.getContent().substr(i.getContent().find(":"));
-            for(auto j: chan_list) {
-              if(j.getData() == chan) { j.setTopic(topic); break; }
-            }
+          else if(has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_NAMREPLY)))) {
+            Namelist(tempContent);
           }
         }
         else if(has_it(tempContent,std::string(specialChar + "quit"))) {
           Disconnect(); disconnect = true; break;
+        }
+        std::cout<<"TempContent: "<<tempContent<<std::endl;
+
+        //Automatic Plugin loading part
+        else {
+          std::string temp = tempContent;
+          for(auto&& k: pluginSubStrs) {
+            if(temp.substr(0,temp.find(" ")) == k.first) {
+              BasePlugin *p = retPlugin(k.first);
+              if(p != nullptr) {
+                std::string rest = temp.substr(temp.find(" ")+1);
+                std::string retStr = p->onCommand("onCall",tempContent.c_str());
+                SendMsg(retStr,conn);
+                delete p;
+              }
+              else { SendMsg("Plugin not found!!!",conn); }
+            }
+          }
         }
       }
     }
@@ -192,15 +166,16 @@ void Tsuki :: Bot :: SetConn() {
   conn.DisConnect();
   conn.Connect();
 
-  while(!conn.isConnected()) {
+  while(isConnected() == false) {
     std::cerr<<"Unable to connect to server!!! Retrying..."<<std::endl;
     std::this_thread::sleep_for(wait_time);
     conn.Connect();
-    setConnected(true);
+    setConnected(conn.isConnected());
   }
   setState(Tsuki::ServerState::SETTING_NICK);
 
   if(getState() == Tsuki::ServerState::SETTING_NICK) {
+    std::cout<<"Sending nick..."<<std::endl;
     SendNick(bot_name,conn);
     std::cout<<"Nick sent..."<<std::endl;
     setState(Tsuki::ServerState::SETTING_USER);
@@ -222,7 +197,6 @@ void Tsuki :: Bot :: Connect() {
     disconnect = false;
 
     while(!isConnected() && !isRunning()) {
-      std::this_thread::sleep_for(wait_time);
       SetConn();
     }
 
@@ -249,15 +223,14 @@ void Tsuki :: Bot :: Connect() {
         setState(Tsuki::ServerState::WORKING);
       }
 
-      //:nick!user@host QUIT :Ping timeout: 200 seconds
+      //
       if(serv_data.find(":Ping timeout:",0) != std::string::npos &&
-        ((has_it(serv_data,bot_name.c_str())) ||
-        (has_it(serv_data,second_name.c_str())))) {
+        (has_it(serv_data,bot_name.c_str()) || has_it(serv_data,second_name.c_str()))) {
         setState(Tsuki::ServerState::NOT_CONNECTED);
+        conn.DisConnect();
         setRunning(false);
         setConnected(false);
         while(!isConnected() && !isRunning()) {
-          std::this_thread::sleep_for(wait_time);
           SetConn();
         }
       }
@@ -275,6 +248,8 @@ void Tsuki :: Bot :: Connect() {
 
 void Tsuki :: Bot :: Disconnect() {
   conn.DisConnect();
+  setRunning(false);
+  setConnected(false);
   setState(Tsuki::ServerState::NOT_CONNECTED);
 }
 
@@ -289,7 +264,7 @@ void Tsuki :: Bot :: LoadPlugins(const std::string& path) {
   Tryx::PluginInterface *p = nullptr;
   size_t i;
 
-  for(i = 0; i<=kernel.getPlugins().size(); ++i) {
+  for(i = 0; i<kernel.getPlugins().size(); ++i) {
     name = kernel.getPluginName(i);
     p = kernel.getFuncHandle(name);
     subtrigger = p->onCommand("getSubTriggers","");
@@ -304,9 +279,90 @@ void Tsuki :: Bot :: LoadPlugins(const std::string& path) {
     delete p;
   }
   std::cout<<"Loaded: "<<i<<" plugins!"<<std::endl;
+
+  i = 0;
+  size_t k;
+  for(auto&& j: pluginSubStrs) {
+    for(k = 0; k<j.second.size(); ++k);
+    i = i + k;
+  }
+  std::cout<<"Loaded: "<<i<<" subplugins!"<<std::endl;
+}
+
+BasePlugin* Tsuki :: Bot :: retPlugin(const std::string& trig) {
+  PluginInterface* p = nullptr;
+  std::string name;
+
+  for(size_t i = 0; i<kernel.getPlugins().size(); ++i) {
+    name = kernel.getPluginName(i);
+    p = kernel.getFuncHandle(name);
+    std::string temp = p->onCommand("getTrigStr","");
+    std::cout<<"Trig: "<<temp<<std::endl;
+    if(trig == temp) {
+      std::cout<<"Found!"<<std::endl;
+      break;
+    }
+    delete p; name.clear();
+  }
+  if(p != nullptr)
+    return reinterpret_cast<BasePlugin*>(p);
+  else  nullptr;
 }
 
 void Tsuki :: Bot :: makeSpace(std::vector<IRCMessage> msgs) {
   std::move(msgs.begin() + 3000, msgs.end(),msgs.begin());
   msgs.resize(2000);
+}
+
+void Tsuki :: Bot :: Join(std::string& temp) {
+  JoinChannel(temp,conn);
+  chan_list.push_back(Tsuki::Channel(temp));
+}
+
+void Tsuki :: Bot :: Part(std::string& tempContent) {
+  std::string total,chan,message;
+  size_t pos1 = -1;
+
+  total = tempContent.substr(total.find(" ")+1);
+  if(total.at(0) == ' ') { total = total.substr(1); }
+  total = tempContent.substr(total.find(" ")+1);
+
+  if(has_it(total,' ')) {
+    chan = total.substr(0,total.find(' '));
+    total = total.substr(total.find_first_of(' ')+1);
+    message = total;
+  }
+  else { chan = total; }
+
+  if(message.empty()) { SendPart(chan,conn); }
+  else if(!message.empty()) { SendPart(chan,message,conn); }
+
+  for(auto&& j: chan_list) {
+    ++pos1;
+    if(j.getData() == chan) {
+      chan_list.erase(chan_list.begin() + pos1);
+      break;
+    }
+  }
+}
+
+void Tsuki :: Bot :: Namelist(std::string& tempContent) {
+  //:cherryh.freenode.net 353 G33kb0i = #tsukibot :G33kb0i OtakuSenpai
+  std::string tempChan = tempContent.substr(0,tempContent.find(" "));
+  std::string nameList = tempContent.substr(tempContent.find(":"));
+
+  for(auto j: chan_list) {
+    if(j.getData() == tempChan) {
+      j.setUsers(nameList); break;
+    }
+  }
+}
+void Tsuki :: Bot :: Topic(std::string& tempContent) {
+  //:cherryh.freenode.net 332 G33kb0i ##llamas :The official #1 off-topic
+
+  std::string chan = tempContent.substr(0,tempContent.find(" "));
+  std::string topic = tempContent.substr(tempContent.find(":"));
+  for(auto j: chan_list) {
+    if(j.getData() == chan) { j.setTopic(topic); break; }
+  }
 }

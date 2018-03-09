@@ -1,14 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////////
 // TsukiBot IRC Bot made by Avra Neel Chakraborty                                //
 //                                                                               //
-// Copyright (c) 2018 Avra Neel Chakraborty                                      // 
+// Copyright (c) 2018 Avra Neel Chakraborty                                      //
 //                                                                               //
 // This Source Code Form is subject to the terms of the Mozilla Public           //
 // License, v. 2.0. If a copy of the MPL was not distributed with this           //
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.                      //
 //                                                                               //
-// The above copyright notice and this permission notice shall be included in    // 
-// all copies or substantial portions of the Software.                           // 
+// The above copyright notice and this permission notice shall be included in    //
+// all copies or substantial portions of the Software.                           //
 ///////////////////////////////////////////////////////////////////////////////////
 
 #include <stdexcept>
@@ -252,7 +252,6 @@ void Tsuki :: Prefix :: Parse(const std::string& _data) {
     }
 
     temp.erase(std::remove(temp.begin(),temp.end(),' '),temp.end());
-
     if((_data.find("net") == _data.size() - 3) && _is_server && _type != Type::mode) {
       _hostname = temp;
       _nick.setData("");
@@ -269,7 +268,7 @@ void Tsuki :: Prefix :: Parse(const std::string& _data) {
       temp = temp.substr(temp.find('!')+1);
       std::string user = temp.substr(0,temp.find('@'));
       _user.setData(user);
-      temp = temp.substr(temp.find('@'));
+      temp = temp.substr(temp.find('@')+1);
       _hostname = temp;
     }
   }
