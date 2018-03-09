@@ -9,7 +9,6 @@ libhttp_parser.a
 CMakeCache.txt 
 cmake_install.cmake
 MakeFile
-TsukiBot.geany
 TsukiBot.tags
 tsukibot
 tests/constants.o

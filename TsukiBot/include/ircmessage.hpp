@@ -1,14 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////////
 // TsukiBot IRC Bot made by Avra Neel Chakraborty                                //
 //                                                                               //
-// Copyright (c) 2018 Avra Neel Chakraborty                                      // 
+// Copyright (c) 2018 Avra Neel Chakraborty                                      //
 //                                                                               //
 // This Source Code Form is subject to the terms of the Mozilla Public           //
 // License, v. 2.0. If a copy of the MPL was not distributed with this           //
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.                      //
 //                                                                               //
-// The above copyright notice and this permission notice shall be included in    // 
-// all copies or substantial portions of the Software.                           // 
+// The above copyright notice and this permission notice shall be included in    //
+// all copies or substantial portions of the Software.                           //
 ///////////////////////////////////////////////////////////////////////////////////
 
 #ifndef IRCMESSAGE_HPP
@@ -54,6 +54,7 @@ namespace Tsuki {
     void setPacketInfo(const unsigned short packet);
     void Parse(const std::string& data);
 
+    void parseQuit(std::string& msg);
     void parsePing(std::string& msg);
     void parseJoin(std::string& msg);
     void parsePrivmsg(std::string& msg);

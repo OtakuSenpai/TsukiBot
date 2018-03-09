@@ -1,8 +1,16 @@
 #!/usr/bin/env sh
 
-echo "Compiling TsukiIRC...."
+echo "Removing old files..."
+rm -rf ./build
 
-cmake -DCMAKE_BUILD_TYPE=Debug CMakeLists.txt
+echo "Making dir and entering it...."
+mkdir ./build && cd build
 
-make
+echo "Generating Cmake files...."
+cmake -DCMAKE_BUILD_TYPE=Debug ..
+
+echo "Building it..."
+make && cp ./bin/tsukibot tsukibot
+
+echo "Done!"
 

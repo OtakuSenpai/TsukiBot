@@ -1,14 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////////
 // TsukiBot IRC Bot made by Avra Neel Chakraborty                                //
 //                                                                               //
-// Copyright (c) 2018 Avra Neel Chakraborty                                      // 
+// Copyright (c) 2018 Avra Neel Chakraborty                                      //
 //                                                                               //
 // This Source Code Form is subject to the terms of the Mozilla Public           //
 // License, v. 2.0. If a copy of the MPL was not distributed with this           //
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.                      //
 //                                                                               //
-// The above copyright notice and this permission notice shall be included in    // 
-// all copies or substantial portions of the Software.                           // 
+// The above copyright notice and this permission notice shall be included in    //
+// all copies or substantial portions of the Software.                           //
 ///////////////////////////////////////////////////////////////////////////////////
 
 #include "ircmessage.hpp"
@@ -74,6 +74,9 @@ std::string Tsuki :: IRCMessage :: getData() const {
     temp = _prefix.getData() + " " + std::to_string(static_cast<int>(_pckType)) +
            " "  + _sender + " " + _content;
   }
+  else if(_type == Type::quit) {
+    temp = _prefix.getData() + " " + _command + " :" + _content;
+  }
   else if(_type == Type::normal) {
     temp = _prefix.getData() + " " + _command + " " +
                      _sender + " " + _content;
@@ -138,6 +141,11 @@ void Tsuki :: IRCMessage :: handleParse(const std::string& message) {
   else if(parseNumeral(message,"MODE")) {
     _from_server = true;
     _type = Type::mode;
+    _prefix.setStatus(_from_server,_type);
+  }
+  else if(parseNumeral(message,"QUIT")) {
+    _from_server = false;
+    _type = Type::quit;
     _prefix.setStatus(_from_server,_type);
   }
   else if(parseNumeral(message,"353") || parseNumeral(message,"366") ||
@@ -280,6 +288,9 @@ void Tsuki :: IRCMessage :: Parse(const std::string& data) {
     }
     else if(_type == Type::special && _from_server) {
        parseSpecial(tempStr);
+    }
+    else if(_type == Type::quit && !_from_server) {
+      parseQuit(tempStr);
     }
     else if(_type == Type::normal && _from_server) {
       if(parseNumeral(tempStr,"353")) { parseNamelist(tempStr); }
@@ -444,4 +455,13 @@ void Tsuki :: IRCMessage :: parseWhoTime(std::string& tempStr) {
   _sender = tempStr.substr(0,tempStr.find(" ",0));
   tempStr = tempStr.substr(tempStr.find(" ",0)+1);
   _content = tempStr;
+}
+
+//:nick!user@host QUIT :Ping timeout: 200 seconds
+void Tsuki :: IRCMessage :: parseQuit(std::string& msg) {
+  setPrefix(msg.substr(0,msg.find(" ",0)),Type::quit,_from_server);
+  msg = msg.substr(msg.find(" ",0)+1);
+  _pckType = PacketType::OTHER;
+  _command = msg.substr(0,msg.find(" ",0)+1);
+  _content = msg.substr(msg.find(":",0)+1);
 }
