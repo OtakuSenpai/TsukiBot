@@ -387,3 +387,19 @@ bool Tsuki :: parseNumeral(const std::string& msg,const char* numeral) {
                                  return temp; }(tempStr);
   return (x == num);
 }
+
+bool Tsuki :: hasTrigger(const std::string& msg, const std::string& sc,
+         const std::map<std::string,std::vector<std::string>>& plugins) {
+  bool hasit = false;
+  std::string trigger = msg.substr(msg.find(":")+1).substr(msg.find(sc)+1);
+  trigger = trigger.substr(0,trigger.find(" "));
+
+  for(auto i: plugins) {
+    if(i.first == trigger) {
+      hasit = true;
+      break;
+    }
+  }
+  std::cout<<"HasTrigger: "<<hasit<<std::endl;
+  return hasit;
+}

@@ -70,7 +70,8 @@ namespace Tsuki
     //Plugins functions
     void LoadPlugin(const std::string& path);
     void LoadPlugins(const std::string& path);
-    BasePlugin* retPlugin(const std::string& trigger);
+    size_t findPlugin(const std::string& trigger);
+    BasePlugin* retPlugin(const size_t& pos);
 
     //Unload plugins
     void UnloadPlugins(){ kernel.unloadPlugins(); }

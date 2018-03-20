@@ -23,6 +23,7 @@
 #include <chrono>
 #include <thread>
 
+
 using namespace Tryx;
 
 void Tsuki :: Bot :: setName(const std::string& name) {
@@ -82,14 +83,14 @@ void Tsuki :: Bot :: handle_msg(std::string& message) {
           std::string temp = i.getContent().substr(i.getContent().find(" ")+1);
           Join(temp);
         }
-        else if(has_it(tempContent,std::string(specialChar + "part"))) {
+        if(has_it(tempContent,std::string(specialChar + "part"))) {
           // $part ##llamas
           // $part ##llamas bye
           //Content: :$part ##llamas
 
           Part(tempContent);
         }
-        else if(has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_NAMREPLY))) ||
+        if(has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_NAMREPLY))) ||
                 has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_TOPIC)))) {
 
           if(has_it(tempContent,std::to_string(static_cast<int>(PacketType::RPL_TOPIC)))) {
@@ -99,27 +100,35 @@ void Tsuki :: Bot :: handle_msg(std::string& message) {
             Namelist(tempContent);
           }
         }
-        else if(has_it(tempContent,std::string(specialChar + "quit"))) {
+        if(has_it(tempContent,std::string(specialChar + "quit"))) {
           Disconnect(); disconnect = true; break;
         }
         std::cout<<"TempContent: "<<tempContent<<std::endl;
 
         //Automatic Plugin loading part
-        else {
+        if(hasTrigger(tempContent,specialChar,pluginSubStrs)) {
           std::string temp = tempContent;
+          temp = temp.substr(1);
+          std::cout<<"Temp: "<<temp<<std::endl;
           for(auto&& k: pluginSubStrs) {
             if(temp.substr(0,temp.find(" ")) == k.first) {
-              BasePlugin *p = retPlugin(k.first);
+              std::string name = kernel.getPluginName(findPlugin(k.first));
+              std::cout<<"Name: "<<name<<std::endl;
+              PluginInterface* p = kernel.getFuncHandle(name);
+              std::cout<<"Loaded plugin: "<<((p == nullptr) ? true : false)<<std::endl;
               if(p != nullptr) {
-                std::string rest = temp.substr(temp.find(" ")+1);
-                std::string retStr = p->onCommand("onCall",tempContent.c_str());
+                std::string retStr = p->onCommand("onCall",temp.c_str());
+                std::cout<<"RetStr: "<<retStr<<std::endl;
                 SendMsg(retStr,conn);
                 delete p;
               }
-              else { SendMsg("Plugin not found!!!",conn); }
+              else if(p == nullptr) {
+                SendMsg("Plugin not found!!!",conn);
+              }
             }
           }
         }
+
       }
     }
 
@@ -289,24 +298,41 @@ void Tsuki :: Bot :: LoadPlugins(const std::string& path) {
   std::cout<<"Loaded: "<<i<<" subplugins!"<<std::endl;
 }
 
-BasePlugin* Tsuki :: Bot :: retPlugin(const std::string& trig) {
+size_t Tsuki :: Bot :: findPlugin(const std::string& trig) {
   PluginInterface* p = nullptr;
   std::string name;
+  size_t pos = -1;
 
   for(size_t i = 0; i<kernel.getPlugins().size(); ++i) {
     name = kernel.getPluginName(i);
     p = kernel.getFuncHandle(name);
     std::string temp = p->onCommand("getTrigStr","");
-    std::cout<<"Trig: "<<temp<<std::endl;
+    std::cout<<"Trig: "<<trig<<std::endl;
+    std::cout<<"Trig from plugin: "<<temp<<std::endl;
     if(trig == temp) {
       std::cout<<"Found!"<<std::endl;
+      pos = i;
+      std::cout<<"Pos: "<<pos<<std::endl;
       break;
     }
-    delete p; name.clear();
+    else {
+      delete p;
+      name.clear();
+      continue;
+    }
   }
-  if(p != nullptr)
-    return reinterpret_cast<BasePlugin*>(p);
-  else  nullptr;
+  return pos;
+}
+
+BasePlugin* Tsuki :: Bot :: retPlugin(const size_t& pos) {
+  Plugin::PluginFactoryFunc temp = kernel.getPlugins().at(pos)->getData().get()->getFuncHandle();
+  BasePlugin* p = reinterpret_cast<BasePlugin*>(temp());
+
+  if(p != nullptr) {
+    std::cout<<"returning plugin!!\n";
+    return p;
+  }
+  else return nullptr;
 }
 
 void Tsuki :: Bot :: makeSpace(std::vector<IRCMessage> msgs) {

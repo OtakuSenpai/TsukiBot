@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <cctype>
 #include <iterator>
+#include <map>
 
 namespace Tsuki {
 
@@ -368,6 +369,8 @@ namespace Tsuki {
   bool has_it(const std::string& data,const char* command);
   bool has_it(const std::string& data,const char& command);
   bool parseNumeral(const std::string& msg,const char* numeral);
+  bool hasTrigger(const std::string& msg, const std::string& sc,
+         const std::map<std::string,std::vector<std::string>>& plugins);
 
 } //namespace Tsuki
 
