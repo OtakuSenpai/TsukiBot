@@ -23,9 +23,6 @@
 #include <chrono>
 #include <thread>
 
-
-using namespace Tryx;
-
 void Tsuki :: Bot :: setName(const std::string& name) {
   bot_name = name;
   server_data.setNick(bot_name);
@@ -114,12 +111,12 @@ void Tsuki :: Bot :: handle_msg(std::string& message) {
             if(temp.substr(0,temp.find(" ")) == k.first) {
               std::string name = kernel.getPluginName(findPlugin(k.first));
               std::cout<<"Name: "<<name<<std::endl;
-              PluginInterface* p = kernel.getFuncHandle(name);
+              BasePlugin* p = kernel.getFuncHandle(name);
               std::cout<<"Loaded plugin: "<<((p == nullptr) ? true : false)<<std::endl;
               if(p != nullptr) {
                 std::string retStr = p->onCommand("onCall",temp.c_str());
                 std::cout<<"RetStr: "<<retStr<<std::endl;
-                SendMsg(retStr,conn);
+                SendPrivMsg(i.getSender(),retStr,conn);
                 delete p;
               }
               else if(p == nullptr) {
@@ -270,18 +267,21 @@ void Tsuki :: Bot :: LoadPlugins(const std::string& path) {
   kernel.loadPlugins(path,true);
   std::string name,subtrigger,trigger;
   std::vector<std::string> subTrigs;
-  Tryx::PluginInterface *p = nullptr;
+  BasePlugin *p = nullptr;
   size_t i;
 
   for(i = 0; i<kernel.getPlugins().size(); ++i) {
     name = kernel.getPluginName(i);
+    std::cout<<"Plugin name: "<<name<<std::endl;
     p = kernel.getFuncHandle(name);
     subtrigger = p->onCommand("getSubTriggers","");
+    std::cout<<"Subtriggers: "<<subtrigger<<std::endl;
     std::stringstream s(subtrigger);
     for(std::string temp; std::getline(s,temp,' '); ) {
       subTrigs.push_back(temp);
     }
     trigger = p->onCommand("getTrigStr","");
+    std::cout<<"Trigger: "<<trigger<<std::endl<<std::endl;
     pluginSubStrs.emplace(trigger,subTrigs);
     trigger.clear(); subtrigger.clear();
     name.clear(); subTrigs.clear();
@@ -299,7 +299,7 @@ void Tsuki :: Bot :: LoadPlugins(const std::string& path) {
 }
 
 size_t Tsuki :: Bot :: findPlugin(const std::string& trig) {
-  PluginInterface* p = nullptr;
+  BasePlugin* p = nullptr;
   std::string name;
   size_t pos = -1;
 
@@ -325,7 +325,14 @@ size_t Tsuki :: Bot :: findPlugin(const std::string& trig) {
 }
 
 BasePlugin* Tsuki :: Bot :: retPlugin(const size_t& pos) {
-  Plugin::PluginFactoryFunc temp = kernel.getPlugins().at(pos)->getData().get()->getFuncHandle();
+  Plugin::PluginFactoryFunc temp;
+  size_t j = 0;
+  for(auto&& i: kernel.getPlugins()) {
+	if(pos == j)
+	  temp = i.second.get()->getFuncHandle();
+	++j;
+  }  
+  
   BasePlugin* p = reinterpret_cast<BasePlugin*>(temp());
 
   if(p != nullptr) {

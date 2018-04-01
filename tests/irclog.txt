@@ -1,3 +1,82 @@
+
+:hitchcock.freenode.net 001 G33kb0i :Welcome to the freenode Internet Relay Chat Network G33kb0i
+:hitchcock.freenode.net 002 G33kb0i :Your host is hitchcock.freenode.net[130.185.232.126/6667], running version ircd-seven-1.1.5
+:hitchcock.freenode.net 003 G33kb0i :This server was created Tue Dec 12 2017 at 21:10:35 UTC
+:hitchcock.freenode.net 004 G33kb0i hitchcock.freenode.net ircd-seven-1.1.5 DOQRSZaghilopswz CFILMPQSbcefgijklmnopqrstvz bkloveqjfI
+:hitchcock.freenode.net 005 G33kb0i CHANTYPES=# EXCEPTS INVEX CHANMODES=eIbq,k,flj,CFLMPQScgimnprstz CHANLIMIT=#:120 PREFIX=(ov)@+ MAXLIST=bqeI:100 MODES=4 NETWORK=freenode KNOCK STATUSMSG=@+ CALLERID=g :are supported by this server
+:hitchcock.freenode.net 005 G33kb0i CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=16 CHANNELLEN=50 TOPICLEN=390 ETRACE CPRIVMSG CNOTICE DEAF=D MONITOR=100 FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR: :are supported by this server
+:hitchcock.freenode.net 005 G33kb0i EXTBAN=$,ajrxz WHOX CLIENTVER=3.0 SAFELIST ELIST=CTU :are supported by this server
+:hitchcock.freenode.net 251 G33kb0i :There are 126 users and 89992 invisible on 34 servers
+:hitchcock.freenode.net 252 G33kb0i 26 :IRC Operators online
+:hitchcock.freenode.net 253 G33kb0i 111 :unknown connection(s)
+:hitchcock.freenode.net 254 G33kb0i 50808 :channels formed
+:hitchcock.freenode.net 255 G33kb0i :I have 4330 clients and 1 servers
+:hitchcock.freenode.net 265 G33kb0i 4330 5963 :Current local users 4330, max 5963
+:hitchcock.freenode.net 266 G33kb0i 90118 96600 :Current global users 90118, max 96600
+:hitchcock.freenode.net 250 G33kb0i :Highest connection count: 5964 (5963 clients) (1166921 connections received)
+:hitchcock.freenode.net 375 G33kb0i :- hitchcock.freenode.net Message of the Day - 
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :- Welcome to hitchcock.freenode.net in Sofia, Bulgaria, EU, kindly sponsored by
+:hitchcock.freenode.net 372 G33kb0i :- Neterra Communications (www.neterra.net)
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :- HITCHCOCK, SIR ALFRED [1899 - 1980] Born in Essex,
+:hitchcock.freenode.net 372 G33kb0i :- England, Sir Alfred Hitchcock was a noted film director
+:hitchcock.freenode.net 372 G33kb0i :- and producer. Over a long career he pioneered many modern
+:hitchcock.freenode.net 372 G33kb0i :- techniques in film-making, made more than 50 feature films,
+:hitchcock.freenode.net 372 G33kb0i :- and influenced many present-day directors and producers.
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :- Welcome to freenode - supporting the free and open source
+:hitchcock.freenode.net 372 G33kb0i :- software communities since 1998.
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :- By connecting to freenode you indicate that you have read and
+:hitchcock.freenode.net 372 G33kb0i :- accept our policies and guidelines as set out on https://freenode.net
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :- In the event that you observe behaviour that contravenes our policies,
+:hitchcock.freenode.net 372 G33kb0i :- please notify a volunteer staff member via private message, or send us an
+:hitchcock.freenode.net 372 G33kb0i :- e-mail to complaints@freenode.net -- we will do our best to address the
+:hitchcock.freenode.net 372 G33kb0i :- situation within a reasonable period of time, and we may request further
+:hitchcock.freenode.net 372 G33kb0i :- information or, as appropriate, involve other parties such as channel operators 
+:hitchcock.freenode.net 372 G33kb0i :- Group Contacts representing an on-topic group.
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :- freenode runs an open proxy scanner.
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :- If you are looking for assistance, you will be able to find a list of
+:hitchcock.freenode.net 372 G33kb0i :- volunteer staff using the '/who freenode/staff/*' command, and you may
+:hitchcock.freenode.net 372 G33kb0i :- message any of us at any time. Please note that freenode predominantly
+:hitchcock.freenode.net 372 G33kb0i :- provides assistance via private message, and while we have a network
+:hitchcock.freenode.net 372 G33kb0i :- channel the primary venue for support requests is via private message to
+:hitchcock.freenode.net 372 G33kb0i :- a member of the volunteer staff team.
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :- From time to time, volunteer staff may send server-wide notices relating to
+:hitchcock.freenode.net 372 G33kb0i :- the project, or the communities that we host. The majority of such notices
+:hitchcock.freenode.net 372 G33kb0i :- will be sent as wallops, and you can '/mode <yournick> +w' to ensure that you
+:hitchcock.freenode.net 372 G33kb0i :- do not miss them. Important messages relating to the freenode project, including
+:hitchcock.freenode.net 372 G33kb0i :- notices of upcoming maintenance and other scheduled downtime will be issued as
+:hitchcock.freenode.net 372 G33kb0i :- global notices.
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :- Representing an on-topic project? Don't forget to register, more information
+:hitchcock.freenode.net 372 G33kb0i :- can be found on the https://freenode.net website under "Group Registration".
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :- freenode organises an annual conference, and we would like to extend our
+:hitchcock.freenode.net 372 G33kb0i :- thanks to the attendees, exhibitors and speakers who made freenode #live 2017
+:hitchcock.freenode.net 372 G33kb0i :- possible. And of course, our generous sponsors: Bytemark, Canonical (Ubuntu),
+:hitchcock.freenode.net 372 G33kb0i :- Falanx Cyber Security, Private Internet Access and Yubico for footing the bill.
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :- Thank you also to our server sponsors for the sustained support in keeping the
+:hitchcock.freenode.net 372 G33kb0i :- network going for close to two decades.
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :- freenode #live returns to Bristol, UK on November 3rd-4th 2018. Our Call for
+:hitchcock.freenode.net 372 G33kb0i :- Proposals is live at https://freenode.live and open until July 31, 2018. If 
+:hitchcock.freenode.net 372 G33kb0i :- you are interested in sponsoring this event, please send an e-mail to
+:hitchcock.freenode.net 372 G33kb0i :- sponsor@freenode.live
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :- Thank you for using freenode!
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 372 G33kb0i :-  
+:hitchcock.freenode.net 376 G33kb0i :End of /MOTD command.
+:G33kb0i MODE G33kb0i :+i
+
+
 :nick!user@host PRIVMSG G33kboi :,join ##llamas
 :G33kb0i!~OtakuSenp@117.194.218.221 PART #tsukibot
 :cherryh.freenode.net 353 G33kb0i = #tsukibot :G33kb0i OtakuSenpai

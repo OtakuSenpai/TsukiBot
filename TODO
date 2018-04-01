@@ -13,26 +13,23 @@ GOALS:
 [+] 0.01 --> Get the /me,JOIN,PART message and coffee giving system working
 [+] 0.02 --> Make a plugin system for the bot
 [?] 0.03 --> Get a Tea/coffee,source,ping,help,moo,list functions working 
-             in plugins.Get MODE,QUERY,QUIT and TOPIC function working,and
+             in plugins.Get MODE,QUERY,QUIT function working,and
              make the bot and accept PRIVMSGs. Make IRCMessage class working.
-[-] 0.04 --> Make plugin 2. Make plugin called on the fly and synchronous
+             Make plugin 2. Make plugin called on the fly and synchronous
              with no hard coded loading functions. Make the bot connect
              through TLS.
-[-] 0.05 --> Get the nickserv register and login system working.Make
+[-] 0.04 --> Get the nickserv register and login system working.Make
              the bot connect to different servers synchronously.
-[-] 0.06 --> Get a  bot settings class working.Also make a channel
+             Get a  bot settings class working.Also make a channel
              logging system(user's choice to log or not).Plugins should
              hav the ability to load/unload on the fly(enabled through
              bot functions).Plus plugins(which require this) should have
              a config file.
-[-] 0.07 --> Move coffee function to a plugin. Also make a reminder,a
-             seen,a tictactoe game and a gomoku game plugin and a
-             talk plugin.
-[-] 0.08 --> Fix some bugs.Also make it autojoin when kicked from a
-             channel.
-[-] 0.09 --> Make some cool plugins for it(number 1,3,4,5)
-[-] 0.10 --> Fix some bugs and add feature enhancements and all.
-[-] 0.11 --> Do some profiling and optimisations of the code base
+[-] 0.05 --> Make a reminder,a seen,a tictactoe game and a gomoku game 
+             plugin and a talk plugin. Also make it autojoin when kicked 
+             from a channel. Make some cool plugins for it(number 1,3,4,5) 
+[-] 0.06 --> Fix some bugs and add feature enhancements and all.
+[-] 0.07 --> Do some profiling and optimisations of the code base
 
 ---------------
 

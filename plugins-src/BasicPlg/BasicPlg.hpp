@@ -3,14 +3,16 @@
 
 #include "BasePlugin.hpp"
 
-#define TRYX_SOURCE 1
+#define TSUKI_SOURCE 1
+
+using namespace Tsuki;
 
 class BasicPlg : public BasePlugin {
   public:
-    TRYX_API_EXP BasicPlg();
-    TRYX_API_EXP ~BasicPlg();
-    TRYX_API_EXP char* onCall(const char* data);
-    TRYX_API_EXP char* onCommand(const char* ident, const char* d);
+    TSUKI_API_EXP BasicPlg();
+    TSUKI_API_EXP ~BasicPlg();
+    TSUKI_API_EXP char* onCall(const char* data);
+    TSUKI_API_EXP char* onCommand(const char* ident, const char* d);
 
     const char* triggered(const char* message);
     void setSubTriggers(const char* data);

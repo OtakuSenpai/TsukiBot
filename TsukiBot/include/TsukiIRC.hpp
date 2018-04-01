@@ -27,7 +27,6 @@
 
 using namespace std::chrono;
 using namespace Tsuki;
-using namespace Tryx;
 
 namespace Tsuki
 {
