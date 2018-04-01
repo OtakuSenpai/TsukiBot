@@ -4,13 +4,15 @@
 #include <sstream>
 #include <iostream>
 
-TRYX_DECL_PLUGIN(BasicPlg)
+using namespace Tsuki;
+
+TSUKI_DECL_PLUGIN(BasicPlg)
 SET_PLUGIN_NAME("BasicPlg")
 SET_PLUGIN_TYPE("helpers")
 SET_PLUGIN_VERS("0.1")
 
 BasicPlg :: BasicPlg(): BasePlugin("basic","This plugin contains basic commands to help in daily channel maintanence like help and list, and also contains commands to play with like ping,coffee,tea and moo",
-                        false,"help moo ping coffeee tea list") {
+                        false,"moo ping coffee tea dice coin cookie help") {
 
 }
 
@@ -18,9 +20,10 @@ BasicPlg :: ~BasicPlg() {
 
 }
 
-//$base moo
-//$base ping letty
-//$base coffee letty
+//$basic moo
+//$basic moo OtakuSenpai 
+//$basic ping letty
+//$basic coffee letty
 
 char* BasicPlg :: onCall(const char* data) {
   char* retValue;
@@ -31,8 +34,15 @@ char* BasicPlg :: onCall(const char* data) {
   if(trigStr == temp) {
     msg = msg.substr(msg.find(' ')+1);
     subtrigger = msg.substr(0,msg.find(' '));
-    otherContent = msg.substr(msg.find(' ')+1);
-
+    std::cout<<"Subtrig: "<<subtrigger<<std::endl;
+    otherContent = subtrigger.substr(subtrigger.find(' ')+1);
+    std::cout<<"Others: "<<otherContent<<std::endl;
+    if(otherContent == "moo" || otherContent == "ping" ||
+       otherContent == "coffee" || otherContent == "tea" ||
+       otherContent == "dice" || otherContent == "coin") {
+	  otherContent.clear();
+    }   
+      
     for(auto&& i: subTriggers) {
       if(i == subtrigger) { hasit = true; break;}
       else { continue; }
@@ -45,35 +55,37 @@ char* BasicPlg :: onCall(const char* data) {
       srand(time(NULL));
 
       if(subtrigger == "moo") {
-        std::string temp = otherContent;
-        temp = otherContent.substr(0,otherContent.find(' '));
-        int random = rand()%3;
-        switch(random) {
-          case 0:  temp = temp + ": " +
-          "\u000309,01m\x0f\u000302,07o\x0f\u000305,13o\x0f\u000310,06o\x0f\u000307,14!!!\x0f";
-                   ret = temp;
-                   break;
-          case 1:  temp = temp + ": " +
-          "\u000310,06m\x0f\u000311,13o\x0f\u000308,04o\x0f\u000314,03o\x0f\u000307,14!!!\x0f";
-                   ret = temp;
-                   break;
-          case 2:  temp = temp + ": " +
-          "\u000305,13m\x0f\u000309,01o\x0f\u000310,06o\x0f\u000311,13o\x0f\u000307,14!!!\x0f";
-                   ret = temp;
-                   break;
-          default: temp = temp + ": " +
-          "\u000306,08m\x0f\u000302,05o\x0f\u000307,09o\x0f\u000305,13o\x0f\u000307,14!!!\x0f";
-                   ret = temp;
-                   break;
+		if(otherContent.empty()) {
+		  ret = "\u000308,02m\x0f\u000304,06o\x0f\u000307,11o\x0f\u000310,06o\x0f\u000304,13!!!\x0f"; 
+		}	
+		else {   	 
+          int random = rand()%3;
+          switch(random) {
+            case 0:  otherContent = otherContent + ": " +
+                "\u000309,01m\x0f\u000302,07o\x0f\u000305,13o\x0f\u000310,06o\x0f\u000307,14!!!\x0f";
+                     ret = otherContent;
+                     break;
+            case 1:  otherContent = otherContent + ": " +
+                "\u000310,06m\x0f\u000311,13o\x0f\u000308,04o\x0f\u000314,03o\x0f\u000307,14!!!\x0f";
+                     ret = otherContent;
+                     break;
+            case 2:  otherContent = otherContent + ": " +
+                "\u000305,13m\x0f\u000309,01o\x0f\u000310,06o\x0f\u000311,13o\x0f\u000307,14!!!\x0f";
+                     ret = otherContent;
+                     break;
+            default: otherContent = otherContent + ": " +
+                "\u000306,08m\x0f\u000302,05o\x0f\u000307,09o\x0f\u000305,13o\x0f\u000307,14!!!\x0f";
+                     ret = otherContent;
+                     break;        
+		  }
         }
       }
       else if(subtrigger == "ping") {
-        if(otherContent.empty()) {
+        if(!otherContent.empty()) {
           ret = "\001ACTION pong ";
         }
         else {
-          std::string name = otherContent.substr(0,otherContent.find(' '));
-          ret = "\001ACTION pings " + name;
+          ret = "\001ACTION pings " + otherContent;
         }
         ret = ret + "\001\r\n";
       }

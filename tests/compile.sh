@@ -1,8 +1,15 @@
 #!/usr/bin/env sh
 
-g++ -c ../TsukiBot/src/constants.cpp -I ../TsukiBot/include
-g++ -c ../TsukiBot/src/ircmessage.cpp -I ../TsukiBot/include
-g++ -o msg-test msg-test.cpp ircmessage.o constants.o -I ../TsukiBot/include
-g++ -o ircmsg-file-test ircmessage-test.cpp ircmessage.o constants.o -I ../TsukiBot/include
-g++ -o prefix-test prefix-test.cpp ircmessage.o constants.o -I ../TsukiBot/include
-g++ -o parse-test parsemsg-test.cpp ircmessage.o constants.o -I ../TsukiBot/include
+echo "Removing old files..."
+rm -rf ./build
+
+echo "Making dir and entering it...."
+mkdir ./build && cd build
+
+echo "Generating Cmake files...."
+cmake ..
+
+echo "Building it..."
+make && cp ./bin/tsukibot tsukibot
+
+echo "Done!"

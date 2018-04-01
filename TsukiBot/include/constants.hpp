@@ -187,7 +187,6 @@ namespace Tsuki {
  };
 
   enum class Type { // Ping message or other
-  none = 0,
   normal = 1,     // If there is a irc numeral to it
   ping = 2,     // PING :hitchcock.freenode.net
   join = 3,     // :WiZ!jto@tolsun.oulu.fi JOIN #Twilight_zone
@@ -199,8 +198,7 @@ namespace Tsuki {
   notice = 5,   //:cherryh.freenode.net NOTICE * :*** Looking up your hostname...
   mode = 6,     // :G33kb0i MODE G33kb0i :+i
   special = 7,  // numerals on join of a network and are sent from server
-  quit = 0,
-  other = 10
+  quit = 8,
   };
 
   enum ServerState

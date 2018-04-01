@@ -1,8 +1,16 @@
 #!/usr/bin/env sh
 
-g++ -c -ggdb3 ../TsukiBot/src/constants.cpp -I ../TsukiBot/include
-g++ -c -ggdb3 ../TsukiBot/src/ircmessage.cpp -I ../TsukiBot/include
-#g++ -ggdb3 ircmessage-test.cpp ircmessage.o constants.o -I ../TsukiBot/include
-#g++ -ggdb3 prefix-test.cpp ircmessage.o constants.o -I ../TsukiBot/include
-g++ -ggdb3 msg-test.cpp ircmessage.o constants.o -I ../TsukiBot/include
-#g++ -ggdb3 ircmessage-test.cpp ircmessage.o constants.o -I ../TsukiBot/include
+echo "Removing old files..."
+rm -rf ./build
+
+echo "Making dir and entering it...."
+mkdir ./build && cd build
+
+echo "Generating Cmake files...."
+cmake -DCMAKE_BUILD_TYPE=Debug ..
+
+echo "Building it..."
+make && cp ./bin/tsukibot tsukibot
+
+echo "Done!"
+

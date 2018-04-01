@@ -1,25 +1,25 @@
 [editor]
-line_wrapping=true
-line_break_column=80
+line_wrapping=false
+line_break_column=72
 auto_continue_multiline=true
 
 [file_prefs]
 final_new_line=true
 ensure_convert_new_lines=false
-strip_trailing_spaces=true
-replace_tabs=true
+strip_trailing_spaces=false
+replace_tabs=false
 
 [indentation]
-indent_width=2
-indent_type=0
+indent_width=4
+indent_type=1
 indent_hard_tab_width=8
 detect_indent=false
 detect_indent_width=false
-indent_mode=3
+indent_mode=2
 
 [project]
 name=TsukiBot
-base_path=/home/neelz/Programming_Workspace/C++_Workspace/Ma_Projects/CLI_Projects/TsukiBot
+base_path=/home/neelz/Programming_Workspace/Ma_Currents/TsukiBot
 description=
 file_patterns=
 
@@ -28,12 +28,13 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=1
-FILE_NAME_0=0;C++;0;EUTF-8;0;1;1;%2Fhome%2Fneelz%2FProgramming_Workspace%2FC%2B%2B_Workspace%2FMa_Projects%2FCLI_Projects%2FTsukiBot%2FTsukiBot%2Finclude%2Fircmessage.hpp;0;2
-FILE_NAME_1=6250;C++;0;EUTF-8;0;1;1;%2Fhome%2Fneelz%2FProgramming_Workspace%2FC%2B%2B_Workspace%2FMa_Projects%2FCLI_Projects%2FTsukiBot%2FTsukiBot%2Fsrc%2Fircmessage.cpp;0;2
+current_page=2
+FILE_NAME_0=42;C++;0;EUTF-8;1;1;0;%2Fhome%2Fneelz%2FProgramming_Workspace%2FMa_Currents%2FTsukiBot%2Fplugins-src%2FBasicPlg%2FBasicPlg.hpp;0;4
+FILE_NAME_1=0;C++;0;EUTF-8;1;1;0;%2Fhome%2Fneelz%2FProgramming_Workspace%2FMa_Currents%2FTsukiBot%2Fplugins-src%2FTsuki-PluginManager%2Finclude%2FBasePlugin.hpp;0;4
+FILE_NAME_2=24;C++;0;EUTF-8;1;1;0;%2Fhome%2Fneelz%2FProgramming_Workspace%2FMa_Currents%2FTsukiBot%2Fplugins-src%2FBasicPlg%2FBasicPlg.cpp;0;4
 
 [VTE]
-last_dir=/home/neelz/Programming_Workspace/C++_Workspace/Ma_Projects/CLI_Projects/TsukiBot
+last_dir=/home/neelz
 
 [prjorg]
 source_patterns=*.c;*.C;*.cpp;*.cxx;*.c++;*.cc;*.m;
