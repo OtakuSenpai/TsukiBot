@@ -15,7 +15,7 @@ Notes
 -----
 
 1) The main code of the bot is ready, I just have to implement the plugins now. The windows side of the plugin syustem is not fixed for now.
-2) Don't use the compile.sh script to compile,use cmake. That script is way outdated. Though the gdb-compile.sh script uses cmake to do the dirty job.
+2) The compile.sh script uses cmake to compile. Use that to compile.
 3) This bot was only meant to be used on the Freenode network. Additional servers,if required,will be added in later versions.
 4)Windows build is not fixed yet, Compile.md might be wrong.
 5) More will be added on notice. 😜

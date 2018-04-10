@@ -17,5 +17,5 @@ tests/ircmsg-file-test
 tests/msg-test
 tests/parse-test
 tests/prefix-test
-
+tests/libbasicplg.so
 

@@ -199,6 +199,7 @@ namespace Tsuki {
   mode = 6,     // :G33kb0i MODE G33kb0i :+i
   special = 7,  // numerals on join of a network and are sent from server
   quit = 8,
+  none = -1,
   };
 
   enum ServerState

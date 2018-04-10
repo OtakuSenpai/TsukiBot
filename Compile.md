@@ -1,27 +1,25 @@
 LIST:-
 ----
 
-1) Packages required
-2) How to compile
-  a) Linux Subsystems
-  b) Windows System
+* [Packages Required](#packages-required)
+* [How to compile](#how-to-compile)
+  * [Linux Subsystems](#linux-subsystems)
+  * [Windows System](#window-system) 
 
-1) Packages required:
---------------------
+# Packages required
 
 You hav to download the LibSDL2 and LibSDL2 Net development packages. Plus you also have to get the shared library packages for both LibSDL2 and LibSDL2-net. You will also need the cmake packages for your system to
 build the bot. Also for debugging,you need to get LibSdl2 Net debugging package. The make package is for those who don't already have the make utility in their posix system. Also Cmake should be above version 3.0.
 As of writing this, this bot uses the following libraries and tools:-
 
-1) LibSDL2
-2) LibSDL2 Net
-3) CMake(greater than or equal too 3.0)
-4) Make (for posix environments)
-5) MSVC or MinGW (for windows environment)
+* LibSDL2
+* LibSDL2 Net
+* CMake(greater than or equal too 3.0)
+* Make (for posix environments)
+* MSVC or MinGW (for windows environment)
 
 
-2) How to Compile:
------------------
+# How to Compile:
 
 First,try this(assuming you are using cli,or else for Windows use TortoiseGit or something similar):-
 
@@ -31,8 +29,7 @@ git clone https://github.com/OtakuSenpai/TsukiBot.git
 ```
 
 
-a) Linux Subsystems:
--------------------
+## Linux Subsystems:
 
 For Ubuntu or Debian,run this command(package names may change with updates):
 
@@ -87,8 +84,7 @@ Now, in the TsukiBot directory, type this command:
 It's a small script that creates a build directory and makes the project there.
 You will find your bin file in the build directory.
 
-b) Windows System:
------------------
+## Windows System:
 
 For Windows,you have to get the required LibSDL2 packages from this two links:-
 1) https://www.libsdl.org/download-2.0.php

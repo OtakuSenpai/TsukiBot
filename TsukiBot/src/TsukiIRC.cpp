@@ -76,6 +76,7 @@ void Tsuki :: Bot :: handle_msg(std::string& message) {
          i.getType() != Type::ping && i.getType() != Type::notice) {
 
         std::string tempContent = i.getContent().substr(1);
+        std::cout<<"TempContent: "<<tempContent<<std::endl;
         if(has_it(tempContent,std::string(specialChar + "join"))) {
           std::string temp = i.getContent().substr(i.getContent().find(" ")+1);
           Join(temp);
@@ -100,7 +101,6 @@ void Tsuki :: Bot :: handle_msg(std::string& message) {
         if(has_it(tempContent,std::string(specialChar + "quit"))) {
           Disconnect(); disconnect = true; break;
         }
-        std::cout<<"TempContent: "<<tempContent<<std::endl;
 
         //Automatic Plugin loading part
         if(hasTrigger(tempContent,specialChar,pluginSubStrs)) {

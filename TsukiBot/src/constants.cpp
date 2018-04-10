@@ -393,7 +393,7 @@ bool Tsuki :: hasTrigger(const std::string& msg, const std::string& sc,
   bool hasit = false;
   std::string trigger = msg.substr(msg.find(":")+1).substr(msg.find(sc)+1);
   trigger = trigger.substr(0,trigger.find(" "));
-
+  std::cout<<"Trigger: "<<trigger<<std::endl;
   for(auto i: plugins) {
     if(i.first == trigger) {
       hasit = true;
