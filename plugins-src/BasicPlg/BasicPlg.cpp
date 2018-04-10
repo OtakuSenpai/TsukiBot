@@ -35,7 +35,7 @@ char* BasicPlg :: onCall(const char* data) {
     msg = msg.substr(msg.find(' ')+1);
     subtrigger = msg.substr(0,msg.find(' '));
     std::cout<<"Subtrig: "<<subtrigger<<std::endl;
-    otherContent = subtrigger.substr(subtrigger.find(' ')+1);
+    otherContent = msg.substr(msg.find(' ')+1);
     std::cout<<"Others: "<<otherContent<<std::endl;
     if(otherContent == "moo" || otherContent == "ping" ||
        otherContent == "coffee" || otherContent == "tea" ||
@@ -81,7 +81,7 @@ char* BasicPlg :: onCall(const char* data) {
         }
       }
       else if(subtrigger == "ping") {
-        if(!otherContent.empty()) {
+        if(otherContent.empty()) {
           ret = "\001ACTION pong ";
         }
         else {
@@ -91,9 +91,7 @@ char* BasicPlg :: onCall(const char* data) {
       }
     }
   }
-
-  std::cout<<ret<<std::endl;
-
+  
   retValue = (char*) calloc(ret.size(), sizeof(char));
   strcpy(retValue,ret.c_str());
   return retValue;

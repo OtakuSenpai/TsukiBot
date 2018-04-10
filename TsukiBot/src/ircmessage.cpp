@@ -182,7 +182,7 @@ void Tsuki :: IRCMessage :: handleParse(const std::string& message) {
     _type = Type::normal;
     _prefix.setStatus(_from_server,_type);
   }
-  else { _type = Type::other; }
+  else { _type = Type::none; }
   Parse(message);
 }
 
